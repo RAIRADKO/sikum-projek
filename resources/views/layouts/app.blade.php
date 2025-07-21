@@ -485,7 +485,7 @@
                     <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
             @endif
-            @if(session('error') || $errors->any()))
+            @if(session('error') || $errors->any())
                 <div class="alert alert-danger alert-dismissible fade show" role="alert">
                     <div class="d-flex align-items-center">
                         <i class="bi bi-exclamation-triangle-fill me-2 fs-5"></i>
@@ -581,6 +581,7 @@
             // Initialize navbar toggle
             const navbarToggler = document.querySelector('.navbar-toggler');
             const navbarCollapse = document.querySelector('.navbar-collapse');
+            
             if (navbarToggler && navbarCollapse) {
                 navbarToggler.addEventListener('click', function() {
                     // Toggle the collapse manually if Bootstrap isn't working
@@ -592,6 +593,7 @@
                         navbarToggler.setAttribute('aria-expanded', 'true');
                     }
                 });
+                
                 // Close navbar when clicking outside
                 document.addEventListener('click', function(event) {
                     if (!navbarToggler.contains(event.target) && !navbarCollapse.contains(event.target)) {
@@ -599,6 +601,7 @@
                         navbarToggler.setAttribute('aria-expanded', 'false');
                     }
                 });
+                
                 // Close navbar when clicking on nav links (mobile)
                 const navLinks = navbarCollapse.querySelectorAll('.nav-link');
                 navLinks.forEach(link => {
@@ -610,6 +613,7 @@
                     });
                 });
             }
+            
             // Auto-close alerts after 5 seconds
             const alerts = document.querySelectorAll('.alert-dismissible');
             alerts.forEach(alert => {
@@ -625,7 +629,21 @@
                 dropdown.addEventListener('click', function(e) {
                     e.preventDefault();
                     const dropdownMenu = this.nextElementSibling;
-                    dropdownMenu.classList.toggle('show');
+                    if (dropdownMenu) {
+                        dropdownMenu.classList.toggle('show');
+                    }
+                });
+            });
+            
+            // Close dropdowns when clicking outside
+            document.addEventListener('click', function(event) {
+                dropdowns.forEach(dropdown => {
+                    const dropdownMenu = dropdown.nextElementSibling;
+                    if (dropdownMenu && 
+                        !dropdown.contains(event.target) && 
+                        !dropdownMenu.contains(event.target)) {
+                        dropdownMenu.classList.remove('show');
+                    }
                 });
             });
         });
