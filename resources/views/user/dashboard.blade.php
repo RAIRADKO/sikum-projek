@@ -26,14 +26,6 @@
                                 <span class="badge bg-white text-primary"><i class="fas fa-building me-2"></i>{{ Auth::user()->opd->nama_opd }}</span>
                             </div>
                         </div>
-                        <div class="d-flex gap-2">
-                            <a href="{{ route('sk') }}" class="btn btn-light">
-                                <i class="bi bi-file-text me-2"></i>SK
-                            </a>
-                            <a href="{{ route('perbup') }}" class="btn btn-light">
-                                <i class="bi bi-journal-text me-2"></i>Perbup
-                            </a>
-                        </div>
                     </div>
                 </div>
             </div>
