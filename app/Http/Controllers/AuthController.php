@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Admin;
 use App\Models\Opd;
 use App\Models\User;
-use App\Models\Admin;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -12,34 +12,17 @@ use Illuminate\Support\Str;
 
 class AuthController extends Controller
 {
-    // ...existing code...
     /**
-     * Logout user atau admin
+     * Menampilkan form login.
      */
-    public function logout() {
-        if (auth('web')->check()) {
-            auth('web')->logout();
-        }
-        if (auth('admin')->check()) {
-            auth('admin')->logout();
-        }
-        return redirect()->route('home');
-    }
-    // ...existing code...
-}
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
-
-class AuthController extends Controller
-{
-    // Show Login Form
     public function showLoginForm()
     {
         return view('auth.login');
     }
 
-    // Handle Login
+    /**
+     * Menangani proses login.
+     */
     public function login(Request $request)
     {
         $request->validate([
@@ -50,11 +33,11 @@ class AuthController extends Controller
         $loginField = $request->input('login');
         $password = $request->input('password');
 
-        // Check if login is email (admin) or NIP/whatsapp (user)
+        // Cek apakah login menggunakan email (admin) atau NIP/whatsapp (user)
         $isEmail = filter_var($loginField, FILTER_VALIDATE_EMAIL);
 
         if ($isEmail) {
-            // Attempt admin login
+            // Coba login sebagai admin
             $admin = Admin::where('email', $loginField)->first();
 
             if ($admin && Hash::check($password, $admin->password)) {
@@ -62,14 +45,14 @@ class AuthController extends Controller
                 return redirect()->intended('/admin/dashboard');
             }
         } else {
-            // Attempt user login with NIP or whatsapp
+            // Coba login sebagai user dengan NIP atau whatsapp
             $user = User::where('nip', $loginField)
                 ->orWhere('whatsapp', $loginField)
                 ->first();
 
             if ($user && Hash::check($password, $user->password)) {
                 Auth::guard('web')->login($user, $request->filled('remember'));
-                return redirect()->route('home');
+                return redirect()->route('dashboard'); // Arahkan ke dashboard user
             }
         }
 
@@ -78,14 +61,18 @@ class AuthController extends Controller
         ])->withInput($request->only('login'));
     }
 
-    // Show Registration Form
+    /**
+     * Menampilkan form registrasi.
+     */
     public function showRegistrationForm()
     {
         $opds = Opd::all();
         return view('auth.register', compact('opds'));
     }
 
-    // Handle Registration
+    /**
+     * Menangani proses registrasi user.
+     */
     public function register(Request $request)
     {
         $request->validate([
@@ -109,7 +96,9 @@ class AuthController extends Controller
         return redirect('/dashboard')->with('success', 'Registrasi berhasil!');
     }
 
-    // Handle Logout
+    /**
+     * Menangani proses logout untuk user dan admin.
+     */
     public function logout(Request $request)
     {
         if (Auth::guard('admin')->check()) {

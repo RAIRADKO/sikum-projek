@@ -392,44 +392,32 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto align-items-lg-center">
                     @auth
-                        <li class="nav-item me-lg-2 d-none d-lg-block">
-                            <a class="nav-link {{ request()->routeIs('home') ? 'active' : '' }}" href="{{ route('home') }}">
-                                <i class="bi bi-house-door me-2"></i>Home
+                        <li class="nav-item">
+                            <a class="nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}" href="{{ route('dashboard') }}">Dashboard</a>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                {{ Auth::user()->nama }}
                             </a>
-                        </li>
-                        <!-- Menu reservasi dihapus -->
-                        <!-- Menu profile dihapus -->
-                        <li class="nav-item d-none d-lg-block">
-                            <form action="{{ route('logout') }}" method="POST" class="mb-0">
-                                @csrf
-                                <button type="submit" class="nav-link btn btn-link text-decoration-none border-0 p-0" style="color: #ffffff !important;">
-                                    <i class="bi bi-box-arrow-right me-2"></i>Logout
-                                </button>
-                            </form>
-                        </li>
-                        <li class="nav-item d-lg-none">
-                            <a class="nav-link {{ request()->routeIs('home') ? 'active' : '' }}" href="{{ route('home') }}">
-                                <i class="bi bi-house-door me-2"></i>Home
-                            </a>
-                        </li>
-                        <!-- Menu reservasi dihapus -->
-                        <!-- Menu profile dihapus -->
-                        <li class="nav-item d-lg-none">
-                            <form action="{{ route('logout') }}" method="POST" class="mb-0">
-                                @csrf
-                                <button type="submit" class="mobile-logout-btn">
-                                    <i class="bi bi-box-arrow-right me-2"></i>Logout
-                                </button>
-                            </form>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                                <li>
+                                    <form method="POST" action="{{ route('logout') }}">
+                                        @csrf
+                                        <button type="submit" class="dropdown-item">
+                                            <i class="bi bi-box-arrow-right me-2"></i>Logout
+                                        </button>
+                                    </form>
+                                </li>
+                            </ul>
                         </li>
                     @else
-                        <li class="nav-item me-2">
+                        <li class="nav-item">
                             <a class="nav-link {{ request()->routeIs('login') ? 'active' : '' }}" href="{{ route('login') }}">
                                 <i class="bi bi-box-arrow-in-right me-1"></i>Login
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="btn btn-primary btn-register px-3" href="{{ route('register') }}">
+                            <a class="btn btn-light btn-sm" href="{{ route('register') }}">
                                 <i class="bi bi-person-plus me-1"></i>Register
                             </a>
                         </li>
@@ -488,7 +476,7 @@
                         <a href="https://www.instagram.com/purworejokab_/" class="footer-social-icon">
                             <i class="bi bi-instagram"></i>
                         </a>
-                        <a href="https://www.youtube.com/@pemkabpurworejo8120" class="footer-social-icon">
+                        <a href="https://www.youtube.com/channel/UC-n8f9h3G3p3e-wZ5q5c3g" class="footer-social-icon">
                             <i class="bi bi-youtube"></i>
                         </a>
                         <a href="https://www.purworejokab.go.id/web/home.html" class="footer-social-icon">
