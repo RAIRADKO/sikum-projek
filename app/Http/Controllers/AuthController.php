@@ -40,7 +40,7 @@ class AuthController extends Controller
         $field = is_numeric($loginField) ? 'nip' : 'whatsapp';
         if (Auth::guard('web')->attempt([$field => $loginField, 'password' => $credentials['password']], $request->filled('remember'))) {
             $request->session()->regenerate();
-            return redirect()->intended(route('home'));
+            return redirect()->intended(route('dashboard'));
         }
 
         return back()->withErrors([
