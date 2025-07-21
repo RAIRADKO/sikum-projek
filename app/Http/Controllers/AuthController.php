@@ -8,80 +8,67 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rules\Password;
 
 class AuthController extends Controller
 {
-    /**
-     * Menampilkan form login.
-     */
     public function showLoginForm()
     {
         return view('auth.login');
     }
 
-    /**
-     * Menangani proses login.
-     */
     public function login(Request $request)
     {
-        $request->validate([
-            'login' => 'required|string',
-            'password' => 'required|string',
+        $credentials = $request->validate([
+            'login' => ['required', 'string'],
+            'password' => ['required', 'string'],
         ]);
 
-        $loginField = $request->input('login');
-        $password = $request->input('password');
-
-        // Cek apakah login menggunakan email (admin) atau NIP/whatsapp (user)
+        $loginField = $credentials['login'];
         $isEmail = filter_var($loginField, FILTER_VALIDATE_EMAIL);
 
+        // Coba login sebagai Admin jika input adalah email
         if ($isEmail) {
-            // Coba login sebagai admin
-            $admin = Admin::where('email', $loginField)->first();
-
-            if ($admin && Hash::check($password, $admin->password)) {
-                Auth::guard('admin')->login($admin, $request->filled('remember'));
-                return redirect()->intended('/admin/dashboard');
-            }
-        } else {
-            // Coba login sebagai user dengan NIP atau whatsapp
-            $user = User::where('nip', $loginField)
-                ->orWhere('whatsapp', $loginField)
-                ->first();
-
-            if ($user && Hash::check($password, $user->password)) {
-                Auth::guard('web')->login($user, $request->filled('remember'));
-                return redirect()->route('dashboard'); // Arahkan ke dashboard user
+            if (Auth::guard('admin')->attempt(['email' => $loginField, 'password' => $credentials['password']], $request->filled('remember'))) {
+                $request->session()->regenerate();
+                return redirect()->intended(route('admin.dashboard'));
             }
         }
 
+        // Coba login sebagai User biasa (NIP atau WhatsApp)
+        $field = is_numeric($loginField) ? 'nip' : 'whatsapp';
+        if (Auth::guard('web')->attempt([$field => $loginField, 'password' => $credentials['password']], $request->filled('remember'))) {
+            $request->session()->regenerate();
+            return redirect()->intended(route('dashboard'));
+        }
+
         return back()->withErrors([
-            'login' => 'Kredensial yang diberikan tidak cocok dengan data kami.',
-        ])->withInput($request->only('login'));
+            'login' => 'NIP/Email atau password salah.',
+        ])->onlyInput('login');
     }
 
-    /**
-     * Menampilkan form registrasi.
-     */
     public function showRegistrationForm()
     {
-        $opds = Opd::all();
+        $opds = Opd::orderBy('nama_opd')->get();
         return view('auth.register', compact('opds'));
     }
 
-    /**
-     * Menangani proses registrasi user.
-     */
     public function register(Request $request)
     {
-        $request->validate([
-            'nama' => 'required|string|max:255',
-            'nip' => 'required|string|unique:users,nip',
-            'whatsapp' => 'required|string|unique:users,whatsapp',
-            'opd_id' => 'required|exists:opds,id',
-            'password' => 'required|string|min:8|confirmed',
+        $validator = Validator::make($request->all(), [
+            'nama' => ['required', 'string', 'max:255'],
+            'nip' => ['required', 'string', 'size:18', 'unique:users,nip'],
+            'whatsapp' => ['required', 'string', 'unique:users,whatsapp', 'regex:/^62[0-9]{9,13}$/'],
+            'opd_id' => ['required', 'exists:opds,id'],
+            'password' => ['required', 'confirmed', Password::min(8)->mixedCase()->numbers()->symbols()],
         ]);
+
+        if ($validator->fails()) {
+            return redirect()->route('register')
+                ->withErrors($validator)
+                ->withInput();
+        }
 
         $user = User::create([
             'nama' => $request->nama,
@@ -91,25 +78,19 @@ class AuthController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
-        Auth::guard('web')->login($user);
+        Auth::login($user);
 
-        return redirect('/dashboard')->with('success', 'Registrasi berhasil!');
+        return redirect()->route('dashboard')->with('success', 'Registrasi berhasil! Selamat datang.');
     }
 
-    /**
-     * Menangani proses logout untuk user dan admin.
-     */
     public function logout(Request $request)
     {
-        if (Auth::guard('admin')->check()) {
-            Auth::guard('admin')->logout();
-        } else {
-            Auth::guard('web')->logout();
-        }
+        $guard = Auth::guard('admin')->check() ? 'admin' : 'web';
+        Auth::guard($guard)->logout();
 
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect('/');
+        return redirect('/')->with('success', 'Anda berhasil logout.');
     }
 }

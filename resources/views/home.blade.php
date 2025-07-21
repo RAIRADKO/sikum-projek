@@ -6,8 +6,8 @@
 <div class="container py-5">
     <div class="row">
         <div class="col-lg-8 mx-auto text-center">
-            <h1 class="display-4 fw-bold text-primary mb-4">Selamat Datang di Sistem Kami</h1>
-            <p class="lead mb-4">Sistem informasi terpadu untuk kebutuhan administrasi OPD</p>
+            <h1 class="display-4 fw-bold text-primary mb-4">Selamat Datang di Sistem Informasi Hukum</h1>
+            <p class="lead mb-4">Sistem Informasi Hukum</p>
             
             @guest
             <div class="d-grid gap-3 d-sm-flex justify-content-sm-center">
@@ -21,8 +21,6 @@
                 <div class="card-body p-5">
                     <div class="d-flex align-items-center">
                         <div class="flex-shrink-0">
-                            <img src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->nama) }}&background=random" 
-                                 alt="Profile" class="rounded-circle" width="80">
                         </div>
                         <div class="flex-grow-1 ms-4">
                             <h3 class="mb-1">{{ Auth::user()->nama }}</h3>
@@ -31,35 +29,6 @@
                         </div>
                     </div>
                     <hr>
-                    <div class="row mt-4">
-                        <div class="col-md-4 mb-3">
-                            <div class="card border-primary h-100">
-                                <div class="card-body text-center">
-                                    <i class="fas fa-file-alt fa-3x text-primary mb-3"></i>
-                                    <h5>Formulir</h5>
-                                    <p class="text-muted">Akses formulir administrasi</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <div class="card border-success h-100">
-                                <div class="card-body text-center">
-                                    <i class="fas fa-chart-line fa-3x text-success mb-3"></i>
-                                    <h5>Laporan</h5>
-                                    <p class="text-muted">Lihat laporan kinerja</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <div class="card border-warning h-100">
-                                <div class="card-body text-center">
-                                    <i class="fas fa-bell fa-3x text-warning mb-3"></i>
-                                    <h5>Notifikasi</h5>
-                                    <p class="text-muted">Pemberitahuan terbaru</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
                 </div>
             </div>
             @endauth

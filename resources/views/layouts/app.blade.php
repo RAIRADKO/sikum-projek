@@ -56,6 +56,7 @@
             box-shadow: 0 0.5rem 1rem rgba(39, 174, 96, 0.15);
             border-radius: 0.5rem;
             margin-top: 0.5rem;
+            z-index: 1030; /* Pastikan dropdown di atas elemen lain */
         }
         .dropdown-item {
             padding: 0.75rem 1.25rem;
@@ -142,6 +143,29 @@
                 background-color: rgba(39, 174, 96, 0.1);
                 border-color: rgba(39, 174, 96, 0.5);
                 color: #219150;
+            }
+            
+            /* Perbaikan tampilan dropdown di mobile */
+            .navbar-collapse .dropdown-menu {
+                background-color: transparent;
+                border: none;
+                box-shadow: none;
+                padding: 0;
+                margin: 0;
+                position: static !important;
+                transform: none !important;
+            }
+            .navbar-collapse .dropdown-item {
+                padding: 0.5rem 1.5rem;
+                color: rgba(255, 255, 255, 0.85);
+                background-color: transparent;
+            }
+            .navbar-collapse .dropdown-item:hover {
+                color: white;
+                background-color: rgba(255, 255, 255, 0.1);
+            }
+            .navbar-collapse .dropdown-divider {
+                opacity: 0.2;
             }
         }
         @media (max-width: 767.98px) {
@@ -392,14 +416,38 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto align-items-lg-center">
                     @auth
-                        <li class="nav-item">
-                            <a class="nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}" href="{{ route('dashboard') }}">Dashboard</a>
-                        </li>
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                {{ Auth::user()->nama }}
+                        <!-- Menu dropdown untuk pengguna yang sudah login -->
+                        <li class="nav-item dropdown d-none d-lg-block">
+                            <a class="nav-link dropdown-toggle" href="#" id="menuDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Menu
                             </a>
-                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                            <ul class="dropdown-menu" aria-labelledby="menuDropdown">
+                                <li><a class="dropdown-item" href="{{ route('sk') }}">SK</a></li>
+                                <li><a class="dropdown-item" href="{{ route('perbup') }}">Perbup</a></li>
+                            </ul>
+                        </li>
+                        
+                        <!-- Tampilan menu untuk mobile -->
+                        <li class="nav-item d-lg-none">
+                            <a class="nav-link" data-bs-toggle="collapse" href="#mobileMenuCollapse" role="button" aria-expanded="false" aria-controls="mobileMenuCollapse">
+                                Menu <i class="bi bi-chevron-down ms-1"></i>
+                            </a>
+                            <div class="collapse" id="mobileMenuCollapse">
+                                <ul class="nav flex-column ps-3 mt-2">
+                                    <li><a class="nav-link" href="{{ route('sk') }}">SK</a></li>
+                                    <li><a class="nav-link" href="{{ route('perbup') }}">Perbup</a></li>
+                                </ul>
+                            </div>
+                        </li>
+                        
+                        <!-- Dropdown profil pengguna -->
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-person-circle me-1"></i> {{ Auth::user()->nama }}
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                                <li><a class="dropdown-item" href="{{ route('dashboard') }}"><i class="bi bi-speedometer2 me-2"></i>Dashboard</a></li>
+                                <li><hr class="dropdown-divider"></li>
                                 <li>
                                     <form method="POST" action="{{ route('logout') }}">
                                         @csrf
@@ -411,14 +459,15 @@
                             </ul>
                         </li>
                     @else
+                        <!-- Tampilan untuk pengunjung (guest) -->
                         <li class="nav-item">
                             <a class="nav-link {{ request()->routeIs('login') ? 'active' : '' }}" href="{{ route('login') }}">
                                 <i class="bi bi-box-arrow-in-right me-1"></i>Login
                             </a>
                         </li>
-                        <li class="nav-item">
-                            <a class="btn btn-light btn-sm" href="{{ route('register') }}">
-                                <i class="bi bi-person-plus me-1"></i>Register
+                        <li class="nav-item ms-lg-2">
+                            <a class="btn btn-light btn-sm btn-register" href="{{ route('register') }}">
+                                <i class="bi bi-person-plus me-1"></i>Daftar
                             </a>
                         </li>
                     @endauth
@@ -436,7 +485,7 @@
                     <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
             @endif
-            @if(session('error') || $errors->any())
+            @if(session('error') || $errors->any()))
                 <div class="alert alert-danger alert-dismissible fade show" role="alert">
                     <div class="d-flex align-items-center">
                         <i class="bi bi-exclamation-triangle-fill me-2 fs-5"></i>
@@ -568,6 +617,16 @@
                     const bsAlert = new bootstrap.Alert(alert);
                     bsAlert.close();
                 }, 5000);
+            });
+            
+            // Initialize dropdowns
+            const dropdowns = document.querySelectorAll('.dropdown-toggle');
+            dropdowns.forEach(dropdown => {
+                dropdown.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const dropdownMenu = this.nextElementSibling;
+                    dropdownMenu.classList.toggle('show');
+                });
             });
         });
     </script>
