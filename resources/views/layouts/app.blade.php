@@ -6,15 +6,12 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'SIKUM')</title>
 
-    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=inter:400,500,600,700&display=swap" rel="stylesheet">
 
-    <!-- Bootstrap & Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
-    <!-- Vite Assets -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
     <style>
@@ -233,8 +230,6 @@
             opacity: 0.9;
         }
         
-        /* Mobile styles removed */
-        
         /* ======= FOOTER STYLES ======= */
         .footer-custom {
             background: linear-gradient(135deg, #219150 0%, #27ae60 100%);
@@ -245,8 +240,7 @@
             overflow: hidden;
         }
         
-        .footer-custom::before {
-            content: '';
+        .footer-pattern {
             position: absolute;
             top: 0;
             left: 0;
@@ -254,6 +248,13 @@
             bottom: 0;
             background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
             opacity: 0.1;
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        .footer-content {
+            position: relative;
+            z-index: 1;
         }
         
         .footer-logo {
@@ -301,6 +302,7 @@
             display: block;
             margin-bottom: 0.5rem;
             transition: color 0.3s ease;
+            position: relative;
         }
         
         .footer-link:hover {
@@ -326,6 +328,7 @@
             transition: all 0.3s ease;
             border: 1px solid rgba(255, 255, 255, 0.2);
             font-size: 1.1rem;
+            position: relative;
         }
         
         .footer-social-icon:hover {
@@ -341,6 +344,7 @@
             align-items: flex-start;
             margin-bottom: 0.75rem;
             font-size: 0.9rem;
+            position: relative;
         }
         
         .footer-contact-item i {
@@ -376,6 +380,7 @@
         .footer-developer a {
             color: #b9f6ca;
             text-decoration: none;
+            transition: color 0.3s ease;
         }
         
         .footer-developer a:hover {
@@ -486,7 +491,6 @@
                 <ul class="navbar-nav d-flex flex-row">
                     @auth
                         <div class="d-flex align-items-center gap-3">
-                            <!-- Regular Menu Items -->
                             <a class="btn btn-outline-light rounded-pill {{ request()->routeIs('sk') ? 'active' : '' }}" href="{{ route('sk') }}">
                                 <i class="bi bi-file-text me-1"></i>SK
                             </a>
@@ -494,7 +498,6 @@
                                 <i class="bi bi-journal-text me-1"></i>Perbup
                             </a>
                             <div class="vr text-light opacity-25 mx-2"></div>
-                            <!-- User Info & Logout -->
                             <div class="d-flex align-items-center gap-2">
                                 <a href="{{ route('dashboard') }}" class="d-flex align-items-center text-light text-decoration-none hover-brighten">
                                     <i class="bi bi-person-circle me-2"></i>
@@ -509,7 +512,6 @@
                             </div>
                         </div>
                     @else
-                        <!-- Guest Navigation Items -->
                         <div class="d-flex align-items-center gap-2">
                             <a class="btn btn-outline-light rounded-pill px-3 d-flex align-items-center" href="{{ route('login') }}">
                                 <i class="bi bi-box-arrow-in-right me-2"></i>
@@ -558,11 +560,14 @@
     </main>
 
     <footer class="footer-custom">
-        <div class="container">
+        <div class="footer-pattern"></div>
+        <div class="container footer-content">
             <div class="row">
                 <div class="col-lg-5 col-md-6 mb-4">
                     <div class="d-flex align-items-center mb-3">
-                        <img src="{{ asset('img/Lambang_Kabupaten_Purworejo.png') }}" alt="Logo Kabupaten Purworejo" class="footer-logo me-3">
+                        <a href="{{ route('home') }}" class="d-inline-block">
+                            <img src="{{ asset('img/Lambang_Kabupaten_Purworejo.png') }}" alt="Logo Kabupaten Purworejo" class="footer-logo me-3">
+                        </a>
                         <div>
                             <h5 class="footer-title">SIKUM</h5>
                             <p class="footer-subtitle">Pemerintah Kabupaten Purworejo</p>
@@ -572,16 +577,16 @@
                         Aplikasi digital untuk memudahkan proses reservasi ruangan rapat di lingkungan Pemerintah Kabupaten Purworejo dengan sistem yang terintegrasi, efisien, dan mudah digunakan.
                     </p>
                     <div class="footer-social-icons">
-                        <a href="https://www.instagram.com/purworejokab_/" class="footer-social-icon">
+                        <a href="https://www.instagram.com/purworejokab_/" class="footer-social-icon" target="_blank" rel="noopener noreferrer">
                             <i class="bi bi-instagram"></i>
                         </a>
-                        <a href="https://www.youtube.com/@pemkabpurworejo8120" class="footer-social-icon">
+                        <a href="https://www.youtube.com/@pemkabpurworejo8120" class="footer-social-icon" target="_blank" rel="noopener noreferrer">
                             <i class="bi bi-youtube"></i>
                         </a>
-                        <a href="https://www.purworejokab.go.id/web/home.html" class="footer-social-icon">
+                        <a href="https://www.purworejokab.go.id/web/home.html" class="footer-social-icon" target="_blank" rel="noopener noreferrer">
                             <i class="bi bi-globe"></i>
                         </a>
-                        <a href="https://x.com/purworejokab_" class="footer-social-icon">
+                        <a href="https://x.com/purworejokab_" class="footer-social-icon" target="_blank" rel="noopener noreferrer">
                             <i class="bi bi-twitter-x"></i>
                         </a>
                     </div>
@@ -617,7 +622,7 @@
                     </div>
                     <div class="col-md-6 text-md-end">
                         <p class="footer-developer">
-                            Developed by <a href="https://www.linkedin.com/in/rahmatirfan/">Rahmat Irfan Adie Purwatmoko</a>
+                            Developed by <a href="https://www.linkedin.com/in/rahmatirfan/" target="_blank" rel="noopener noreferrer">Rahmat Irfan Adie Purwatmoko</a>
                         </p>
                     </div>
                 </div>

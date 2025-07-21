@@ -6,8 +6,8 @@
 <div class="hero-section py-5 bg-light">
     <div class="container">
         <div class="row align-items-center">
-            <div class="col-lg-6 text-center text-lg-start">
-                <h1 class="display-4 fw-bold text-primary mb-4">Selamat Datang di<br>Sistem Informasi Hukum</h1>
+            <div class="col-lg-6">
+                <h1 class="display-5 fw-bold text-primary mb-4">Selamat Datang di<br>Sistem Informasi Hukum</h1>
                 <p class="lead mb-4 text-muted">Portal informasi terpadu untuk pengelolaan dan akses dokumen hukum</p>
                 
                 @guest
@@ -21,12 +21,9 @@
                 </div>
                 @endguest
             </div>
-            <div class="col-lg-6 text-center">
+            <div class="col-lg-5 d-flex justify-content-end">
                 <img src="{{ asset('img/Lambang_Kabupaten_Purworejo.png') }}" alt="Logo" class="img-fluid" style="max-width: 300px;">
             </div>
-        </div>
-    </div>
-</div>
         </div>
     </div>
 </div>
