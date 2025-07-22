@@ -23,8 +23,10 @@ Route::middleware('guest')->group(function () {
 // --- GRUP ROUTE UNTUK PENGGUNA TEROTENTIKASI ---
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [HomeController::class, 'dashboard'])->name('dashboard');
-    Route::post('logout', [AuthController::class, 'logout'])->name('logout');
 });
+
+// Logout Route for both users and admins
+Route::post('logout', [AuthController::class, 'logout'])->name('logout');
 
 
 // --- GRUP ROUTE UNTUK ADMIN ---
