@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('whatsapp')->unique();
             $table->foreignId('opd_id')->constrained('opds');
             $table->string('password');
+            $table->boolean('is_approved')->default(false);
             $table->rememberToken();
             $table->timestamps();
         });
