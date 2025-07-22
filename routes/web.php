@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\Admin\AdminDashboardController;
+use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\OpdController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Auth\LoginController;
@@ -33,7 +33,7 @@ Route::post('register', [RegisterController::class, 'register']);
 
 // Rute untuk Admin
 Route::prefix('admin')->name('admin.')->middleware('auth:admin')->group(function () {
-    Route::get('dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
+    Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     // Rute untuk Manajemen User (Digabungkan)
     Route::patch('user/{user}/approve', [UserController::class, 'approve'])->name('user.approve');
