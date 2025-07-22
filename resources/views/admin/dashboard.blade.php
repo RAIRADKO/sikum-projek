@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.admin')
 
 @section('title', 'Admin Dashboard')
 
@@ -22,7 +22,7 @@
                     </div>
                 </div>
                 <div class="card-footer d-flex align-items-center justify-content-between">
-                    <a class="small text-white stretched-link" href="#">View Details</a>
+                    <a class="small text-white stretched-link" href="{{ route('admin.user.index') }}">Lihat Detail</a>
                     <div class="small text-white"><i class="fas fa-angle-right"></i></div>
                 </div>
             </div>
@@ -39,7 +39,7 @@
                     </div>
                 </div>
                 <div class="card-footer d-flex align-items-center justify-content-between">
-                    <a class="small text-white stretched-link" href="#">View Details</a>
+                    <a class="small text-white stretched-link" href="{{ route('admin.opd.index') }}">Lihat Detail</a>
                     <div class="small text-white"><i class="fas fa-angle-right"></i></div>
                 </div>
             </div>
@@ -56,7 +56,7 @@
                     </div>
                 </div>
                 <div class="card-footer d-flex align-items-center justify-content-between">
-                    <a class="small text-white stretched-link" href="#">View Details</a>
+                    <a class="small text-white stretched-link" href="#">Lihat Detail</a>
                     <div class="small text-white"><i class="fas fa-angle-right"></i></div>
                 </div>
             </div>
@@ -73,7 +73,7 @@
                     </div>
                 </div>
                 <div class="card-footer d-flex align-items-center justify-content-between">
-                    <a class="small text-white stretched-link" href="#">View Details</a>
+                    <a class="small text-white stretched-link" href="#">Lihat Detail</a>
                     <div class="small text-white"><i class="fas fa-angle-right"></i></div>
                 </div>
             </div>
@@ -132,8 +132,7 @@
                             <td>{{ $user->whatsapp }}</td>
                             <td>{{ $user->created_at->format('d/m/Y') }}</td>
                             <td>
-                                <button class="btn btn-sm btn-info"><i class="fas fa-eye"></i></button>
-                                <button class="btn btn-sm btn-warning"><i class="fas fa-edit"></i></button>
+                                <a href="{{ route('admin.user.edit', $user) }}" class="btn btn-sm btn-warning"><i class="fas fa-edit"></i></a>
                             </td>
                         </tr>
                         @endforeach
@@ -148,15 +147,22 @@
 @push('scripts')
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.1/chart.min.js"></script>
 <script>
+    // Data untuk Chart dari Controller
+    const userRegistrationLabels = @json($userRegistrationData->pluck('date'));
+    const userRegistrationValues = @json($userRegistrationData->pluck('total'));
+
+    const opdLabels = @json($opdDistribution->pluck('opd.nama_opd'));
+    const opdValues = @json($opdDistribution->pluck('total'));
+    
     // User Registration Chart
     const ctx1 = document.getElementById('userRegistrationChart').getContext('2d');
     const userRegistrationChart = new Chart(ctx1, {
         type: 'line',
         data: {
-            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
+            labels: userRegistrationLabels,
             datasets: [{
                 label: 'Pendaftaran Pengguna',
-                data: [12, 19, 3, 5, 2, 3, 15],
+                data: userRegistrationValues,
                 backgroundColor: 'rgba(54, 162, 235, 0.2)',
                 borderColor: 'rgba(54, 162, 235, 1)',
                 borderWidth: 2,
@@ -178,10 +184,10 @@
     const opdDistributionChart = new Chart(ctx2, {
         type: 'bar',
         data: {
-            labels: ['Dinas Pendidikan', 'Dinas Kesehatan', 'Dinas PU', 'Dinas Sosial', 'Dinas Perhubungan'],
+            labels: opdLabels,
             datasets: [{
                 label: 'Jumlah Pengguna',
-                data: [12, 19, 3, 5, 2],
+                data: opdValues,
                 backgroundColor: [
                     'rgba(255, 99, 132, 0.7)',
                     'rgba(54, 162, 235, 0.7)',

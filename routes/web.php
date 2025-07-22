@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
+use App\Http\Controllers\Admin\OpdController;
+use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\HomeController;
@@ -27,8 +29,12 @@ Route::middleware('auth')->group(function () {
 // --- GRUP ROUTE UNTUK ADMIN ---
 Route::prefix('admin')->name('admin.')->middleware('auth:admin')->group(function () {
     Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
-    // Tambahkan rute admin lainnya di sini, contoh:
-    // Route::get('/users', [UserController::class, 'index'])->name('users.index');
+    
+    // Rute untuk Manajemen OPD
+    Route::resource('opd', OpdController::class);
+
+    // Rute untuk Manajemen User
+    Route::resource('user', UserController::class);
 });
 
 
