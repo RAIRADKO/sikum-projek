@@ -49,7 +49,7 @@ class AuthController extends Controller
             if (Auth::guard('web')->attempt(['nip' => $loginIdentifier, 'password' => $password])) {
                 $request->session()->regenerate();
                 // FIX: Arahkan ke rute 'dashboard'
-                return redirect()->intended(route('dashboard'));
+                return redirect()->intended(route('home'));
             }
         }
 
@@ -92,7 +92,7 @@ class AuthController extends Controller
 
         Auth::login($user);
 
-        return redirect()->route('dashboard')->with('success', 'Registrasi berhasil! Selamat datang.');
+        return redirect()->route('home')->with('success', 'Registrasi berhasil! Selamat datang.');
     }
 
     public function logout(Request $request)
