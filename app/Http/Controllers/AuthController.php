@@ -32,21 +32,24 @@ class AuthController extends Controller
         if (filter_var($loginIdentifier, FILTER_VALIDATE_EMAIL)) {
             if (Auth::guard('admin')->attempt(['email' => $loginIdentifier, 'password' => $password])) {
                 $request->session()->regenerate();
-                return redirect()->intended('admin');
+                // FIX: Arahkan ke rute 'admin.dashboard'
+                return redirect()->intended(route('admin.dashboard'));
             }
         }
 
-        // 2. Coba autentikasi sebagai admin dengan NAMA (tanpa peduli tipe input)
-        if (Auth::guard('admin')->attempt(['name' => $loginIdentifier, 'password' => $password])) {
+        // 2. Coba autentikasi sebagai admin dengan NAMA (menggunakan kolom 'nama')
+        if (Auth::guard('admin')->attempt(['nama' => $loginIdentifier, 'password' => $password])) {
             $request->session()->regenerate();
-            return redirect()->intended('admin');
+            // FIX: Arahkan ke rute 'admin.dashboard'
+            return redirect()->intended(route('admin.dashboard'));
         }
 
         // 3. Coba autentikasi sebagai user dengan NIP (hanya jika input numerik)
         if (is_numeric($loginIdentifier)) {
             if (Auth::guard('web')->attempt(['nip' => $loginIdentifier, 'password' => $password])) {
                 $request->session()->regenerate();
-                return redirect()->intended('user');
+                // FIX: Arahkan ke rute 'dashboard'
+                return redirect()->intended(route('dashboard'));
             }
         }
 
@@ -67,7 +70,7 @@ class AuthController extends Controller
             'nama' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'nip' => ['required', 'string', 'size:18', 'unique:users,nip'],
-            'whatsapp' => ['required', 'string', 'unique:users,whatsapp', 'regex:/^62[0-9]{9,13}$/'],
+            'whatsapp' => ['required', 'string', 'unique:users,whatsapp'],
             'opd_id' => ['required', 'exists:opds,id'],
             'password' => ['required', 'confirmed', Password::min(8)->mixedCase()->numbers()->symbols()],
         ]);
