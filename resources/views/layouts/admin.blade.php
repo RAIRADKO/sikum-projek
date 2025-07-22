@@ -79,7 +79,7 @@
             </div>
         </div>
         <div id="page-content-wrapper">
-            <main class="py-4">
+            <main class="py-0">
                  @if(session('success'))
                     <div class="alert alert-success alert-dismissible fade show" role="alert">
                         {{ session('success') }}
