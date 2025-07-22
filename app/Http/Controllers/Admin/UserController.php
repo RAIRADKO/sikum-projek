@@ -129,6 +129,9 @@ class UserController extends Controller
      */
     public function approve(User $user)
     {
+        if ($user->is_approved) {
+            return redirect()->route('admin.user.index')->with('error', 'User ini sudah disetujui sebelumnya.');
+        }
         $user->update(['is_approved' => true]);
         return redirect()->route('admin.user.index')->with('success', 'Pendaftaran user telah disetujui.');
     }
@@ -141,6 +144,9 @@ class UserController extends Controller
      */
     public function reject(User $user)
     {
+        if ($user->is_approved) {
+            return redirect()->route('admin.user.index')->with('error', 'User yang sudah disetujui tidak dapat ditolak. Gunakan tombol hapus.');
+        }
         $user->delete();
         return redirect()->route('admin.user.index')->with('success', 'Pendaftaran user telah ditolak dan dihapus.');
     }
