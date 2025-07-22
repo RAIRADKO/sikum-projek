@@ -74,6 +74,12 @@
                 <a href="{{ route('admin.user.index') }}" class="list-group-item list-group-item-action {{ request()->routeIs('admin.user.*') ? 'active' : '' }}">
                     <i class="fas fa-users fa-fw me-2"></i>Manajemen User
                 </a>
+                <a href="{{ route('logout') }}" class="list-group-item list-group-item-action" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                    <i class="fas fa-sign-out-alt fa-fw me-2"></i>Logout
+                </a>
+                <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                    @csrf
+                </form>
             </div>
         </div>
         <div id="page-content-wrapper">
@@ -88,12 +94,7 @@
                                     </a>
                                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
                                         <li>
-                                            <form method="POST" action="{{ route('logout') }}">
-                                                @csrf
-                                                <button type="submit" class="dropdown-item">
-                                                    <i class="fas fa-sign-out-alt fa-fw me-1"></i> Logout
-                                                </button>
-                                            </form>
+                                            <a class="dropdown-item" href="#">Profil</a>
                                         </li>
                                     </ul>
                                 </li>
