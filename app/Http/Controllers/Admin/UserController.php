@@ -3,110 +3,166 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Opd;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Validation\Rules\Password;
 
 class UserController extends Controller
 {
     /**
-     * Menampilkan daftar user.
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
      */
     public function index()
     {
-        $users = User::with('opd')->orderBy('nama')->paginate(10);
+        $users = User::latest()->when(request()->q, function($users){
+            $users = $users->where('name', 'like', '%'. request()->q . '%');
+        })->paginate(10);
         return view('admin.user.index', compact('users'));
     }
 
     /**
-     * Menampilkan form untuk membuat user baru.
+     * Show the form for creating a new resource.
+     *
+     * @return \Illuminate\Http\Response
      */
     public function create()
     {
-        $opds = Opd::orderBy('nama_opd')->get();
-        return view('admin.user.create', compact('opds'));
+        return view('admin.user.create');
     }
 
     /**
-     * Menyimpan user baru ke database.
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'nama' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
-            'nip' => ['required', 'string', 'size:18', 'unique:users,nip'],
-            'whatsapp' => ['required', 'string', 'unique:users,whatsapp', 'regex:/^62[0-9]{9,13}$/'],
-            'opd_id' => ['required', 'exists:opds,id'],
-            'password' => ['required', 'confirmed', Password::min(8)->mixedCase()->numbers()->symbols()],
+        $this->validate($request, [
+            'name'      => 'required',
+            'email'     => 'required|email|unique:users',
+            'password'  => 'required|confirmed'
         ]);
 
-        if ($validator->fails()) {
-            return redirect()->route('admin.user.create')
-                ->withErrors($validator)
-                ->withInput();
+        $user = User::create([
+            'name'      => $request->name,
+            'email'     => $request->email,
+            'password'  => Hash::make($request->password)
+        ]);
+
+        if($user){
+            //redirect dengan pesan sukses
+            return redirect()->route('admin.user.index')->with(['success' => 'Data Berhasil Disimpan!']);
+        }else{
+            //redirect dengan pesan error
+            return redirect()->route('admin.user.index')->with(['error' => 'Data Gagal Disimpan!']);
         }
-
-        User::create([
-            'nama' => $request->nama,
-            'email' => $request->email,
-            'nip' => $request->nip,
-            'whatsapp' => $request->whatsapp,
-            'opd_id' => $request->opd_id,
-            'password' => Hash::make($request->password),
-        ]);
-
-        return redirect()->route('admin.user.index')->with('success', 'User berhasil ditambahkan.');
     }
 
     /**
-     * Menampilkan form untuk mengedit user.
+     * Show the form for editing the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
      */
     public function edit(User $user)
     {
-        $opds = Opd::orderBy('nama_opd')->get();
-        return view('admin.user.edit', compact('user', 'opds'));
+        return view('admin.user.edit', compact('user'));
     }
 
     /**
-     * Memperbarui data user di database.
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
      */
     public function update(Request $request, User $user)
     {
-        $validator = Validator::make($request->all(), [
-            'nama' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,' . $user->id],
-            'nip' => ['required', 'string', 'size:18', 'unique:users,nip,' . $user->id],
-            'whatsapp' => ['required', 'string', 'unique:users,whatsapp,' . $user->id, 'regex:/^62[0-9]{9,13}$/'],
-            'opd_id' => ['required', 'exists:opds,id'],
-            'password' => ['nullable', 'confirmed', Password::min(8)->mixedCase()->numbers()->symbols()],
+        $this->validate($request, [
+            'name'      => 'required',
+            'email'     => 'required|email|unique:users,email,'.$user->id,
+            'password'  => 'nullable|confirmed'
         ]);
 
-        if ($validator->fails()) {
-            return redirect()->route('admin.user.edit', $user)
-                ->withErrors($validator)
-                ->withInput();
+        if($request->password == "") {
+            $user->update([
+                'name'      => $request->name,
+                'email'     => $request->email,
+            ]);
+        } else {
+            $user->update([
+                'name'      => $request->name,
+                'email'     => $request->email,
+                'password'  => Hash::make($request->password)
+            ]);
         }
 
-        $data = $request->except('password');
-        if ($request->filled('password')) {
-            $data['password'] = Hash::make($request->password);
+        if($user){
+            //redirect dengan pesan sukses
+            return redirect()->route('admin.user.index')->with(['success' => 'Data Berhasil Diupdate!']);
+        }else{
+            //redirect dengan pesan error
+            return redirect()->route('admin.user.index')->with(['error' => 'Data Gagal Diupdate!']);
         }
-
-        $user->update($data);
-
-        return redirect()->route('admin.user.index')->with('success', 'User berhasil diperbarui.');
     }
 
     /**
-     * Menghapus user dari database.
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
      */
-    public function destroy(User $user)
+    public function destroy($id)
+    {
+        $user = User::findOrFail($id);
+        $user->delete();
+
+        if($user){
+            return response()->json([
+                'status' => 'success'
+            ]);
+        }else{
+            return response()->json([
+                'status' => 'error'
+            ]);
+        }
+    }
+
+    /**
+     * Display a listing of the pending users.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function pending()
+    {
+        $pendingUsers = User::where('is_approved', false)->paginate(10);
+        return view('admin.user.pending', compact('pendingUsers'));
+    }
+
+    /**
+     * Approve the specified user.
+     *
+     * @param  \App\Models\User  $user
+     * @return \Illuminate\Http\Response
+     */
+    public function approve(User $user)
+    {
+        $user->update(['is_approved' => true]);
+        return redirect()->route('admin.user.pending')->with('success', 'User has been approved.');
+    }
+
+    /**
+     * Reject and delete the specified user.
+     *
+     * @param  \App\Models\User  $user
+     * @return \Illuminate\Http\Response
+     */
+    public function reject(User $user)
     {
         $user->delete();
-        return redirect()->route('admin.user.index')->with('success', 'User berhasil dihapus.');
+        return redirect()->route('admin.user.pending')->with('success', 'User has been rejected and deleted.');
     }
 }
