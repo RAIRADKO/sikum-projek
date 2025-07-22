@@ -30,3 +30,14 @@ Route::prefix('admin')->name('admin.')->middleware('auth:admin')->group(function
     // Rute untuk Manajemen OPD
     Route::resource('opd', OpdController::class);
 });
+
+// Rute SK dan Perbup
+Route::middleware('auth')->group(function () {
+    Route::get('/sk', function () {
+        return view('user.sk');
+    })->name('sk');
+
+    Route::get('/perbup', function () {
+        return view('user.perbup');
+    })->name('perbup');
+});

@@ -19,52 +19,42 @@ class AuthController extends Controller
 
     public function login(Request $request)
     {
-        // 1. Ambil semua input kecuali password dan token CSRF
-        $credentials = $request->except(['password', '_token']);
+        $validator = Validator::make($request->all(), [
+            'login' => ['required', 'string'],
+            'password' => ['required', 'string'],
+        ]);
 
-        // 2. Jika tidak ada input lain selain password, kirim error
-        if (empty($credentials)) {
-            // Kita tidak tahu nama fieldnya, jadi buat pesan error umum
-            return back()->withErrors(['login_error' => 'Kolom Nama Admin / NIP wajib diisi.']);
+        if ($validator->fails()) {
+            return back()->withErrors($validator)->withInput();
         }
 
-        // 3. Ambil nama dan nilai dari field pertama yang ditemukan (pasti itu login identifier)
-        $identifierKey = array_key_first($credentials);
-        $loginIdentifier = $request->input($identifierKey);
+        $login = $request->input('login');
         $password = $request->input('password');
-        
-        // Pastikan password diisi
-        if (empty($password)) {
-            return back()->withErrors(['password' => 'Password wajib diisi.'])->withInput();
-        }
 
-        // 4. Coba autentikasi sebagai admin (bisa pakai email atau nama)
-        if (Auth::guard('admin')->attempt(['email' => $loginIdentifier, 'password' => $password]) || Auth::guard('admin')->attempt(['nama' => $loginIdentifier, 'password' => $password])) {
+        $isAdminAttempt = Auth::guard('admin')->attempt(['email' => $login, 'password' => $password]) ||
+                          Auth::guard('admin')->attempt(['nama' => $login, 'password' => $password]);
+
+        if ($isAdminAttempt) {
             $request->session()->regenerate();
             return redirect()->intended(route('admin.dashboard'));
         }
 
-        // 5. Coba autentikasi sebagai user dengan NIP
-        if (is_numeric($loginIdentifier)) {
-            if (Auth::guard('web')->attempt(['nip' => $loginIdentifier, 'password' => $password])) {
-                $user = Auth::guard('web')->user();
+        if (is_numeric($login) && Auth::guard('web')->attempt(['nip' => $login, 'password' => $password])) {
+            $user = Auth::guard('web')->user();
 
-                if (!$user->is_approved) {
-                    Auth::guard('web')->logout();
-                    return back()->with('loginError', 'Akun Anda belum disetujui oleh admin.')
-                                 ->withInput($request->except('password'));
-                }
-
-                $request->session()->regenerate();
-                return redirect()->intended(route('home'));
+            if (!$user->is_approved) {
+                Auth::guard('web')->logout();
+                return back()->with('loginError', 'Akun Anda belum disetujui oleh admin.')
+                             ->withInput($request->except('password'));
             }
+
+            $request->session()->regenerate();
+            return redirect()->intended(route('home'));
         }
 
-        // 6. Jika semua percobaan gagal, kembali dengan pesan error
-        // Arahkan pesan error ke field yang benar, apapun namanya
         return back()->withErrors([
-            $identifierKey => 'Kredensial yang diberikan tidak cocok dengan catatan kami.',
-        ])->onlyInput($identifierKey);
+            'login' => 'Kredensial yang diberikan tidak cocok dengan catatan kami.',
+        ])->onlyInput('login');
     }
 
     public function showRegistrationForm()
