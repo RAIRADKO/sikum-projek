@@ -53,10 +53,6 @@
             flex: 1;
             padding: 20px;
         }
-        .navbar-custom {
-            background: #fff;
-            border-bottom: 1px solid #dee2e6;
-        }
     </style>
     @stack('styles')
 </head>
@@ -83,27 +79,6 @@
             </div>
         </div>
         <div id="page-content-wrapper">
-            <nav class="navbar navbar-expand-lg navbar-light navbar-custom">
-                <div class="container-fluid">
-                    <div class="collapse navbar-collapse">
-                        <ul class="navbar-nav ms-auto mt-2 mt-lg-0">
-                             @auth('admin')
-                                <li class="nav-item dropdown">
-                                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                        <i class="fas fa-user fa-fw me-1"></i> {{ Auth::guard('admin')->user()->nama }}
-                                    </a>
-                                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                                        <li>
-                                            <a class="dropdown-item" href="#">Profil</a>
-                                        </li>
-                                    </ul>
-                                </li>
-                             @endauth
-                        </ul>
-                    </div>
-                </div>
-            </nav>
-
             <main class="py-4">
                  @if(session('success'))
                     <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -121,7 +96,7 @@
                 @yield('content')
             </main>
         </div>
-        </div>
+    </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     @stack('scripts')
