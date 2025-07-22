@@ -20,32 +20,39 @@ class AuthController extends Controller
 
     public function login(Request $request)
     {
-        $credentials = $request->validate([
-            'login' => ['required', 'string'],
-            'password' => ['required', 'string'],
+        $request->validate([
+            'nip' => 'required',
+            'password' => 'required',
         ]);
 
-        $loginField = $credentials['login'];
-        $isEmail = filter_var($loginField, FILTER_VALIDATE_EMAIL);
+        $loginIdentifier = $request->input('nip');
+        $password = $request->input('password');
 
-        // Coba login sebagai Admin jika input adalah email
-        if ($isEmail) {
-            if (Auth::guard('admin')->attempt(['email' => $loginField, 'password' => $credentials['password']], $request->filled('remember'))) {
+        // 1. Coba autentikasi sebagai admin dengan EMAIL (jika input berupa email)
+        if (filter_var($loginIdentifier, FILTER_VALIDATE_EMAIL)) {
+            if (Auth::guard('admin')->attempt(['email' => $loginIdentifier, 'password' => $password])) {
                 $request->session()->regenerate();
-                return redirect()->intended(route('admin.dashboard'));
+                return redirect()->intended('admin');
             }
         }
 
-        // Coba login sebagai User biasa (NIP atau WhatsApp)
-        $field = is_numeric($loginField) ? 'nip' : 'whatsapp';
-        if (Auth::guard('web')->attempt([$field => $loginField, 'password' => $credentials['password']], $request->filled('remember'))) {
+        // 2. Coba autentikasi sebagai admin dengan NAMA (tanpa peduli tipe input)
+        if (Auth::guard('admin')->attempt(['name' => $loginIdentifier, 'password' => $password])) {
             $request->session()->regenerate();
-            return redirect()->intended(route('home'));
+            return redirect()->intended('admin');
         }
 
-        return back()->withErrors([
-            'login' => 'NIP/Email atau password salah.',
-        ])->onlyInput('login');
+        // 3. Coba autentikasi sebagai user dengan NIP (hanya jika input numerik)
+        if (is_numeric($loginIdentifier)) {
+            if (Auth::guard('web')->attempt(['nip' => $loginIdentifier, 'password' => $password])) {
+                $request->session()->regenerate();
+                return redirect()->intended('user');
+            }
+        }
+
+        return back()->with([
+            'loginError' => 'Login Gagal! Periksa kembali NIP/Nama/Email dan Kata Sandi Anda.',
+        ])->withInput($request->except('password'));
     }
 
     public function showRegistrationForm()
