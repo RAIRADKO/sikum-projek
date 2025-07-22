@@ -11,6 +11,7 @@ return new class extends Migration
         Schema::create('users', function (Blueprint $table) {
             $table->id();
             $table->string('nama');
+            $table->string('email')->unique();
             $table->string('nip')->unique();
             $table->string('whatsapp')->unique();
             $table->foreignId('opd_id')->constrained('opds');

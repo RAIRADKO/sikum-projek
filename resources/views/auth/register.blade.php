@@ -27,6 +27,16 @@
                     </div>
 
                     <div class="form-floating mb-3">
+                        <input id="email" type="email" class="form-control @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" required autocomplete="email" placeholder="Alamat Email">
+                        <label for="email"><i class="bi bi-envelope me-2"></i>Alamat Email</label>
+                        @error('email')
+                            <span class="invalid-feedback" role="alert">
+                                <strong>{{ $message }}</strong>
+                            </span>
+                        @enderror
+                    </div>
+
+                    <div class="form-floating mb-3">
                         <input id="nip" type="text" class="form-control @error('nip') is-invalid @enderror" name="nip" value="{{ old('nip') }}" required autocomplete="nip" placeholder="NIP (18 digit)">
                         <label for="nip"><i class="bi bi-person-badge me-2"></i>NIP (18 digit)</label>
                         @error('nip')

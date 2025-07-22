@@ -58,6 +58,7 @@ class AuthController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'nama' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'nip' => ['required', 'string', 'size:18', 'unique:users,nip'],
             'whatsapp' => ['required', 'string', 'unique:users,whatsapp', 'regex:/^62[0-9]{9,13}$/'],
             'opd_id' => ['required', 'exists:opds,id'],
@@ -72,6 +73,7 @@ class AuthController extends Controller
 
         $user = User::create([
             'nama' => $request->nama,
+            'email' => $request->email,
             'nip' => $request->nip,
             'whatsapp' => $request->whatsapp,
             'opd_id' => $request->opd_id,
