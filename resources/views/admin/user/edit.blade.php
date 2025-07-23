@@ -1,4 +1,4 @@
-@extends('layouts.master')
+@extends('layouts.admin')
 
 @section('content')
 <div class="container-fluid">
@@ -9,7 +9,7 @@
                     <h3 class="card-title">Edit Data OPD</h3>
                 </div>
                 <div class="card-body">
-                    <form action="{{ route('admin.opd.update', $opd->id) }}" method="POST">
+                    <form action="{{ route('admin.opd.update', $opd) }}" method="POST">
                         @csrf
                         @method('PUT')
                         <div class="form-group">

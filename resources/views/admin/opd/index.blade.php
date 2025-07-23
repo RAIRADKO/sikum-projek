@@ -1,4 +1,4 @@
-@extends('layouts.master')
+@extends('layouts.admin')
 
 @section('content')
 <div class="container-fluid">
@@ -27,8 +27,8 @@
                                     <td>{{ $loop->iteration }}</td>
                                     <td>{{ $opd->namaopd }}</td>
                                     <td>
-                                        <a href="{{ route('admin.opd.edit', $opd->id) }}" class="btn btn-primary btn-sm">Edit</a>
-                                        <form action="{{ route('admin.opd.destroy', $opd->id) }}" method="POST" style="display: inline-block;">
+                                        <a href="{{ route('admin.opd.edit', $opd->kodeopd) }}" class="btn btn-primary btn-sm">Edit</a>
+                                        <form action="{{ route('admin.opd.destroy', $opd->kodeopd) }}" method="POST" style="display: inline-block;">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Apakah Anda yakin ingin menghapus data ini?')">Hapus</button>
