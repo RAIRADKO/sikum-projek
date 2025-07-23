@@ -14,7 +14,7 @@ class OpdController extends Controller
      */
     public function index()
     {
-        $opds = Opd::orderBy('nama_opd')->paginate(10);
+        $opds = Opd::orderBy('namaopd')->paginate(10);
         return view('admin.opd.index', compact('opds'));
     }
 

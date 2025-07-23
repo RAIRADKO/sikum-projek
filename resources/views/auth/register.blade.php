@@ -60,7 +60,7 @@
                         <select id="opd_id" class="form-select @error('opd_id') is-invalid @enderror" name="opd_id" required aria-label="Pilih OPD">
                             <option value="">Pilih OPD</option>
                             @foreach($opds as $opd)
-                                <option value="{{ $opd->id }}" {{ old('opd_id') == $opd->id ? 'selected' : '' }}>{{ $opd->nama_opd }}</option>
+                                <option value="{{ $opd->id }}" {{ old('opd_id') == $opd->id ? 'selected' : '' }}>{{ $opd->namaopd }}</option>
                             @endforeach
                         </select>
                         <label for="opd_id"><i class="bi bi-building me-2"></i>OPD/Instansi</label>

@@ -9,7 +9,7 @@ class Opd extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['nama_opd'];
+    protected $fillable = ['namaopd'];
 
     public function users()
     {
