@@ -59,7 +59,7 @@ class AuthController extends Controller
 
     public function showRegistrationForm()
     {
-        $opds = Opd::orderBy('nama_opd')->get();
+        $opds = Opd::orderBy('namaopd')->get();
         return view('auth.register', compact('opds'));
     }
 
