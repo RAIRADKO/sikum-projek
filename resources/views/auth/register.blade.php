@@ -70,7 +70,6 @@
                             </span>
                         @enderror
                     </div>
-
                     <div class="form-floating mb-3 position-relative">
                         <input id="password" type="password" class="form-control @error('password') is-invalid @enderror" name="password" required autocomplete="new-password" placeholder="Password">
                         <label for="password"><i class="bi bi-lock me-2"></i>Password</label>
