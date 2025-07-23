@@ -37,6 +37,16 @@ Route::middleware('auth')->group(function () {
     Route::get('/perbup', function () {
         return view('user.perbup');
     })->name('perbup');
+    Route::get('/sk-proses', function () {
+        // Mengarahkan ke view 'user.sk_proses'
+        return view('user.sk_proses');
+    })->name('sk-proses');
+    Route::get('/perbup-proses', function () {
+        // Mengarahkan ke view 'user.perbup_proses'
+        return view('user.perbup_proses');
+    })->name('perbup-proses');
+    Route::redirect('/profile', '/dashboard')->name('profile');
+
 });
 
 
