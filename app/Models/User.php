@@ -17,7 +17,7 @@ class User extends Authenticatable
         'whatsapp',
         'opd_id',
         'password',
-        'is_approved', // Tambahkan baris ini
+        'is_approved', 
     ];
 
     protected $hidden = [

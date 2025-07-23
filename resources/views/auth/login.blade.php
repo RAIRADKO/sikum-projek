@@ -67,11 +67,11 @@
 </style>
 <div class="d-flex align-items-center justify-content-center" style="min-height: 70vh; background: #f8f9fa;">
     <div class="col-12 col-sm-10 col-md-6 col-lg-4">
-        <div class="login-card p-2">
-            <div class="mb-3">
+        <div class="card shadow-lg border-0 rounded-lg login-card p-4">
+            <div class="mb-3 text-center">
                 <img src="{{ asset('img/Lambang_Kabupaten_Purworejo.png') }}" alt="Logo" class="login-logo">
-                <div class="login-title text-center mt-2">Selamat Datang</div>
-                <div class="login-subtitle text-center">Masuk untuk melanjutkan</div>
+                <div class="login-title mt-2">Selamat Datang</div>
+                <div class="login-subtitle">Masuk untuk melanjutkan</div>
             </div>
             <form method="POST" action="{{ route('login') }}">
                 @csrf
