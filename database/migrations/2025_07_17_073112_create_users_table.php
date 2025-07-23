@@ -25,6 +25,7 @@ return new class extends Migration
                   ->on('opds')
                   ->onUpdate('cascade')
                   ->onDelete('cascade');
+            $table->boolean('is_approved')->default(false);
             $table->rememberToken();
             $table->timestamps();
         });
