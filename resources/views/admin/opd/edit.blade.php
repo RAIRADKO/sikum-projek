@@ -29,6 +29,18 @@
                         </div>
                     @enderror
                 </div>
+                <div class="mb-3">
+                    <label for="kodeass" class="form-label">Kode Asisten</label>
+                    <select class="form-select @error('kodeass') is-invalid @enderror" id="kodeass" name="kodeass" required>
+                        <option value="" disabled>Pilih Kode Asisten</option>
+                        @foreach($asistens as $asisten)
+                            <option value="{{ $asisten->kodeass }}" {{ old('kodeass', $opd->kodeass) == $asisten->kodeass ? 'selected' : '' }}>{{ $asisten->namaass }}</option>
+                        @endforeach
+                    </select>
+                    @error('kodeass')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
+                </div>
                 <button type="submit" class="btn btn-primary">
                     <i class="fas fa-sync-alt me-1"></i>
                     Perbarui

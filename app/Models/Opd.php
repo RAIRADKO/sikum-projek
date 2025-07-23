@@ -13,10 +13,15 @@ class Opd extends Model
     public $incrementing = false;
     protected $keyType = 'string';
 
-    protected $fillable = ['namaopd'];
+    protected $fillable = ['namaopd', 'kodeass'];
 
     public function users()
     {
         return $this->hasMany(User::class, 'opd_id', 'kodeopd');
+    }
+
+    public function asisten()
+    {
+        return $this->belongsTo(Asisten::class, 'kodeass', 'kodeass');
     }
 }

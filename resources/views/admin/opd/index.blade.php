@@ -18,6 +18,7 @@
                                 <tr>
                                     <th>No</th>
                                     <th>Nama OPD</th>
+                                    <th>Kode Asisten</th>
                                     <th>Aksi</th>
                                 </tr>
                             </thead>
@@ -26,6 +27,7 @@
                                 <tr>
                                     <td>{{ $loop->iteration }}</td>
                                     <td>{{ $opd->namaopd }}</td>
+                                    <td>{{ $opd->asisten->namaass ?? 'N/A' }}</td>
                                     <td>
                                         <a href="{{ route('admin.opd.edit', $opd->kodeopd) }}" class="btn btn-primary btn-sm">Edit</a>
                                         <form action="{{ route('admin.opd.destroy', $opd->kodeopd) }}" method="POST" style="display: inline-block;">
@@ -37,7 +39,7 @@
                                 </tr>
                                 @empty
                                 <tr>
-                                    <td colspan="3" class="text-center">Data Kosong</td>
+                                    <td colspan="4" class="text-center">Data Kosong</td>
                                 </tr>
                                 @endforelse
                             </tbody>
