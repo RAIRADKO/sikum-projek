@@ -27,6 +27,6 @@ class User extends Authenticatable
 
     public function opd()
     {
-        return $this->belongsTo(Opd::class);
+        return $this->belongsTo(Opd::class, 'opd_id', 'kodeopd');
     }
 }

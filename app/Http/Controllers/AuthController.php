@@ -70,7 +70,7 @@ class AuthController extends Controller
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'nip' => ['required', 'string', 'size:18', 'unique:users,nip'],
             'whatsapp' => ['required', 'string', 'unique:users,whatsapp'],
-            'opd_id' => ['required', 'exists:opds,id'],
+            'opd_id' => ['required', 'exists:opds,kodeopd'],
             'password' => ['required', 'confirmed', Password::min(8)->mixedCase()->numbers()->symbols()],
         ]);
 
