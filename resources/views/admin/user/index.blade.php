@@ -37,7 +37,6 @@
                                             <th>Nama</th>
                                             <th>Email</th>
                                             <th>OPD</th>
-                                            <th>Role</th>
                                             <th>Aksi</th>
                                         </tr>
                                     </thead>
@@ -45,22 +44,34 @@
                                         @forelse ($users as $user)
                                         <tr>
                                             <td>{{ $loop->iteration }}</td>
-                                            <td>{{ $user->name }}</td>
+                                            <td>{{ $user->nama }}</td>
                                             <td>{{ $user->email }}</td>
                                             <td>{{ $user->opd->namaopd }}</td>
-                                            <td>{{ $user->role }}</td>
                                             <td>
-                                                <a href="{{ route('admin.user.edit', $user->id) }}" class="btn btn-primary btn-sm">Edit</a>
-                                                <form action="{{ route('admin.user.destroy', $user->id) }}" method="POST" style="display: inline-block;">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Apakah Anda yakin ingin menghapus data ini?')">Hapus</button>
-                                                </form>
+                                                @if(!$user->is_approved)
+                                                    <form action="{{ route('admin.user.approve', $user->id) }}" method="POST" style="display: inline-block;">
+                                                        @csrf
+                                                        @method('PATCH')
+                                                        <button type="submit" class="btn btn-success btn-sm">Setujui</button>
+                                                    </form>
+                                                    <form action="{{ route('admin.user.reject', $user->id) }}" method="POST" style="display: inline-block;">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Apakah Anda yakin ingin menolak dan menghapus pendaftaran ini?')">Tolak</button>
+                                                    </form>
+                                                @else
+                                                    <a href="{{ route('admin.user.edit', $user->id) }}" class="btn btn-primary btn-sm">Edit</a>
+                                                    <form action="{{ route('admin.user.destroy', $user->id) }}" method="POST" style="display: inline-block;">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Apakah Anda yakin ingin menghapus data ini?')">Hapus</button>
+                                                    </form>
+                                                @endif
                                             </td>
                                         </tr>
                                         @empty
                                         <tr>
-                                            <td colspan="6" class="text-center">Data Kosong</td>
+                                            <td colspan="5" class="text-center">Data Kosong</td>
                                         </tr>
                                         @endforelse
                                     </tbody>
