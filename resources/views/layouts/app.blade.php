@@ -111,40 +111,63 @@
             color: #ffffff;
         }
         
+        /* ======= DROPDOWN STYLES ======= */
         .dropdown-menu {
             border: none;
             border-radius: 0.75rem;
-            box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.1);
+            box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.15);
             padding: 0.5rem;
             margin-top: 0.5rem;
+            min-width: 180px;
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.95);
         }
-        
+
         .dropdown-item {
             padding: 0.625rem 1rem;
             font-size: 0.9rem;
-            transition: all 0.2s;
+            font-weight: 500;
+            transition: all 0.2s ease;
             border-radius: 0.5rem;
             margin: 0.125rem 0;
+            color: #2c3e50;
+            display: flex;
+            align-items: center;
         }
-        
+
         .dropdown-item:hover {
             background-color: rgba(39, 174, 96, 0.1);
             color: #219150;
+            transform: translateX(5px);
         }
-        
-        .dropdown-menu .btn-danger {
-            background-color: #dc3545;
-            border-color: #dc3545;
-            color: #fff;
-            transition: all 0.2s;
-            padding: 0.5rem;
+
+        .dropdown-item i {
+            width: 16px;
+            text-align: center;
+        }
+
+        .dropdown-item.text-danger {
+            color: #dc3545 !important;
+        }
+
+        .dropdown-item.text-danger:hover {
+            background-color: rgba(220, 53, 69, 0.1);
+            color: #bb2d3b !important;
+        }
+
+        .dropdown-divider {
             margin: 0.5rem 0;
+            border-color: rgba(39, 174, 96, 0.2);
         }
-        
-        .dropdown-menu .btn-danger:hover {
-            background-color: #bb2d3b;
-            border-color: #b02a37;
-            transform: translateY(-1px);
+
+        /* Dropdown arrow styling */
+        .dropdown-toggle::after {
+            margin-left: 0.5rem;
+            transition: transform 0.3s ease;
+        }
+
+        .dropdown-toggle[aria-expanded="true"]::after {
+            transform: rotate(180deg);
         }
         
         .navbar-custom .navbar-toggler {
@@ -171,14 +194,6 @@
             height: 24px;
         }
         
-        .navbar-collapse {
-            background-color: #145a32;
-            border-radius: 0.5rem;
-            margin-top: 1rem;
-            padding: 1rem;
-            box-shadow: 0 4px 8px rgba(39, 174, 96, 0.1);
-        }
-        
         .btn-danger.btn-sm {
             font-size: 0.875rem;
             padding: 0.25rem 0.75rem;
@@ -188,24 +203,6 @@
         .btn-danger.btn-sm:hover {
             transform: translateY(-1px);
             box-shadow: 0 4px 12px rgba(220, 53, 69, 0.2);
-        }
-        
-        .navbar-nav .nav-link {
-            padding: 0.75rem 1rem;
-            margin-bottom: 0.5rem;
-            border-radius: 0.5rem;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            transition: all 0.3s ease;
-        }
-        
-        .navbar-nav .nav-link:hover {
-            background-color: rgba(255, 255, 255, 0.1);
-            border-color: rgba(255, 255, 255, 0.2);
-        }
-        
-        .navbar-nav .nav-link.active {
-            background-color: rgba(255, 255, 255, 0.15);
-            border-color: rgba(255, 255, 255, 0.3);
         }
         
         .navbar-logo {
@@ -402,6 +399,36 @@
             .navbar-jargon {
                 font-size: 0.65rem;
             }
+            
+            .navbar-collapse {
+                background-color: rgba(33, 145, 80, 0.95);
+                border-radius: 0.5rem;
+                margin-top: 1rem;
+                padding: 1rem;
+                box-shadow: 0 4px 8px rgba(39, 174, 96, 0.2);
+                backdrop-filter: blur(10px);
+            }
+            
+            .nav-item {
+                margin-bottom: 0.5rem;
+            }
+            
+            .btn-outline-light {
+                width: 100%;
+                justify-content: flex-start;
+                text-align: left;
+            }
+            
+            .dropdown-menu {
+                background: rgba(255, 255, 255, 0.98);
+                margin-top: 0.25rem;
+                margin-left: 1rem;
+                border-left: 3px solid #27ae60;
+            }
+            
+            .vr {
+                display: none;
+            }
         }
         
         @media (max-width: 767.98px) {
@@ -419,8 +446,15 @@
                 font-size: 0.6rem;
             }
             .navbar-nav .nav-link {
-                padding: 0.5rem;
+                padding: 0.75rem 1rem;
+                margin-bottom: 0.5rem;
+                border-radius: 0.5rem;
+                border: 1px solid rgba(255, 255, 255, 0.1);
                 font-size: 0.9rem;
+            }
+            .navbar-nav .nav-link:hover {
+                background-color: rgba(255, 255, 255, 0.1);
+                border-color: rgba(255, 255, 255, 0.2);
             }
             .btn-register {
                 padding: 0.375rem 0.75rem;
@@ -487,41 +521,83 @@
                     <div class="navbar-jargon">Mewujudkan Tata Kelola Perkantoran yang Modern, Efisien, dan Terintegrasi</div>
                 </div>
             </a>
-            <div class="d-flex align-items-center ms-auto">
-                <ul class="navbar-nav d-flex flex-row">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
                     @auth
-                        <div class="d-flex align-items-center gap-3">
-                            <a class="btn btn-outline-light rounded-pill {{ request()->routeIs('sk') ? 'active' : '' }}" href="{{ route('sk') }}">
+                        <!-- SK Dropdown -->
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle btn btn-outline-light rounded-pill px-3 me-2" href="#" id="navbarSkDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 <i class="bi bi-file-text me-1"></i>SK
                             </a>
-                            <a class="btn btn-outline-light rounded-pill {{ request()->routeIs('perbup') ? 'active' : '' }}" href="{{ route('perbup') }}">
+                            <ul class="dropdown-menu" aria-labelledby="navbarSkDropdown">
+                                <li><a class="dropdown-item" href="{{ route('sk') }}">
+                                    <i class="bi bi-file-text me-2"></i>SK
+                                </a></li>
+                                <li><a class="dropdown-item" href="{{ route('proses-sk') }}">
+                                    <i class="bi bi-gear me-2"></i>Proses SK
+                                </a></li>
+                            </ul>
+                        </li>
+
+                        <!-- Perbup Dropdown -->
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle btn btn-outline-light rounded-pill px-3 me-2" href="#" id="navbarPerbupDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 <i class="bi bi-journal-text me-1"></i>Perbup
                             </a>
-                            <div class="vr text-light opacity-25 mx-2"></div>
-                            <div class="d-flex align-items-center gap-2">
-                                <a href="{{ route('dashboard') }}" class="d-flex align-items-center text-light text-decoration-none hover-brighten">
-                                    <i class="bi bi-person-circle me-2"></i>
-                                    <span class="fw-medium">{{ Auth::user()->nama }}</span>
-                                </a>
-                                <form method="POST" action="{{ route('logout') }}" class="ms-2">
-                                    @csrf
-                                    <button type="submit" class="btn btn-danger btn-sm rounded-pill px-3">
-                                        <i class="bi bi-box-arrow-right me-1"></i>Logout
-                                    </button>
-                                </form>
-                            </div>
-                        </div>
+                            <ul class="dropdown-menu" aria-labelledby="navbarPerbupDropdown">
+                                <li><a class="dropdown-item" href="{{ route('perbup') }}">
+                                    <i class="bi bi-journal-text me-2"></i>Perbup
+                                </a></li>
+                                <li><a class="dropdown-item" href="{{ route('proses-perbup') }}">
+                                    <i class="bi bi-gear me-2"></i>Proses Perbup
+                                </a></li>
+                            </ul>
+                        </li>
+
+                        <li class="nav-item">
+                            <div class="vr text-light opacity-25 mx-2" style="height: 38px;"></div>
+                        </li>
+
+                        <!-- User Profile Dropdown -->
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle d-flex align-items-center text-light text-decoration-none hover-brighten px-3" href="#" id="navbarUserDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-person-circle me-2"></i>
+                                <span class="fw-medium">{{ Auth::user()->nama }}</span>
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarUserDropdown">
+                                <li><a class="dropdown-item" href="{{ route('dashboard') }}">
+                                    <i class="bi bi-speedometer2 me-2"></i>Dashboard
+                                </a></li>
+                                <li><a class="dropdown-item" href="{{ route('profile') }}">
+                                    <i class="bi bi-person me-2"></i>Profil
+                                </a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <form method="POST" action="{{ route('logout') }}" class="d-block">
+                                        @csrf
+                                        <button type="submit" class="dropdown-item text-danger">
+                                            <i class="bi bi-box-arrow-right me-2"></i>Logout
+                                        </button>
+                                    </form>
+                                </li>
+                            </ul>
+                        </li>
                     @else
-                        <div class="d-flex align-items-center gap-2">
-                            <a class="btn btn-outline-light rounded-pill px-3 d-flex align-items-center" href="{{ route('login') }}">
+                        <li class="nav-item">
+                            <a class="btn btn-outline-light rounded-pill px-3 me-2 d-flex align-items-center" href="{{ route('login') }}">
                                 <i class="bi bi-box-arrow-in-right me-2"></i>
                                 <span>Login</span>
                             </a>
+                        </li>
+                        <li class="nav-item">
                             <a class="btn btn-light btn-register rounded-pill px-3 d-flex align-items-center" href="{{ route('register') }}">
                                 <i class="bi bi-person-plus me-2"></i>
                                 <span>Daftar</span>
                             </a>
-                        </div>
+                        </li>
                     @endauth
                 </ul>
             </div>
