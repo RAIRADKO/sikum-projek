@@ -230,6 +230,47 @@
             opacity: 0.9;
         }
         
+        /* ======= MULTI-LEVEL DROPDOWN STYLES ======= */
+        .dropdown-submenu {
+            position: relative;
+        }
+        
+        .dropdown-submenu .dropdown-submenu-content {
+            display: none;
+            position: absolute;
+            left: 100%;
+            top: 0;
+            margin-top: -0.5rem;
+            margin-left: 0.1rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.1);
+            min-width: 120px;
+            background-color: #fff;
+            z-index: 1000;
+        }
+        
+        .dropdown-submenu:hover > .dropdown-submenu-content {
+            display: block;
+        }
+        
+        .dropdown-submenu .dropdown-item {
+            white-space: nowrap;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 991.98px) {
+            .dropdown-submenu .dropdown-submenu-content {
+                position: static;
+                margin-left: 1rem;
+                margin-top: 0.25rem;
+                border-left: 2px solid rgba(39, 174, 96, 0.2);
+                box-shadow: none;
+            }
+        }
+        
         /* ======= FOOTER STYLES ======= */
         .footer-custom {
             background: linear-gradient(135deg, #219150 0%, #27ae60 100%);
@@ -492,26 +533,76 @@
                     @auth
                         <div class="d-flex align-items-center gap-3">
                             <!-- SK Dropdown -->
-                            <div class="dropdown">
+                            <div class="dropdown me-2">
                                 <a class="btn btn-outline-light rounded-pill dropdown-toggle {{ (request()->routeIs('sk') || request()->routeIs('sk-proses')) ? 'active' : '' }}" 
                                    href="#" role="button" id="skDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                                     <i class="bi bi-file-text me-1"></i>SK
                                 </a>
                                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="skDropdown">
-                                    <li><a class="dropdown-item {{ request()->routeIs('sk') ? 'active' : '' }}" href="{{ route('sk') }}">SK</a></li>
-                                    <li><a class="dropdown-item {{ request()->routeIs('sk-proses') ? 'active' : '' }}" href="{{ route('sk-proses') }}">Proses SK</a></li>
+                                    <!-- Menu SK dengan submenu tahun -->
+                                    <li class="dropdown-submenu">
+                                        <a class="dropdown-item {{ request()->routeIs('sk') ? 'active' : '' }} d-flex justify-content-between align-items-center" 
+                                           href="{{ route('sk') }}">
+                                            <span><i class="bi bi-file-earmark me-2"></i>SK</span>
+                                            <i class="bi bi-chevron-right"></i>
+                                        </a>
+                                        <ul class="dropdown-menu dropdown-submenu-content">
+                                            @for($year = date('Y'); $year >= 2021; $year--)
+                                                <li><a class="dropdown-item" href="{{ route('sk', ['year' => $year]) }}">{{ $year }}</a></li>
+                                            @endfor
+                                        </ul>
+                                    </li>
+                                    
+                                    <!-- Menu Proses SK dengan submenu tahun -->
+                                    <li class="dropdown-submenu">
+                                        <a class="dropdown-item {{ request()->routeIs('sk-proses') ? 'active' : '' }} d-flex justify-content-between align-items-center" 
+                                           href="{{ route('sk-proses') }}">
+                                            <span><i class="bi bi-gear me-2"></i>Proses SK</span>
+                                            <i class="bi bi-chevron-right"></i>
+                                        </a>
+                                        <ul class="dropdown-menu dropdown-submenu-content">
+                                            @for($year = date('Y'); $year >= 2021; $year--)
+                                                <li><a class="dropdown-item" href="{{ route('sk-proses', ['year' => $year]) }}">{{ $year }}</a></li>
+                                            @endfor
+                                        </ul>
+                                    </li>
                                 </ul>
                             </div>
                             
                             <!-- Perbup Dropdown -->
-                            <div class="dropdown">
+                            <div class="dropdown me-2">
                                 <a class="btn btn-outline-light rounded-pill dropdown-toggle {{ (request()->routeIs('perbup') || request()->routeIs('perbup-proses')) ? 'active' : '' }}" 
                                    href="#" role="button" id="perbupDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                                     <i class="bi bi-journal-text me-1"></i>Perbup
                                 </a>
                                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="perbupDropdown">
-                                    <li><a class="dropdown-item {{ request()->routeIs('perbup') ? 'active' : '' }}" href="{{ route('perbup') }}">Perbup</a></li>
-                                    <li><a class="dropdown-item {{ request()->routeIs('perbup-proses') ? 'active' : '' }}" href="{{ route('perbup-proses') }}">Proses Perbup</a></li>
+                                    <!-- Menu Perbup dengan submenu tahun -->
+                                    <li class="dropdown-submenu">
+                                        <a class="dropdown-item {{ request()->routeIs('perbup') ? 'active' : '' }} d-flex justify-content-between align-items-center" 
+                                           href="{{ route('perbup') }}">
+                                            <span><i class="bi bi-journal me-2"></i>Perbup</span>
+                                            <i class="bi bi-chevron-right"></i>
+                                        </a>
+                                        <ul class="dropdown-menu dropdown-submenu-content">
+                                            @for($year = date('Y'); $year >= 2021; $year--)
+                                                <li><a class="dropdown-item" href="{{ route('perbup', ['year' => $year]) }}">{{ $year }}</a></li>
+                                            @endfor
+                                        </ul>
+                                    </li>
+                                    
+                                    <!-- Menu Proses Perbup dengan submenu tahun -->
+                                    <li class="dropdown-submenu">
+                                        <a class="dropdown-item {{ request()->routeIs('perbup-proses') ? 'active' : '' }} d-flex justify-content-between align-items-center" 
+                                           href="{{ route('perbup-proses') }}">
+                                            <span><i class="bi bi-gear me-2"></i>Proses Perbup</span>
+                                            <i class="bi bi-chevron-right"></i>
+                                        </a>
+                                        <ul class="dropdown-menu dropdown-submenu-content">
+                                            @for($year = date('Y'); $year >= 2021; $year--)
+                                                <li><a class="dropdown-item" href="{{ route('perbup-proses', ['year' => $year]) }}">{{ $year }}</a></li>
+                                            @endfor
+                                        </ul>
+                                    </li>
                                 </ul>
                             </div>
                             
@@ -526,6 +617,7 @@
                                 </a>
                                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
                                     <li><a class="dropdown-item" href="{{ route('profile') }}"><i class="bi bi-person me-2"></i>Profil</a></li>
+                                    <li><hr class="dropdown-divider"></li>
                                     <li>
                                         <form method="POST" action="{{ route('logout') }}">
                                             @csrf
@@ -659,7 +751,6 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            
             // Auto-close alerts after 5 seconds
             const alerts = document.querySelectorAll('.alert-dismissible');
             alerts.forEach(alert => {
@@ -669,29 +760,19 @@
                 }, 5000);
             });
             
-            // Initialize dropdowns
-            const dropdowns = document.querySelectorAll('.dropdown-toggle');
-            dropdowns.forEach(dropdown => {
-                dropdown.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    const dropdownMenu = this.nextElementSibling;
-                    if (dropdownMenu) {
-                        dropdownMenu.classList.toggle('show');
-                    }
+            // Handle submenu on mobile
+            const isMobile = window.matchMedia("(max-width: 991.98px)").matches;
+            if (isMobile) {
+                document.querySelectorAll('.dropdown-submenu > a').forEach(item => {
+                    item.addEventListener('click', function(e) {
+                        if (this.parentElement.querySelector('.dropdown-submenu-content').style.display === 'block') {
+                            e.preventDefault();
+                        }
+                        this.parentElement.querySelector('.dropdown-submenu-content').style.display = 
+                            this.parentElement.querySelector('.dropdown-submenu-content').style.display === 'block' ? 'none' : 'block';
+                    });
                 });
-            });
-            
-            // Close dropdowns when clicking outside
-            document.addEventListener('click', function(event) {
-                dropdowns.forEach(dropdown => {
-                    const dropdownMenu = dropdown.nextElementSibling;
-                    if (dropdownMenu && 
-                        !dropdown.contains(event.target) && 
-                        !dropdownMenu.contains(event.target)) {
-                        dropdownMenu.classList.remove('show');
-                    }
-                });
-            });
+            }
         });
     </script>
     @yield('scripts')
