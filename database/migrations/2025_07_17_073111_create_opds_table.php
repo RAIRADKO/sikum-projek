@@ -9,8 +9,9 @@ return new class extends Migration
     public function up()
     {
         Schema::create('opds', function (Blueprint $table) {
-            $table->id();
-            $table->string('nama_opd');
+            $table->string('kodeopd', 150)->primary();
+            $table->longText('namaopd');
+            $table->string('kodeass', 10);
             $table->timestamps();
         });
     }

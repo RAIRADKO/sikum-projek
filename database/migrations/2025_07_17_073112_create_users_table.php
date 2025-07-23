@@ -6,23 +6,26 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    public function up()
+    public function up(): void
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
-            $table->string('nama');
+            $table->string('name');
             $table->string('email')->unique();
-            $table->string('nip')->unique();
-            $table->string('whatsapp')->unique();
-            $table->foreignId('opd_id')->constrained('opds');
+            $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            $table->boolean('is_approved')->default(false);
+            $table->string('opd_id', 150); // Sesuaikan tipe data
+            $table->foreign('opd_id')
+                  ->references('kodeopd') // Referensi ke kolom 'kodeopd'
+                  ->on('opds')
+                  ->onUpdate('cascade')
+                  ->onDelete('cascade');            
             $table->rememberToken();
             $table->timestamps();
         });
     }
 
-    public function down()
+    public function down(): void
     {
         Schema::dropIfExists('users');
     }
