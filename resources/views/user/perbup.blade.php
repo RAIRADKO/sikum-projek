@@ -1,15 +1,23 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Perbup</title>
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
-</head>
-<body>
-    <div class="container mt-5">
-        <h1>Halaman Perbup</h1>
-        <p>Ini adalah halaman untuk Perbup.</p>
-    </div>
-</body>
-</html>
+@extends('layouts.app')
+
+@section('title', 'Daftar Perbup')
+
+@section('content')
+<div class="container">
+    <h1>Daftar Perbup</h1>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Tahun</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach($years as $year)
+            <tr>
+                <td><a href="{{ route('perbup.year', $year) }}">{{ $year }}</a></td>
+            </tr>
+            @endforeach
+        </tbody>
+    </table>
+</div>
+@endsection

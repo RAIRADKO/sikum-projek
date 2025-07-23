@@ -5,6 +5,8 @@ use App\Http\Controllers\Admin\OpdController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\SkController;
+use App\Http\Controllers\PerbupController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -29,24 +31,23 @@ Route::get('register', [AuthController::class, 'showRegistrationForm'])->name('r
 Route::post('register', [AuthController::class, 'register']);
 
 // Rute untuk Pengguna yang Terautentikasi
+// Rute untuk Pengguna yang Terautentikasi
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [HomeController::class, 'dashboard'])->name('dashboard');
-    Route::get('/sk', function () {
-        return view('user.sk');
-    })->name('sk');
-    Route::get('/perbup', function () {
-        return view('user.perbup');
-    })->name('perbup');
-    Route::get('/sk-proses', function () {
-        // Mengarahkan ke view 'user.sk_proses'
-        return view('user.sk_proses');
-    })->name('sk-proses');
-    Route::get('/perbup-proses', function () {
-        // Mengarahkan ke view 'user.perbup_proses'
-        return view('user.perbup_proses');
-    })->name('perbup-proses');
-    Route::redirect('/profile', '/dashboard')->name('profile');
 
+    // SK Routes
+    Route::get('/sk', [SkController::class, 'index'])->name('sk');
+    Route::get('/sk/{year}', [SkController::class, 'showByYear'])->name('sk.year');
+    Route::get('/sk-proses', [SkController::class, 'prosesIndex'])->name('sk-proses');
+    Route::get('/sk-proses/{year}', [SkController::class, 'prosesShowByYear'])->name('sk-proses.year');
+
+    // Perbup Routes
+    Route::get('/perbup', [PerbupController::class, 'index'])->name('perbup');
+    Route::get('/perbup/{year}', [PerbupController::class, 'showByYear'])->name('perbup.year');
+    Route::get('/perbup-proses', [PerbupController::class, 'prosesIndex'])->name('perbup-proses');
+    Route::get('/perbup-proses/{year}', [PerbupController::class, 'prosesShowByYear'])->name('perbup-proses.year');
+
+    Route::redirect('/profile', '/dashboard')->name('profile');
 });
 
 
