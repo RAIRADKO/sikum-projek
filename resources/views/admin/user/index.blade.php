@@ -46,7 +46,7 @@
                                             <td>{{ $loop->iteration }}</td>
                                             <td>{{ $user->nama }}</td>
                                             <td>{{ $user->email }}</td>
-                                            <td>{{ $user->opd->namaopd }}</td>
+                                            <td>{{ $user->opd->namaopd ?? 'OPD Tidak Ditemukan' }}</td>
                                             <td>
                                                 {{-- @if(!$user->is_approved) ... @else ... @endif --}}  <a href="{{ route('admin.user.edit', $user->id) }}" class="btn btn-primary btn-sm">Edit</a>
                                                 <form action="{{ route('admin.user.destroy', $user->id) }}" method="POST" style="display: inline-block;">
