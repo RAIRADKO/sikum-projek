@@ -62,4 +62,7 @@ Route::prefix('admin')->name('admin.')->middleware('auth:admin')->group(function
 
     // Rute untuk Manajemen OPD
     Route::resource('opd', OpdController::class);
+
+    // Rute untuk Manajemen Admin
+    Route::resource('admin', \App\Http\Controllers\Admin\AdminController::class);
 });
