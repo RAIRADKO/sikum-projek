@@ -45,7 +45,7 @@ class UserController extends Controller
         $request->validate([
             'nama' => 'required|string|max:255',
             'nip' => 'required|string|max:20|unique:users',
-            'opd_id' => 'required|exists:opds,id',
+            'opd_id' => 'required|exists:opds,kodeopd',
             'whatsapp' => 'required|string|max:15',
             'password' => 'required|string|min:8|confirmed',
         ]);
@@ -90,7 +90,7 @@ class UserController extends Controller
         $request->validate([
             'nama' => 'required|string|max:255',
             'nip' => ['required', 'string', 'max:20', Rule::unique('users')->ignore($user->id)],
-            'opd_id' => 'required|exists:opds,id',
+            'opd_id' => 'required|exists:opds,kodeopd',
             'whatsapp' => 'required|string|max:15',
             'password' => 'nullable|string|min:8|confirmed',
         ]);

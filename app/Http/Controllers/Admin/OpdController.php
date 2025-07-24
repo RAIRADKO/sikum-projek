@@ -25,7 +25,7 @@ class OpdController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'nama_opd' => ['required', 'string', 'max:255', 'unique:opds'],
+            'namaopd' => ['required', 'string', 'max:255', 'unique:opds'],
             'kodeass' => ['required', 'string', 'exists:asisten,kodeass'],
         ]);
 
@@ -49,7 +49,7 @@ class OpdController extends Controller
     public function update(Request $request, Opd $opd)
     {
         $validator = Validator::make($request->all(), [
-            'nama_opd' => ['required', 'string', 'max:255', 'unique:opds,nama_opd,' . $opd->id],
+            'namaopd' => ['required', 'string', 'max:255', 'unique:opds,namaopd,' . $opd->id],
             'kodeass' => ['required', 'string', 'exists:asisten,kodeass'],
         ]);
 

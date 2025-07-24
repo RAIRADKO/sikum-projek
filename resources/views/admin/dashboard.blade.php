@@ -103,7 +103,7 @@
                         <tr>
                             <td>{{ $user->nama }}</td>
                             <td>{{ $user->nip }}</td>
-                            <td>{{ $user->opd->nama_opd }}</td>
+                            <td>{{ $user->opd->namaopd }}</td>
                             <td>{{ $user->whatsapp }}</td>
                             <td>{{ $user->created_at->format('d/m/Y') }}</td>
                             <td>
@@ -126,7 +126,7 @@
     const userRegistrationLabels = @json($userRegistrationData->pluck('date'));
     const userRegistrationValues = @json($userRegistrationData->pluck('total'));
 
-    const opdLabels = @json($opdDistribution->pluck('opd.nama_opd'));
+    const opdLabels = @json($opdDistribution->pluck('opd.namaopd'));
     const opdValues = @json($opdDistribution->pluck('total'));
     
     // User Registration Chart

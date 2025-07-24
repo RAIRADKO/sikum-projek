@@ -56,7 +56,7 @@
                     <select class="form-select @error('opd_id') is-invalid @enderror" id="opd_id" name="opd_id" required>
                         <option value="" disabled selected>Pilih OPD</option>
                         @foreach($opds as $opd)
-                            <option value="{{ $opd->id }}" {{ old('opd_id') == $opd->id ? 'selected' : '' }}>{{ $opd->nama_opd }}</option>
+                            <option value="{{ $opd->kodeopd }}" {{ old('opd_id') == $opd->kodeopd ? 'selected' : '' }}>{{ $opd->namaopd }}</option> // Diubah
                         @endforeach
                     </select>
                     @error('opd_id')

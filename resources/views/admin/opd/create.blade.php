@@ -20,9 +20,9 @@
             <form action="{{ route('admin.opd.store') }}" method="POST">
                 @csrf
                 <div class="mb-3">
-                    <label for="nama_opd" class="form-label">Nama OPD</label>
-                    <input type="text" class="form-control @error('nama_opd') is-invalid @enderror" id="nama_opd" name="nama_opd" value="{{ old('nama_opd') }}" required autofocus>
-                    @error('nama_opd')
+                    <label for="namaopd" class="form-label">Nama OPD</label>
+                    <input type="text" class="form-control @error('namaopd') is-invalid @enderror" id="namaopd" name="namaopd" value="{{ old('namaopd') }}" required autofocus>
+                    @error('namaopd')
                         <div class="invalid-feedback">
                             {{ $message }}
                         </div>

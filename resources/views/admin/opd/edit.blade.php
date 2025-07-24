@@ -23,7 +23,7 @@
                 <div class="mb-3">
                     <label for="nama_opd" class="form-label">Nama OPD</label>
                     <input type="text" class="form-control @error('nama_opd') is-invalid @enderror" id="nama_opd" name="nama_opd" value="{{ old('nama_opd', $opd->nama_opd) }}" required>
-                    @error('nama_opd')
+                    @error('namaopd')
                         <div class="invalid-feedback">
                             {{ $message }}
                         </div>
