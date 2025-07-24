@@ -14,6 +14,7 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->string('whatsapp');
             $table->string('password');
+            $table->enum('role', ['superadmin', 'admin'])->default('admin');
             $table->rememberToken();
             $table->timestamps();
         });

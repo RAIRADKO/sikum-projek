@@ -34,6 +34,7 @@
                     <th scope="col">Nama</th>
                     <th scope="col">Email</th>
                     <th scope="col">Whatsapp</th>
+                    <th scope="col">Role</th>
                     <th scope="col">Aksi</th>
                 </tr>
             </thead>
@@ -44,6 +45,7 @@
                     <td>{{ $admin->nama }}</td>
                     <td>{{ $admin->email }}</td>
                     <td>{{ $admin->whatsapp }}</td>
+                    <td>{{ $admin->role }}</td>
                     <td>
                         <a href="{{ route('admin.admin.edit', $admin) }}" class="btn btn-sm btn-outline-secondary">
                             <i class="fas fa-edit fa-fw"></i>

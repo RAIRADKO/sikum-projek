@@ -18,6 +18,7 @@ class AdminSeeder extends Seeder
             'email' => 'admin@purworejo.go.id',
             'whatsapp' => '6285123456789',
             'password' => Hash::make('admin123'),
+            'role' => 'superadmin',
             'created_at' => now(),
             'updated_at' => now(),
         ]);

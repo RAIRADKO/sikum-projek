@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers; // <--- UBAH BARIS INI
+namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\Admin;
@@ -44,6 +44,7 @@ class AdminController extends Controller
             'email' => 'required|string|email|max:255|unique:admins',
             'whatsapp' => 'required|string|max:15',
             'password' => 'required|string|min:8|confirmed',
+            'role' => 'required|in:superadmin,admin',
         ]);
 
         Admin::create([
@@ -51,6 +52,7 @@ class AdminController extends Controller
             'email' => $request->email,
             'whatsapp' => $request->whatsapp,
             'password' => Hash::make($request->password),
+            'role' => $request->role,
         ]);
 
         return redirect()->route('admin.admin.index')->with('success', 'Admin berhasil ditambahkan.');
@@ -81,6 +83,7 @@ class AdminController extends Controller
             'email' => ['required', 'string', 'email', 'max:255', Rule::unique('admins')->ignore($admin->id)],
             'whatsapp' => 'required|string|max:15',
             'password' => 'nullable|string|min:8|confirmed',
+            'role' => 'required|in:superadmin,admin',
         ]);
 
         $data = $request->except('password');
