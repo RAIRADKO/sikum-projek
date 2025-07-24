@@ -21,8 +21,8 @@
                 @csrf
                 @method('PUT')
                 <div class="mb-3">
-                    <label for="nama_opd" class="form-label">Nama OPD</label>
-                    <input type="text" class="form-control @error('nama_opd') is-invalid @enderror" id="nama_opd" name="nama_opd" value="{{ old('nama_opd', $opd->nama_opd) }}" required>
+                    <label for="namaopd" class="form-label">Nama OPD</label>
+                    <input type="text" class="form-control @error('namaopd') is-invalid @enderror" id="namaopd" name="namaopd" value="{{ old('namaopd', $opd->namaopd) }}" required>
                     @error('namaopd')
                         <div class="invalid-feedback">
                             {{ $message }}
