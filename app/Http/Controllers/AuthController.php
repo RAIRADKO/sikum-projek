@@ -40,13 +40,13 @@ class AuthController extends Controller
         }
 
         if (is_numeric($login) && Auth::guard('web')->attempt(['nip' => $login, 'password' => $password])) {
-            $user = Auth::guard('web')->user();
+            //$user = Auth::guard('web')->user();
 
-            if (!$user->is_approved) {
-                Auth::guard('web')->logout();
-                return back()->with('loginError', 'Akun Anda belum disetujui oleh admin.')
-                             ->withInput($request->except('password'));
-            }
+            //if (!$user->is_approved) {
+                //Auth::guard('web')->logout();
+                //return back()->with('loginError', 'Akun Anda belum disetujui oleh admin.')
+                  //           ->withInput($request->except('password'));
+            //}
 
             $request->session()->regenerate();
             return redirect()->intended(route('home'));
@@ -87,7 +87,7 @@ class AuthController extends Controller
             'whatsapp' => $request->whatsapp,
             'opd_id' => $request->opd_id,
             'password' => Hash::make($request->password),
-            'is_approved' => false,
+            'is_approved' => true,
         ]);
 
         return redirect()->route('login')->with('success', 'Registrasi berhasil! Silakan tunggu persetujuan dari admin.');

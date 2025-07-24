@@ -121,20 +121,35 @@ class UserController extends Controller
         return redirect()->route('admin.user.index')->with('success', 'User berhasil dihapus.');
     }
 
-    /**
-     * Menyetujui pendaftaran pengguna.
-     *
-     * @param  \App\Models\User  $user
-     * @return \Illuminate\Http\Response
-     */
-    public function approve(User $user)
-    {
-        if ($user->is_approved) {
-            return redirect()->route('admin.user.index')->with('error', 'User ini sudah disetujui sebelumnya.');
-        }
-        $user->update(['is_approved' => true]);
-        return redirect()->route('admin.user.index')->with('success', 'Pendaftaran user telah disetujui.');
-    }
+    // /**
+    //  * Menyetujui pendaftaran pengguna.
+    //  *
+    //  * @param  \App\Models\User  $user
+    //  * @return \Illuminate\Http\Response
+    //  */
+    // public function approve(User $user)
+    // {
+    //     if ($user->is_approved) {
+    //         return redirect()->route('admin.user.index')->with('error', 'User ini sudah disetujui sebelumnya.');
+    //     }
+    //     $user->update(['is_approved' => true]);
+    //     return redirect()->route('admin.user.index')->with('success', 'Pendaftaran user telah disetujui.');
+    // }
+
+    // /**
+    //  * Menolak dan menghapus pendaftaran pengguna.
+    //  *
+    //  * @param  \App\Models\User  $user
+    //  * @return \Illuminate\Http\Response
+    //  */
+    // public function reject(User $user)
+    // {
+    //     if ($user->is_approved) {
+    //         return redirect()->route('admin.user.index')->with('error', 'User yang sudah disetujui tidak dapat ditolak. Gunakan tombol hapus.');
+    //     }
+    //     $user->delete();
+    //     return redirect()->route('admin.user.index')->with('success', 'Pendaftaran user telah ditolak dan dihapus.');
+    // }
 
     /**
      * Menolak dan menghapus pendaftaran pengguna.

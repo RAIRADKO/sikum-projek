@@ -48,25 +48,12 @@
                                             <td>{{ $user->email }}</td>
                                             <td>{{ $user->opd->namaopd }}</td>
                                             <td>
-                                                @if(!$user->is_approved)
-                                                    <form action="{{ route('admin.user.approve', $user->id) }}" method="POST" style="display: inline-block;">
-                                                        @csrf
-                                                        @method('PATCH')
-                                                        <button type="submit" class="btn btn-success btn-sm">Setujui</button>
-                                                    </form>
-                                                    <form action="{{ route('admin.user.reject', $user->id) }}" method="POST" style="display: inline-block;">
-                                                        @csrf
-                                                        @method('DELETE')
-                                                        <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Apakah Anda yakin ingin menolak dan menghapus pendaftaran ini?')">Tolak</button>
-                                                    </form>
-                                                @else
-                                                    <a href="{{ route('admin.user.edit', $user->id) }}" class="btn btn-primary btn-sm">Edit</a>
-                                                    <form action="{{ route('admin.user.destroy', $user->id) }}" method="POST" style="display: inline-block;">
-                                                        @csrf
-                                                        @method('DELETE')
-                                                        <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Apakah Anda yakin ingin menghapus data ini?')">Hapus</button>
-                                                    </form>
-                                                @endif
+                                                {{-- @if(!$user->is_approved) ... @else ... @endif --}}  <a href="{{ route('admin.user.edit', $user->id) }}" class="btn btn-primary btn-sm">Edit</a>
+                                                <form action="{{ route('admin.user.destroy', $user->id) }}" method="POST" style="display: inline-block;">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Apakah Anda yakin ingin menghapus data ini?')">Hapus</button>
+                                                </form>
                                             </td>
                                         </tr>
                                         @empty

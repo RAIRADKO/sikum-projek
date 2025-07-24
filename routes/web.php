@@ -57,8 +57,8 @@ Route::prefix('admin')->name('admin.')->middleware('auth:admin')->group(function
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     // Rute untuk Manajemen User (Digabungkan)
-    Route::patch('user/{user}/approve', [UserController::class, 'approve'])->name('user.approve');
-    Route::delete('user/{user}/reject', [UserController::class, 'reject'])->name('user.reject');
+    //Route::patch('user/{user}/approve', [UserController::class, 'approve'])->name('user.approve');
+    //Route::delete('user/{user}/reject', [UserController::class, 'reject'])->name('user.reject');
     Route::resource('user', UserController::class);
 
     // Rute untuk Manajemen OPD
