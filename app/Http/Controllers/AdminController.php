@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Admin;
+namespace App\Http\Controllers; // <--- UBAH BARIS INI
 
 use App\Http\Controllers\Controller;
 use App\Models\Admin;

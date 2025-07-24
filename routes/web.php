@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\OpdController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\AdminController; // <--- UBAH BARIS INI
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\SkController;
@@ -64,5 +65,5 @@ Route::prefix('admin')->name('admin.')->middleware('auth:admin')->group(function
     Route::resource('opd', OpdController::class);
 
     // Rute untuk Manajemen Admin
-    Route::resource('admin', \App\Http\Controllers\Admin\AdminController::class);
+    Route::resource('admin', AdminController::class); // <--- UBAH BARIS INI
 });
