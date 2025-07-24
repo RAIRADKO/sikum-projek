@@ -90,7 +90,7 @@ class AuthController extends Controller
             'is_approved' => true,
         ]);
 
-        return redirect()->route('login')->with('success', 'Registrasi berhasil! Silakan tunggu persetujuan dari admin.');
+        return redirect()->route('login')->with('success', 'Registrasi berhasil! Silakan Login.');
     }
 
     public function logout(Request $request)
