@@ -5,24 +5,49 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\NomorSk;
 use App\Models\Opd;
-use Illuminate\Http\Request;
+use Illuminate\Http\Request; // Pastikan Request di-import
+use Illuminate\Validation\Rule;
 
 class NomorSkController extends Controller
 {
-    public function index()
+    /**
+     * Display a listing of the resource.
+     */
+    public function index(Request $request)
     {
-        // Ganti latest() dengan orderBy('nosk', 'desc')
-        $nomorSk = NomorSk::with('opd')->orderBy('nosk', 'desc')->paginate(10);
+        $search = $request->input('search');
+
+        // Query dasar
+        $query = NomorSk::with('opd');
+
+        // Jika ada input pencarian, tambahkan kondisi 'where'
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('nosk', 'like', "%{$search}%")
+                  ->orWhere('judulsk', 'like', "%{$search}%")
+                  ->orWhere('kodeopd', 'like', "%{$search}%")
+                  ->orWhere('status', 'like', "%{$search}%");
+            });
+        }
+
+        // Ambil data dengan paginasi dan urutkan
+        $nomorSk = $query->orderBy('nosk', 'desc')->paginate(10);
+
+        // Penting: agar link paginasi tetap menyertakan query pencarian
+        $nomorSk->appends(['search' => $search]);
+
         return view('admin.nomorsk.index', compact('nomorSk'));
     }
 
-    // ... (sisa kode controller tidak perlu diubah)
+    // ... sisa method lainnya tidak berubah ...
     public function create()
     {
         $opds = Opd::all();
         return view('admin.nomorsk.create', compact('opds'));
     }
 
+    // (store, edit, update, destroy)
+    // ...
     public function store(Request $request)
     {
         $rules = [
@@ -38,7 +63,6 @@ class NomorSkController extends Controller
             'status_bon' => 'required|in:dibon,tidak_dibon',
         ];
 
-        // Validasi kondisional: jika status 'dibon', field bon menjadi wajib
         if ($request->input('status_bon') == 'dibon') {
             $rules['namabon'] = 'required|string|max:50';
             $rules['tglbon'] = 'required|date';
@@ -46,11 +70,12 @@ class NomorSkController extends Controller
         }
 
         $validatedData = $request->validate($rules);
-
         $dataToCreate = $validatedData;
         
-        // Jika status 'tidak_dibon', pastikan data bon di-set null
-        if ($validatedData['status_bon'] == 'tidak_dibon') {
+        // Atur status berdasarkan status_bon
+        $dataToCreate['status'] = ($validatedData['status_bon'] == 'dibon') ? 'bon' : 'proses';
+        
+        if ($dataToCreate['status'] == 'proses') {
             $dataToCreate['namabon'] = null;
             $dataToCreate['tglbon'] = null;
             $dataToCreate['alasanbonsk'] = null;
@@ -59,6 +84,12 @@ class NomorSkController extends Controller
         NomorSk::create($dataToCreate);
 
         return redirect()->route('admin.nomorsk.index')->with('success', 'Nomor SK berhasil ditambahkan.');
+    }
+
+    public function edit(NomorSk $nomorsk)
+    {
+        $opds = Opd::all();
+        return view('admin.nomorsk.edit', compact('nomorsk', 'opds'));
     }
 
     public function update(Request $request, NomorSk $nomorsk)
@@ -72,22 +103,21 @@ class NomorSkController extends Controller
             'namapengambilsk' => 'nullable|string|max:50',
             'ket' => 'nullable|string|max:255',
             'kodesk' => 'nullable|string|max:10',
-            'status_bon' => 'required|in:dibon,tidak_dibon',
+            'status' => ['required', Rule::in(['proses', 'bon', 'selesai'])],
         ];
 
-        // Validasi kondisional: jika status 'dibon', field bon menjadi wajib
-        if ($request->input('status_bon') == 'dibon') {
+        // Jika status adalah 'bon', field bon menjadi wajib diisi.
+        if ($request->input('status') == 'bon') {
             $rules['namabon'] = 'required|string|max:50';
             $rules['tglbon'] = 'required|date';
             $rules['alasanbonsk'] = 'required|string|max:255';
         }
 
         $validatedData = $request->validate($rules);
-
         $dataToUpdate = $validatedData;
 
-        // Jika status 'tidak_dibon', pastikan data bon di-set null
-        if ($validatedData['status_bon'] == 'tidak_dibon') {
+        // Jika status BUKAN 'bon', pastikan semua data bon di-set null.
+        if ($validatedData['status'] != 'bon') {
             $dataToUpdate['namabon'] = null;
             $dataToUpdate['tglbon'] = null;
             $dataToUpdate['alasanbonsk'] = null;
@@ -96,12 +126,6 @@ class NomorSkController extends Controller
         $nomorsk->update($dataToUpdate);
 
         return redirect()->route('admin.nomorsk.index')->with('success', 'Nomor SK berhasil diperbarui.');
-    }
-
-    public function edit(NomorSk $nomorsk)
-    {
-        $opds = Opd::all();
-        return view('admin.nomorsk.edit', compact('nomorsk', 'opds'));
     }
 
     public function destroy(NomorSk $nomorsk)

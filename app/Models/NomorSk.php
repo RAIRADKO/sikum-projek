@@ -27,6 +27,7 @@ class NomorSk extends Model
         'alasanbonsk',
         'ket',
         'kodesk',
+        'status', // <-- Tambahkan ini
     ];
 
     public function opd()
