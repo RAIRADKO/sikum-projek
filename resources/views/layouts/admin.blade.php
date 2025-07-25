@@ -73,6 +73,9 @@
                 <a href="{{ route('admin.admin.index') }}" class="list-group-item list-group-item-action {{ request()->routeIs('admin.admin.*') ? 'active' : '' }}">
                     <i class="fas fa-users-cog fa-fw me-2"></i>Manajemen Admin
                 </a>
+                <a href="{{ route('admin.nomorsk.index') }}" class="list-group-item list-group-item-action {{ request()->routeIs('admin.nomorsk.*') ? 'active' : '' }}">
+                    <i class="fas fa-file-alt fa-fw me-2"></i>Manajemen Nomor SK
+                </a>
                 <a href="{{ route('logout') }}" class="list-group-item list-group-item-action" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                     <i class="fas fa-sign-out-alt fa-fw me-2"></i>Logout
                 </a>

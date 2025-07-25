@@ -9,6 +9,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\SkController;
 use App\Http\Controllers\PerbupController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Admin\NomorSkController;
 
 /*
 |--------------------------------------------------------------------------
@@ -66,4 +67,6 @@ Route::prefix('admin')->name('admin.')->middleware('auth:admin')->group(function
 
     // Rute untuk Manajemen Admin
     Route::resource('admin', AdminController::class); // <--- UBAH BARIS INI
+    Route::resource('nomorsk', NomorSkController::class)->except(['show']);
+
 });
