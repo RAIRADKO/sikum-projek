@@ -543,7 +543,7 @@
                                     <li class="dropdown-submenu">
                                         <a class="dropdown-item {{ request()->routeIs('sk') ? 'active' : '' }} d-flex justify-content-between align-items-center" 
                                            href="{{ route('sk') }}">
-                                            <span><i class="bi bi-file-earmark me-2"></i>SK</span>
+                                            <span><i class="bi bi-file-earmark me-2"></i>Penomoran SK</span>
                                             <i class="bi bi-chevron-right"></i>
                                         </a>
                                         <ul class="dropdown-menu dropdown-submenu-content">
@@ -580,7 +580,7 @@
                                     <li class="dropdown-submenu">
                                         <a class="dropdown-item {{ request()->routeIs('perbup') ? 'active' : '' }} d-flex justify-content-between align-items-center" 
                                            href="{{ route('perbup') }}">
-                                            <span><i class="bi bi-journal me-2"></i>Perbup</span>
+                                            <span><i class="bi bi-journal me-2"></i>Penomoran Perbup</span>
                                             <i class="bi bi-chevron-right"></i>
                                         </a>
                                         <ul class="dropdown-menu dropdown-submenu-content">

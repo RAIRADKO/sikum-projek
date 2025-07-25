@@ -17,6 +17,7 @@
                             <thead>
                                 <tr>
                                     <th>No</th>
+                                    <th>Kode OPD</th>
                                     <th>Nama OPD</th>
                                     <th>Kode Asisten</th>
                                     <th>Aksi</th>
@@ -26,6 +27,7 @@
                                 @forelse ($opds as $opd)
                                 <tr>
                                     <td>{{ $loop->iteration }}</td>
+                                    <td>{{ $opd->kodeopd }}</td>
                                     <td>{{ $opd->namaopd }}</td>
                                     <td>{{ $opd->asisten->namaass ?? 'N/A' }}</td>
                                     <td>
@@ -39,7 +41,7 @@
                                 </tr>
                                 @empty
                                 <tr>
-                                    <td colspan="4" class="text-center">Data Kosong</td>
+                                    <td colspan="5" class="text-center">Data Kosong</td>
                                 </tr>
                                 @endforelse
                             </tbody>
