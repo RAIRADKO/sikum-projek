@@ -57,12 +57,42 @@ class SkController extends Controller
         return view('user.sk_proses', compact('years'));
     }
 
-    public function prosesShowByYear($year)
+    public function prosesShowByYear(Request $request, $year)
     {
-        // Mengurutkan data proses SK dari terbaru ke terlama
-        $prosesSkData = \App\Models\ProsesSk::whereYear('tglmasuksk', $year)
-                                             ->orderBy('tglmasuksk', 'desc') // Ditambahkan
-                                             ->paginate(15);
-        return view('user.sk_proses_data', ['year' => $year, 'prosesSkData' => $prosesSkData]);
+        $search = $request->input('search');
+
+        $prosesSkDataQuery = \App\Models\ProsesSk::whereYear('tglmasuksk', $year)
+                                                 ->with(['opd', 'nomorSk'])
+                                                 ->orderBy('tglmasuksk', 'desc');
+
+        if ($search) {
+            $prosesSkDataQuery->where(function ($query) use ($search) {
+                $query->where('judulsk', 'like', "%{$search}%")
+                      ->orWhere('kodesk', 'like', "%{$search}%")
+                      ->orWhereHas('opd', function ($q) use ($search) {
+                          $q->where('namaopd', 'like', "%{$search}%");
+                      });
+            });
+        }
+
+        $prosesSkData = $prosesSkDataQuery->paginate(15)->appends(['search' => $search]);
+
+        return view('user.sk_proses_data', [
+            'year' => $year, 
+            'prosesSkData' => $prosesSkData
+        ]);
+    }
+
+    /**
+     * Menampilkan detail proses SK
+     *
+     * @param  string  $kodesk
+     * @return \Illuminate\View\View
+     */
+    public function prosesShow($kodesk)
+    {
+        $prosesSk = ProsesSk::with(['opd', 'nomorSk'])->findOrFail($kodesk);
+        
+        return view('user.sk_proses_detail', ['prosesSk' => $prosesSk]);
     }
 }

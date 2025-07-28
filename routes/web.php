@@ -33,17 +33,18 @@ Route::get('register', [AuthController::class, 'showRegistrationForm'])->name('r
 Route::post('register', [AuthController::class, 'register']);
 
 // Rute untuk Pengguna yang Terautentikasi
-// Rute untuk Pengguna yang Terautentikasi
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [HomeController::class, 'dashboard'])->name('dashboard');
 
     // SK Routes
     Route::get('/sk', [SkController::class, 'index'])->name('sk');
     Route::get('/sk/{year}', [SkController::class, 'showByYear'])->name('sk.year');
-    Route::get('/sk/detail/{nomorsk}', [SkController::class, 'show'])->name('sk.detail'); // <-- TAMBAHKAN BARIS INI
+    Route::get('/sk/detail/{nomorsk}', [SkController::class, 'show'])->name('sk.detail');
+    
+    // SK Proses Routes
     Route::get('/sk-proses', [SkController::class, 'prosesIndex'])->name('sk-proses');
     Route::get('/sk-proses/{year}', [SkController::class, 'prosesShowByYear'])->name('sk-proses.year');
-
+    Route::get('/sk-proses/detail/{kodesk}', [SkController::class, 'prosesShow'])->name('sk-proses.detail');
 
     // Perbup Routes
     Route::get('/perbup', [PerbupController::class, 'index'])->name('perbup');
@@ -53,7 +54,6 @@ Route::middleware('auth')->group(function () {
 
     Route::redirect('/profile', '/dashboard')->name('profile');
 });
-
 
 // Rute untuk Admin
 Route::prefix('admin')->name('admin.')->middleware('auth:admin')->group(function () {

@@ -5,83 +5,105 @@
 @section('content')
 <div class="container py-4">
     <div class="card shadow-sm">
-        <div class="card-header bg-primary text-white">
-            <h4 class="mb-0">Informasi Data Nomor SK</h4>
+        <div class="card-header text-center text-white" style="background-color: #6c757d;">
+            <h5 class="mb-0">INFORMASI DATA NOMOR SK</h5>
         </div>
-        <div class="card-body p-4">
+        <div class="card-body p-0">
 
             {{-- Bagian Data Nomor SK --}}
-            <h5 class="mb-3">Data Nomor SK</h5>
-            <div class="row">
-                <div class="col-md-6 mb-3">
-                    <label class="form-label fw-bold">Nomor SK</label>
-                    <input type="text" class="form-control" value="{{ $sk->nosk }}" readonly>
+            <div class="p-3" style="background-color: #f8f9fa; border-bottom: 1px solid #dee2e6;">
+                <h6 class="mb-3 fw-bold">Data Nomor SK</h6>
+                
+                <div class="mb-3">
+                    <label class="form-label text-muted small">Nomor SK</label>
+                    <div class="p-2 rounded" style="background-color: #e9ecef;">{{ $sk->nosk }}</div>
                 </div>
-                <div class="col-md-6 mb-3">
-                    <label class="form-label fw-bold">Tanggal SK</label>
-                    <input type="text" class="form-control" value="{{ $sk->tglsk ? \Carbon\Carbon::parse($sk->tglsk)->isoFormat('D MMMM YYYY') : '' }}" readonly>
+                
+                <div class="mb-3">
+                    <label class="form-label text-muted small">Tanggal SK</label>
+                    <div class="p-2 rounded" style="background-color: #e9ecef;">
+                        {{ $sk->tglsk ? \Carbon\Carbon::parse($sk->tglsk)->format('d-m-Y') : '' }}
+                    </div>
                 </div>
-            </div>
-            <div class="mb-3">
-                <label class="form-label fw-bold">Judul</label>
-                <textarea class="form-control" rows="3" readonly>{{ $sk->judulsk }}</textarea>
-            </div>
-            <div class="row">
-                <div class="col-md-6 mb-3">
-                    <label class="form-label fw-bold">OPD/Dinas</label>
-                    <input type="text" class="form-control" value="{{ $sk->opd->namaopd ?? 'N/A' }}" readonly>
+                
+                <div class="mb-3">
+                    <label class="form-label text-muted small">Judul</label>
+                    <div class="p-2 rounded" style="background-color: #e9ecef; min-height: 60px;">
+                        {{ $sk->judulsk }}
+                    </div>
                 </div>
-                <div class="col-md-6 mb-3">
-                    <label class="form-label fw-bold">Tanggal Turun SK</label>
-                    {{-- Menggunakan Carbon::parse untuk mengubah string menjadi objek tanggal terlebih dahulu --}}
-                    <input type="text" class="form-control" value="{{ $sk->tglturunsk ? \Carbon\Carbon::parse($sk->tglturunsk)->isoFormat('D MMMM YYYY') : 'Belum turun' }}" readonly>
+                
+                <div class="mb-3">
+                    <label class="form-label text-muted small">OPD/Dinas</label>
+                    <div class="p-2 rounded" style="background-color: #e9ecef;">
+                        {{ $sk->opd->namaopd ?? 'BKD' }}
+                    </div>
                 </div>
-            </div>
-            <div class="mb-4">
-                <label class="form-label fw-bold">Keterangan</label>
-                <textarea class="form-control" rows="2" readonly>{{ $sk->ket }}</textarea>
+                
+                <div class="mb-3">
+                    <label class="form-label text-muted small">Tanggal Turun SK</label>
+                    <div class="p-2 rounded" style="background-color: #e9ecef;">
+                        {{ $sk->tglturunsk ? \Carbon\Carbon::parse($sk->tglturunsk)->format('d-m-Y') : '' }}
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    <label class="form-label text-muted small">Keterangan</label>
+                    <div class="p-2 rounded" style="background-color: #e9ecef; min-height: 60px;">
+                        {{ $sk->ket }}
+                    </div>
+                </div>
             </div>
 
             {{-- Tampilkan bagian ini hanya jika ada data bon (peminjaman) --}}
             @if($sk->namabon)
-                <hr class="my-4">
-                <h5 class="mb-3 text-info">Data Pengebon SK</h5>
-                <div class="row">
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label fw-bold">Nama Pengebon</label>
-                        <input type="text" class="form-control" value="{{ $sk->namabon }}" readonly>
+                <div class="p-3" style="background-color: #f8f9fa; border-bottom: 1px solid #dee2e6;">
+                    <h6 class="mb-3 fw-bold">Data Pengebon SK</h6>
+                    
+                    <div class="mb-3">
+                        <label class="form-label text-muted small">Nama Pengebon</label>
+                        <div class="p-2 rounded" style="background-color: #e9ecef;">{{ $sk->namabon }}</div>
                     </div>
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label fw-bold">Tanggal Saat Ngebon</label>
-                        <input type="text" class="form-control" value="{{ $sk->tglbon ? \Carbon\Carbon::parse($sk->tglbon)->isoFormat('D MMMM YYYY') : '' }}" readonly>
+                    
+                    <div class="mb-3">
+                        <label class="form-label text-muted small">Tanggal Saat Ngebon</label>
+                        <div class="p-2 rounded" style="background-color: #e9ecef;">
+                            {{ $sk->tglbon ? \Carbon\Carbon::parse($sk->tglbon)->format('d-m-Y') : '' }}
+                        </div>
                     </div>
-                </div>
-                <div class="mb-4">
-                    <label class="form-label fw-bold">Alasan BON</label>
-                    <textarea class="form-control" rows="3" readonly>{{ $sk->alasanbonsk }}</textarea>
+                    
+                    <div class="mb-3">
+                        <label class="form-label text-muted small">Alasan BON</label>
+                        <div class="p-2 rounded" style="background-color: #e9ecef; min-height: 60px;">
+                            {{ $sk->alasanbonsk }}
+                        </div>
+                    </div>
                 </div>
             @endif
 
             {{-- Tampilkan bagian ini hanya jika SK sudah diambil --}}
             @if($sk->namapengambilsk)
-                 <hr class="my-4">
-                 <h5 class="mb-3 text-success">Data Pengambilan SK</h5>
-                 <div class="row">
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label fw-bold">Tanggal Ambil</label>
-                        <input type="text" class="form-control" value="{{ $sk->tglambilsk ? \Carbon\Carbon::parse($sk->tglambilsk)->isoFormat('D MMMM YYYY') : '' }}" readonly>
+                <div class="p-3" style="background-color: #f8f9fa; border-bottom: 1px solid #dee2e6;">
+                    <h6 class="mb-3 fw-bold">Data Pengambilan SK</h6>
+                    
+                    <div class="mb-3">
+                        <label class="form-label text-muted small">Tanggal Ambil</label>
+                        <div class="p-2 rounded" style="background-color: #e9ecef;">
+                            {{ $sk->tglambilsk ? \Carbon\Carbon::parse($sk->tglambilsk)->format('d-m-Y') : '' }}
+                        </div>
                     </div>
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label fw-bold">Nama Pengambil SK</label>
-                        <input type="text" class="form-control" value="{{ $sk->namapengambilsk }}" readonly>
+                    
+                    <div class="mb-3">
+                        <label class="form-label text-muted small">Nama Pengambil SK</label>
+                        <div class="p-2 rounded" style="background-color: #e9ecef;">{{ $sk->namapengambilsk }}</div>
                     </div>
-                 </div>
+                </div>
             @endif
 
         </div>
-        <div class="card-footer bg-light text-end">
-            <a href="{{ url()->previous() }}" class="btn btn-danger">
-                <i class="bi bi-arrow-left-circle me-2"></i>Keluar
+        <div class="card-footer bg-light text-start p-3">
+            <a href="{{ url()->previous() }}" class="btn btn-danger btn-sm">
+                <i class="bi bi-arrow-left-circle me-1"></i>Keluar
             </a>
         </div>
     </div>
@@ -90,9 +112,22 @@
 
 @section('styles')
 <style>
-    .form-control[readonly] {
-        background-color: #e9ecef;
-        opacity: 1;
+    .card {
+        border: 1px solid #dee2e6;
+        border-radius: 0.375rem;
+    }
+    
+    .form-label {
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+    }
+    
+    .text-muted {
+        color: #6c757d !important;
+    }
+    
+    .small {
+        font-size: 0.875rem;
     }
 </style>
 @endsection

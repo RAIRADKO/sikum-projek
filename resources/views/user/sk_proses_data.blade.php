@@ -54,18 +54,23 @@
                             </td>
                             <td>{{ $sk->nosk ?? '-' }}</td>
                             <td>
-                                @if($sk->nosk)
-                                    <a href="{{ route('sk.detail', $sk->nosk) }}" class="btn btn-sm btn-info">Lihat Detail</a>
-                                @else
-                                    -
-                                @endif
+                                <div class="btn-group" role="group">
+                                    {{-- Tombol Detail Proses SK --}}
+                                    <a href="{{ route('sk-proses.detail', $sk->kodesk) }}" class="btn btn-sm btn-primary">
+                                        <i class="bi bi-eye"></i> Detail Proses
+                                    </a>
+                                </div>
                             </td>
                         </tr>
                         @empty
                         <tr>
                             <td colspan="7" class="text-center">
                                 <div class="alert alert-warning" role="alert">
-                                    Data Proses SK untuk tahun {{ $year }} tidak ditemukan.
+                                    @if(request('search'))
+                                        Data Proses SK dengan pencarian "{{ request('search') }}" untuk tahun {{ $year }} tidak ditemukan.
+                                    @else
+                                        Data Proses SK untuk tahun {{ $year }} tidak ditemukan.
+                                    @endif
                                 </div>
                             </td>
                         </tr>
@@ -76,7 +81,7 @@
 
             {{-- Menampilkan link paginasi --}}
             <div class="d-flex justify-content-center">
-                {{ $prosesSkData->links() }}
+                {{ $prosesSkData->appends(request()->query())->links() }}
             </div>
 
         </div>
