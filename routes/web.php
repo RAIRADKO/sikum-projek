@@ -71,6 +71,7 @@ Route::prefix('admin')->name('admin.')->middleware('auth:admin')->group(function
     // Rute untuk Manajemen Admin
     Route::resource('admin', AdminController::class); // <--- UBAH BARIS INI
     Route::resource('nomorsk', NomorSkController::class)->except(['show']);
+    Route::resource('nomorperbup', \App\Http\Controllers\Admin\NomorPerbupController::class)->except(['show']); // TAMBAHKAN BARIS INI
     Route::resource('prosessk', ProsesSkController::class);
     Route::resource('asisten', App\Http\Controllers\Admin\AsistenController::class)->except(['show']);
     Route::resource('prosesperbup', \App\Http\Controllers\Admin\ProsesPerbupController::class);

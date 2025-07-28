@@ -82,7 +82,10 @@
                 <a href="{{ route('admin.prosessk.index') }}" class="list-group-item list-group-item-action {{ request()->routeIs('admin.prosessk.*') ? 'active' : '' }}">
                     <i class="fas fa-cogs fa-fw me-2"></i>Manajemen Proses SK
                 </a>
-                <a href="{{ route('admin.prosesperbup.index') }}" class="list-group-item list-group-item-action {{ request()->routeIs('admin.prosessk.*') ? 'active' : '' }}">
+                <a href="{{ route('admin.nomorperbup.index') }}" class="list-group-item list-group-item-action {{ request()->routeIs('admin.nomorperbup.*') ? 'active' : '' }}">
+                    <i class="fas fa-cogs fa-fw me-2"></i>Manajemen Nomor Perbup
+                </a>
+                <a href="{{ route('admin.prosesperbup.index') }}" class="list-group-item list-group-item-action {{ request()->routeIs('admin.prosesperbup.*') ? 'active' : '' }}">
                     <i class="fas fa-cogs fa-fw me-2"></i>Manajemen Proses Perbup
                 </a>
                 <a href="{{ route('logout') }}" class="list-group-item list-group-item-action" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
