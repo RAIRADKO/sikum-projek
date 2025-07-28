@@ -14,12 +14,24 @@ class SkController extends Controller
      * @param  int  $year
      * @return \Illuminate\View\View
      */
-    public function showByYear($year)
+    public function showByYear(Request $request, $year) // Tambahkan Request $request
     {
-        $skData = \App\Models\NomorSk::whereYear('tglsk', $year)
+        $search = $request->input('search');
+
+        $skDataQuery = \App\Models\NomorSk::whereYear('tglsk', $year)
                                     ->with('opd') // Eager load relasi OPD
-                                    ->orderBy('tglsk', 'desc')
-                                    ->paginate(15); // Misalnya 15 data per halaman
+                                    ->orderBy('tglsk', 'desc');
+
+        if ($search) {
+            $skDataQuery->where(function ($query) use ($search) {
+                $query->where('judulsk', 'like', "%{$search}%")
+                      ->orWhereHas('opd', function ($q) use ($search) {
+                          $q->where('namaopd', 'like', "%{$search}%");
+                      });
+            });
+        }
+
+        $skData = $skDataQuery->paginate(15)->appends(['search' => $search]); // Misalnya 15 data per halaman
 
         return view('user.sk_data', [
             'year' => $year,

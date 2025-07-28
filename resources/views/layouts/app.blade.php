@@ -20,7 +20,7 @@
             font-family: 'Inter', sans-serif;
             background-color: #f8fafb;
             padding-top: 80px;
-            color: #2c3e50;
+            color: #005800
         }
         
         .card {
@@ -548,7 +548,7 @@
                                         </a>
                                         <ul class="dropdown-menu dropdown-submenu-content">
                                             @for($year = date('Y'); $year >= 2021; $year--)
-                                                <li><a class="dropdown-item" href="{{ route('sk', ['year' => $year]) }}">{{ $year }}</a></li>
+                                                <li><a class="dropdown-item" href="{{ route('sk.year', ['year' => $year]) }}">{{ $year }}</a></li>
                                             @endfor
                                         </ul>
                                     </li>
@@ -692,7 +692,7 @@
                         </div>
                     </div>
                     <p class="footer-description">
-                        Aplikasi digital untuk memudahkan proses reservasi ruangan rapat di lingkungan Pemerintah Kabupaten Purworejo dengan sistem yang terintegrasi, efisien, dan mudah digunakan.
+                        Sistem Informasi Hukum adalah aplikasi berbasis web yang digunakan untuk melihat dan menelusuri proses penyusunan serta pengelolaan dokumen hukum secara terpusat. Aplikasi ini memudahkan pengguna dalam mengakses informasi hukum yang lengkap, akurat, dan terstruktur.
                     </p>
                     <div class="footer-social-icons">
                         <a href="https://www.instagram.com/purworejokab_/" class="footer-social-icon" target="_blank" rel="noopener noreferrer">
@@ -727,7 +727,7 @@
                 <div class="col-lg-3 col-md-6 mb-4">
                     <h6 class="footer-section-title">Informasi</h6>
                     <p class="footer-description">
-                        Sistem reservasi ruangan online yang memungkinkan pemesanan ruangan rapat 24/7 dengan kalender ketersediaan real-time dan notifikasi otomatis.
+                        Sistem Informasi Hukum adalah aplikasi berbasis web yang digunakan untuk melihat dan menelusuri proses penyusunan serta pengelolaan dokumen hukum secara terpusat. Aplikasi ini memudahkan pengguna dalam mengakses informasi hukum yang lengkap, akurat, dan terstruktur.
                     </p>
                 </div>
             </div>

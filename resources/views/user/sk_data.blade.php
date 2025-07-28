@@ -6,6 +6,18 @@
 <div class="container">
     <h1 class="mt-4 mb-4">Data SK Tahun {{ $year }}</h1>
 
+    {{-- Search Bar --}}
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <form action="{{ route('sk.year', ['year' => $year]) }}" method="GET">
+                <div class="input-group">
+                    <input type="text" name="search" class="form-control" placeholder="Cari berdasarkan Judul SK atau OPD..." value="{{ request('search') }}">
+                    <button class="btn btn-primary" type="submit">Cari</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <div class="card">
         <div class="card-header">
             <h5 class="card-title mb-0">Daftar Surat Keputusan</h5>
