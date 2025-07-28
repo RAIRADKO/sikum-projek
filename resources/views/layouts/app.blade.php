@@ -562,7 +562,7 @@
                                         </a>
                                         <ul class="dropdown-menu dropdown-submenu-content">
                                             @for($year = date('Y'); $year >= 2021; $year--)
-                                                <li><a class="dropdown-item" href="{{ route('sk-proses', ['year' => $year]) }}">{{ $year }}</a></li>
+                                                <li><a class="dropdown-item" href="{{ route('sk-proses.year', ['year' => $year]) }}">{{ $year }}</a></li>
                                             @endfor
                                         </ul>
                                     </li>
@@ -585,7 +585,7 @@
                                         </a>
                                         <ul class="dropdown-menu dropdown-submenu-content">
                                             @for($year = date('Y'); $year >= 2021; $year--)
-                                                <li><a class="dropdown-item" href="{{ route('perbup', ['year' => $year]) }}">{{ $year }}</a></li>
+                                                <li><a class="dropdown-item" href="{{ route('perbup.year', ['year' => $year]) }}">{{ $year }}</a></li>
                                             @endfor
                                         </ul>
                                     </li>
@@ -599,7 +599,7 @@
                                         </a>
                                         <ul class="dropdown-menu dropdown-submenu-content">
                                             @for($year = date('Y'); $year >= 2021; $year--)
-                                                <li><a class="dropdown-item" href="{{ route('perbup-proses', ['year' => $year]) }}">{{ $year }}</a></li>
+                                                <li><a class="dropdown-item" href="{{ route('perbup-proses.year', ['year' => $year]) }}">{{ $year }}</a></li>
                                             @endfor
                                         </ul>
                                     </li>

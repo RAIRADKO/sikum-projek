@@ -50,6 +50,7 @@ Route::middleware('auth')->group(function () {
     // Perbup Routes
     Route::get('/perbup', [PerbupController::class, 'index'])->name('perbup');
     Route::get('/perbup/{year}', [PerbupController::class, 'showByYear'])->name('perbup.year');
+    Route::get('/perbup/detail/{nomorperbup}', [PerbupController::class, 'show'])->name('perbup.detail'); // Tambahkan baris ini
     Route::get('/perbup-proses', [PerbupController::class, 'prosesIndex'])->name('perbup-proses');
     Route::get('/perbup-proses/{year}', [PerbupController::class, 'prosesShowByYear'])->name('perbup-proses.year');
 
