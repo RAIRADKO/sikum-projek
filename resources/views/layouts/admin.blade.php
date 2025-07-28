@@ -70,6 +70,9 @@
                 <a href="{{ route('admin.user.index') }}" class="list-group-item list-group-item-action {{ request()->routeIs('admin.user.*') ? 'active' : '' }}">
                     <i class="fas fa-users fa-fw me-2"></i>Manajemen User
                 </a>
+                <a href="{{ route('admin.asisten.index') }}" class="list-group-item list-group-item-action {{ request()->routeIs('admin.asisten.*') ? 'active' : '' }}">
+                    <i class="fas fa-user fa-fw me-2"></i>Manajemen Asisten
+                </a>
                 <a href="{{ route('admin.admin.index') }}" class="list-group-item list-group-item-action {{ request()->routeIs('admin.admin.*') ? 'active' : '' }}">
                     <i class="fas fa-users-cog fa-fw me-2"></i>Manajemen Admin
                 </a>
