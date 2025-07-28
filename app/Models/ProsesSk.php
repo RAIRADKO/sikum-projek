@@ -13,7 +13,7 @@ class ProsesSk extends Model
     protected $primaryKey = 'kodesk';
     public $incrementing = false;
     protected $keyType = 'string';
-    public $timestamps = true; 
+    public $timestamps = true;
 
     protected $fillable = [
         'kodesk',
@@ -28,6 +28,7 @@ class ProsesSk extends Model
         'ketprosessk',
         'nowa',
         'nosk',
+        'status', // <-- Tambahkan baris ini
     ];
 
     /**

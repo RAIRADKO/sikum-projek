@@ -38,3 +38,14 @@
         @endforeach
     </select>
 </div>
+
+{{-- Tambahkan field status hanya saat mode edit --}}
+@isset($prosessk)
+<div class="mb-3">
+    <label for="status" class="form-label">Status</label>
+    <select class="form-select @error('status') is-invalid @enderror" id="status" name="status">
+        <option value="Proses" {{ old('status', $prosessk->status) == 'Proses' ? 'selected' : '' }}>Proses</option>
+        <option value="Selesai" {{ old('status', $prosessk->status) == 'Selesai' ? 'selected' : '' }}>Selesai</option>
+    </select>
+</div>
+@endisset

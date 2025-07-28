@@ -6,13 +6,27 @@ use App\Http\Controllers\Controller;
 use App\Models\ProsesSk;
 use App\Models\Opd;
 use App\Models\Asisten;
-use Illuminate\Http\Request;
+use Illuminate\Http\Request; // <-- Jangan lupa import Request
 
 class ProsesSkController extends Controller
 {
-    public function index()
+    // Ubah metode index menjadi seperti ini
+    public function index(Request $request)
     {
-        $prosesSks = ProsesSk::with('opd')->orderBy('tglmasuksk', 'desc')->paginate(10);
+        $search = $request->input('search');
+
+        $prosesSks = ProsesSk::with('opd')
+            ->when($search, function ($query, $search) {
+                return $query->where('kodesk', 'like', "%{$search}%")
+                             ->orWhere('judulsk', 'like', "%{$search}%")
+                             ->orWhereHas('opd', function ($q) use ($search) {
+                                 $q->where('namaopd', 'like', "%{$search}%");
+                             });
+            })
+            ->orderBy('tglmasuksk', 'desc')
+            ->paginate(10)
+            ->appends(['search' => $search]); // Agar pencarian tetap ada saat pindah halaman
+
         return view('admin.prosessk.index', compact('prosesSks'));
     }
 
@@ -33,7 +47,10 @@ class ProsesSkController extends Controller
             'kodeass' => 'required|string|exists:asisten,kodeass',
         ]);
 
-        ProsesSk::create($request->all());
+        $data = $request->all();
+        $data['status'] = 'Proses';
+
+        ProsesSk::create($data);
 
         return redirect()->route('admin.prosessk.index')->with('success', 'Proses SK berhasil ditambahkan.');
     }
@@ -52,6 +69,7 @@ class ProsesSkController extends Controller
             'judulsk' => 'required|string',
             'kodeopd' => 'required|string|exists:opds,kodeopd',
             'kodeass' => 'required|string|exists:asisten,kodeass',
+            'status' => 'required|in:Proses,Selesai',
         ]);
 
         $prosessk->update($request->all());

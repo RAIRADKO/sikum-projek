@@ -18,6 +18,19 @@
     </div>
     @endif
 
+    {{-- Form Pencarian --}}
+    <div class="row">
+        <div class="col-md-6">
+            <form action="{{ route('admin.prosessk.index') }}" method="GET">
+                <div class="input-group mb-3">
+                    <input type="text" class="form-control" placeholder="Cari Kode/Judul SK atau OPD..." name="search" value="{{ request('search') }}">
+                    <button class="btn btn-primary" type="submit"><i class="fas fa-search"></i> Cari</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    {{-- Akhir Form Pencarian --}}
+
     <div class="table-responsive">
         <table class="table table-striped table-sm">
             <thead>
@@ -26,6 +39,7 @@
                     <th scope="col">Tanggal Masuk</th>
                     <th scope="col">Judul SK</th>
                     <th scope="col">OPD</th>
+                    <th scope="col">Status</th>
                     <th scope="col">Aksi</th>
                 </tr>
             </thead>
@@ -36,6 +50,13 @@
                     <td>{{ $prosesSk->tglmasuksk ? \Carbon\Carbon::parse($prosesSk->tglmasuksk)->format('d-m-Y') : '-' }}</td>
                     <td>{{ $prosesSk->judulsk }}</td>
                     <td>{{ $prosesSk->opd->namaopd ?? 'N/A' }}</td>
+                    <td>
+                        @if ($prosesSk->status == 'Selesai')
+                            <span class="badge bg-success">{{ $prosesSk->status }}</span>
+                        @else
+                            <span class="badge bg-warning text-dark">{{ $prosesSk->status }}</span>
+                        @endif
+                    </td>
                     <td>
                         <a href="{{ route('admin.prosessk.edit', $prosesSk) }}" class="btn btn-sm btn-outline-secondary">
                             <i class="fas fa-edit fa-fw"></i>
@@ -51,7 +72,7 @@
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="5" class="text-center">Data tidak ditemukan.</td>
+                    <td colspan="6" class="text-center">Data tidak ditemukan.</td>
                 </tr>
                 @endforelse
             </tbody>
