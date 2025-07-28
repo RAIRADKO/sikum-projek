@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\NomorSk; // Pastikan model ini sudah ada
+use App\Models\NomorSk;
+use App\Models\ProsesSk;
 use Illuminate\Http\Request;
-use Carbon\Carbon; // Digunakan untuk memanipulasi tanggal jika diperlukan
+use Carbon\Carbon;
 
 class SkController extends Controller
 {
@@ -14,12 +15,12 @@ class SkController extends Controller
      * @param  int  $year
      * @return \Illuminate\View\View
      */
-    public function showByYear(Request $request, $year) // Tambahkan Request $request
+    public function showByYear(Request $request, $year)
     {
         $search = $request->input('search');
 
         $skDataQuery = \App\Models\NomorSk::whereYear('tglsk', $year)
-                                    ->with('opd') // Eager load relasi OPD
+                                    ->with('opd')
                                     ->orderBy('tglsk', 'desc');
 
         if ($search) {
@@ -31,17 +32,16 @@ class SkController extends Controller
             });
         }
 
-        $skData = $skDataQuery->paginate(15)->appends(['search' => $search]); // Misalnya 15 data per halaman
+        $skData = $skDataQuery->paginate(15)->appends(['search' => $search]);
 
         return view('user.sk_data', [
             'year' => $year,
             'skData' => $skData
         ]);
     }
+
     public function show(NomorSk $nomorsk)
     {
-        // Variabel $nomorsk sudah berisi data SK yang cocok dengan ID dari URL
-        // Kita hanya perlu mengirimkannya ke view
         return view('user.sk_detail', ['sk' => $nomorsk]);
     }
 
@@ -59,7 +59,10 @@ class SkController extends Controller
 
     public function prosesShowByYear($year)
     {
-        // Logika untuk menampilkan data proses SK berdasarkan tahun
-        return view('user.sk_proses_data', ['year' => $year]);
+        // Mengurutkan data proses SK dari terbaru ke terlama
+        $prosesSkData = \App\Models\ProsesSk::whereYear('tglmasuksk', $year)
+                                             ->orderBy('tglmasuksk', 'desc') // Ditambahkan
+                                             ->paginate(15);
+        return view('user.sk_proses_data', ['year' => $year, 'prosesSkData' => $prosesSkData]);
     }
 }
