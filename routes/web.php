@@ -40,8 +40,10 @@ Route::middleware('auth')->group(function () {
     // SK Routes
     Route::get('/sk', [SkController::class, 'index'])->name('sk');
     Route::get('/sk/{year}', [SkController::class, 'showByYear'])->name('sk.year');
+    Route::get('/sk/detail/{nomorsk}', [SkController::class, 'show'])->name('sk.detail'); // <-- TAMBAHKAN BARIS INI
     Route::get('/sk-proses', [SkController::class, 'prosesIndex'])->name('sk-proses');
     Route::get('/sk-proses/{year}', [SkController::class, 'prosesShowByYear'])->name('sk-proses.year');
+
 
     // Perbup Routes
     Route::get('/perbup', [PerbupController::class, 'index'])->name('perbup');
