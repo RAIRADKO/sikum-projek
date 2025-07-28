@@ -2,7 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\NomorPerbup; // Tambahkan ini
+use App\Models\NomorPerbup;
+use App\Models\ProsesPerbup; // <-- Tambahkan ini
 use Illuminate\Http\Request;
 
 class PerbupController extends Controller
@@ -38,15 +39,10 @@ class PerbupController extends Controller
             'perbupData' => $perbupData
         ]);
     }
-    
-    // Tambahkan method baru untuk detail
+
     public function show(NomorPerbup $nomorperbup)
     {
-        // Anda perlu membuat view 'user.perbup_detail'
         // Untuk sekarang kita akan redirect atau tampilkan data mentah
-        // return view('user.perbup_detail', ['perbup' => $nomorperbup]);
-        
-        // Contoh response data mentah:
         return response()->json($nomorperbup->load('opd'));
     }
 
@@ -57,9 +53,31 @@ class PerbupController extends Controller
         return view('user.perbup_proses', compact('years'));
     }
 
-    public function prosesShowByYear($year)
+    // --- MODIFIKASI DIMULAI DARI SINI ---
+    public function prosesShowByYear(Request $request, $year)
     {
-        // Logika untuk menampilkan data proses Perbup berdasarkan tahun
-        return view('user.perbup_proses_data', ['year' => $year]);
+        $search = $request->input('search');
+
+        $prosesPerbupDataQuery = ProsesPerbup::whereYear('tglmasukpb', $year)
+                                             ->with('opd')
+                                             ->orderBy('tglmasukpb', 'desc');
+
+        if ($search) {
+            $prosesPerbupDataQuery->where(function ($query) use ($search) {
+                $query->where('judulpb', 'like', "%{$search}%")
+                      ->orWhere('kodepb', 'like', "%{$search}%")
+                      ->orWhereHas('opd', function ($q) use ($search) {
+                          $q->where('namaopd', 'like', "%{$search}%");
+                      });
+            });
+        }
+
+        $prosesPerbupData = $prosesPerbupDataQuery->paginate(15)->appends(['search' => $search]);
+
+        return view('user.perbup_proses_data', [
+            'year' => $year,
+            'prosesPerbupData' => $prosesPerbupData // <-- Variabel ini sekarang dikirim ke view
+        ]);
     }
+    // --- MODIFIKASI SELESAI ---
 }
