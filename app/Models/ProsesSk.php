@@ -13,7 +13,7 @@ class ProsesSk extends Model
     protected $primaryKey = 'kodesk';
     public $incrementing = false;
     protected $keyType = 'string';
-    public $timestamps = false;
+    public $timestamps = true; 
 
     protected $fillable = [
         'kodesk',

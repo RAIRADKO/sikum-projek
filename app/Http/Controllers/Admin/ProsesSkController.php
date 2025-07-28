@@ -12,7 +12,7 @@ class ProsesSkController extends Controller
 {
     public function index()
     {
-        $prosesSks = ProsesSk::with('opd')->latest()->paginate(10);
+        $prosesSks = ProsesSk::with('opd')->orderBy('tglmasuksk', 'desc')->paginate(10);
         return view('admin.prosessk.index', compact('prosesSks'));
     }
 
