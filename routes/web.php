@@ -73,4 +73,5 @@ Route::prefix('admin')->name('admin.')->middleware('auth:admin')->group(function
     Route::resource('nomorsk', NomorSkController::class)->except(['show']);
     Route::resource('prosessk', ProsesSkController::class);
     Route::resource('asisten', App\Http\Controllers\Admin\AsistenController::class)->except(['show']);
+    Route::resource('prosesperbup', \App\Http\Controllers\Admin\ProsesPerbupController::class);
 });

@@ -82,6 +82,9 @@
                 <a href="{{ route('admin.prosessk.index') }}" class="list-group-item list-group-item-action {{ request()->routeIs('admin.prosessk.*') ? 'active' : '' }}">
                     <i class="fas fa-cogs fa-fw me-2"></i>Manajemen Proses SK
                 </a>
+                <a href="{{ route('admin.prosesperbup.index') }}" class="list-group-item list-group-item-action {{ request()->routeIs('admin.prosessk.*') ? 'active' : '' }}">
+                    <i class="fas fa-cogs fa-fw me-2"></i>Manajemen Proses Perbup
+                </a>
                 <a href="{{ route('logout') }}" class="list-group-item list-group-item-action" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                     <i class="fas fa-sign-out-alt fa-fw me-2"></i>Logout
                 </a>
