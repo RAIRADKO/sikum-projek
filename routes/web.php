@@ -50,9 +50,12 @@ Route::middleware('auth')->group(function () {
     // Perbup Routes
     Route::get('/perbup', [PerbupController::class, 'index'])->name('perbup');
     Route::get('/perbup/{year}', [PerbupController::class, 'showByYear'])->name('perbup.year');
-    Route::get('/perbup/detail/{nomorperbup}', [PerbupController::class, 'show'])->name('perbup.detail'); // Tambahkan baris ini
+    Route::get('/perbup/detail/{nomorperbup}', [PerbupController::class, 'show'])->name('perbup.detail');
+    
+    // Perbup Proses Routes
     Route::get('/perbup-proses', [PerbupController::class, 'prosesIndex'])->name('perbup-proses');
     Route::get('/perbup-proses/{year}', [PerbupController::class, 'prosesShowByYear'])->name('perbup-proses.year');
+    Route::get('/perbup-proses/detail/{kodepb}', [PerbupController::class, 'prosesShow'])->name('perbup-proses.detail');
 
     Route::redirect('/profile', '/dashboard')->name('profile');
 });
@@ -70,9 +73,9 @@ Route::prefix('admin')->name('admin.')->middleware('auth:admin')->group(function
     Route::resource('opd', OpdController::class);
 
     // Rute untuk Manajemen Admin
-    Route::resource('admin', AdminController::class); // <--- UBAH BARIS INI
+    Route::resource('admin', AdminController::class);
     Route::resource('nomorsk', NomorSkController::class)->except(['show']);
-    Route::resource('nomorperbup', \App\Http\Controllers\Admin\NomorPerbupController::class)->except(['show']); // TAMBAHKAN BARIS INI
+    Route::resource('nomorperbup', \App\Http\Controllers\Admin\NomorPerbupController::class)->except(['show']);
     Route::resource('prosessk', ProsesSkController::class);
     Route::resource('asisten', App\Http\Controllers\Admin\AsistenController::class)->except(['show']);
     Route::resource('prosesperbup', \App\Http\Controllers\Admin\ProsesPerbupController::class);

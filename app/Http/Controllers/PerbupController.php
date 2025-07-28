@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\NomorPerbup;
-use App\Models\ProsesPerbup; // <-- Tambahkan ini
+use App\Models\ProsesPerbup;
 use Illuminate\Http\Request;
 
 class PerbupController extends Controller
@@ -42,10 +42,8 @@ class PerbupController extends Controller
 
     public function show(NomorPerbup $nomorperbup)
     {
-        // Untuk sekarang kita akan redirect atau tampilkan data mentah
         return response()->json($nomorperbup->load('opd'));
     }
-
 
     public function prosesIndex()
     {
@@ -53,7 +51,6 @@ class PerbupController extends Controller
         return view('user.perbup_proses', compact('years'));
     }
 
-    // --- MODIFIKASI DIMULAI DARI SINI ---
     public function prosesShowByYear(Request $request, $year)
     {
         $search = $request->input('search');
@@ -76,8 +73,14 @@ class PerbupController extends Controller
 
         return view('user.perbup_proses_data', [
             'year' => $year,
-            'prosesPerbupData' => $prosesPerbupData // <-- Variabel ini sekarang dikirim ke view
+            'prosesPerbupData' => $prosesPerbupData
         ]);
     }
-    // --- MODIFIKASI SELESAI ---
+
+    // Tambahkan method untuk detail proses perbup
+    public function prosesShow($kodepb)
+    {
+        $prosesPerbup = ProsesPerbup::with('opd')->findOrFail($kodepb);
+        return response()->json($prosesPerbup);
+    }
 }
