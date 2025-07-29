@@ -12,6 +12,15 @@
                 @csrf
                 @method('PUT')
                 @include('admin.proseslain.form')
+                
+                <div class="mb-3">
+                    <label for="status" class="form-label">Status</label>
+                    <select class="form-select @error('status') is-invalid @enderror" id="status" name="status">
+                        <option value="Diproses" {{ old('status', $proseslain->status) == 'Diproses' ? 'selected' : '' }}>Diproses</option>
+                        <option value="Selesai" {{ old('status', $proseslain->status) == 'Selesai' ? 'selected' : '' }}>Selesai</option>
+                    </select>
+                </div>
+
                 <button type="submit" class="btn btn-primary">Perbarui</button>
                 <a href="{{ route('admin.proseslain.index') }}" class="btn btn-secondary">Batal</a>
             </form>

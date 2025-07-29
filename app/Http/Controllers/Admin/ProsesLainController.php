@@ -39,12 +39,14 @@ class ProsesLainController extends Controller
             'kodelain' => 'required|string|max:10|unique:proseslain',
             'tglmasuk' => 'required|date',
             'judul' => 'required|string',
-            'status' => 'required|string', // Tambahkan validasi
             'kodeopd' => 'required|string|exists:opds,kodeopd',
             'kodeass' => 'required|string|exists:asisten,kodeass',
         ]);
 
-        ProsesLain::create($request->all());
+        $data = $request->all();
+        $data['status'] = 'Diproses'; // Set status default
+
+        ProsesLain::create($data);
 
         return redirect()->route('admin.proseslain.index')->with('success', 'Data SK Lainnya berhasil ditambahkan.');
     }
@@ -62,7 +64,7 @@ class ProsesLainController extends Controller
         $request->validate([
             'tglmasuk' => 'required|date',
             'judul' => 'required|string',
-            'status' => 'required|string', // Tambahkan validasi
+            'status' => 'required|string|in:Diproses,Selesai', // Tambahkan validasi status
             'kodeopd' => 'required|string|exists:opds,kodeopd',
             'kodeass' => 'required|string|exists:asisten,kodeass',
         ]);

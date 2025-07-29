@@ -38,6 +38,7 @@
                     <th scope="col">Judul</th>
                     <th scope="col">OPD</th>
                     <th scope="col">Asisten</th>
+                    <th scope="col">Status</th>
                     <th scope="col">Aksi</th>
                 </tr>
             </thead>
@@ -49,6 +50,13 @@
                     <td>{{ $item->judul }}</td>
                     <td>{{ $item->opd->namaopd ?? 'N/A' }}</td>
                     <td>{{ $item->asisten->namaass ?? 'N/A' }}</td>
+                    <td>
+                        @if ($item->status == 'Selesai')
+                            <span class="badge bg-success">{{ $item->status }}</span>
+                        @else
+                            <span class="badge bg-warning text-dark">{{ $item->status }}</span>
+                        @endif
+                    </td>
                     <td>
                         <a href="{{ route('admin.proseslain.edit', $item) }}" class="btn btn-sm btn-outline-secondary">
                             <i class="fas fa-edit fa-fw"></i>
@@ -64,7 +72,7 @@
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="6" class="text-center">Data tidak ditemukan.</td>
+                    <td colspan="7" class="text-center">Data tidak ditemukan.</td>
                 </tr>
                 @endforelse
             </tbody>
