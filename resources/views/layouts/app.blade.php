@@ -531,7 +531,26 @@
             <div class="d-flex align-items-center ms-auto">
                 <ul class="navbar-nav d-flex flex-row">
                     @auth
-                        <div class="d-flex align-items-center gap-3">
+                        <div class="dropdown me-2">
+                                    <a class="btn btn-outline-light rounded-pill dropdown-toggle {{ (request()->routeIs('opd.index') || request()->routeIs('asisten.index')) ? 'active' : '' }}"
+                                    href="#" role="button" id="dataMasterDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="bi bi-server me-1"></i>Data Master
+                                    </a>
+                                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dataMasterDropdown">
+                                        <li>
+                                            <a class="dropdown-item {{ request()->routeIs('opd.index') ? 'active' : '' }}" href="{{ route('opd.index') }}">
+                                                <i class="bi bi-building me-2"></i>OPD
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item {{ request()->routeIs('asisten.index') ? 'active' : '' }}" href="{{ route('asisten.index') }}">
+                                                <i class="bi bi-person-badge me-2"></i>Asisten
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+
+                            <div class="d-flex align-items-center gap-3">
                             <!-- SK Dropdown -->
                             <div class="dropdown me-2">
                                 <a class="btn btn-outline-light rounded-pill dropdown-toggle {{ (request()->routeIs('sk') || request()->routeIs('sk-proses')) ? 'active' : '' }}" 

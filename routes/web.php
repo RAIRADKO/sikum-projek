@@ -1,13 +1,15 @@
 <?php
 
 use App\Http\Controllers\Admin\DashboardController;
-use App\Http\Controllers\Admin\OpdController;
+use App\Http\Controllers\Admin\OpdController as AdminOpdController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\SkController;
 use App\Http\Controllers\PerbupController;
+use App\Http\Controllers\OpdController;
+use App\Http\Controllers\AsistenController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\NomorSkController;
 use App\Http\Controllers\Admin\ProsesSkController;
@@ -39,6 +41,9 @@ Route::middleware('auth')->group(function () {
 
     // Rute untuk menampilkan data OPD bagi user
     Route::get('/opd', [OpdController::class, 'index'])->name('opd.index');
+
+    // Rute untuk menampilkan data Asisten bagi user
+    Route::get('/asisten', [AsistenController::class, 'index'])->name('asisten.index');
 
     // SK Routes
     Route::get('/sk', [SkController::class, 'index'])->name('sk');
@@ -79,7 +84,7 @@ Route::prefix('admin')->name('admin.')->middleware('auth:admin')->group(function
     });
 
     // Rute untuk Super Admin dan Admin
-    Route::resource('opd', OpdController::class);
+    Route::resource('opd', AdminOpdController::class);
     Route::resource('asisten', \App\Http\Controllers\Admin\AsistenController::class)->except(['show']);
     Route::resource('nomorsk', NomorSkController::class)->except(['show']);
     Route::resource('prosessk', ProsesSkController::class);
