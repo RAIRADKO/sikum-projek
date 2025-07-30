@@ -37,6 +37,9 @@ Route::post('register', [AuthController::class, 'register']);
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [HomeController::class, 'dashboard'])->name('dashboard');
 
+    // Rute untuk menampilkan data OPD bagi user
+    Route::get('/opd', [OpdController::class, 'index'])->name('opd.index');
+
     // SK Routes
     Route::get('/sk', [SkController::class, 'index'])->name('sk');
     Route::get('/sk/{year}', [SkController::class, 'showByYear'])->name('sk.year');
