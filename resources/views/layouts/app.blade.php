@@ -605,7 +605,28 @@
                                     </li>
                                 </ul>
                             </div>
-                            
+                            <div class="dropdown me-2">
+                                <a class="btn btn-outline-light rounded-pill dropdown-toggle {{ request()->routeIs('sk-lainnya.*') ? 'active' : '' }}" 
+                                   href="#" role="button" id="skLainnyaDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="bi bi-file-earmark-text me-1"></i>SK Lainnya
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="skLainnyaDropdown">
+                                    <li class="dropdown-submenu">
+                                        <a class="dropdown-item {{ request()->routeIs('sk-lainnya.index') ? 'active' : '' }} d-flex justify-content-between align-items-center" 
+                                           href="{{ route('sk-lainnya.index') }}">
+                                            <span><i class="bi bi-calendar-event me-2"></i>Pilih Tahun SK Lainnya</span>
+                                            <i class="bi bi-chevron-right"></i>
+                                        </a>
+                                        <ul class="dropdown-menu dropdown-submenu-content">
+                                            @php $years = range(date('Y'), 2021); @endphp
+                                            @foreach($years as $year)
+                                                <li><a class="dropdown-item" href="{{ route('sk-lainnya.year', ['year' => $year]) }}">{{ $year }}</a></li>
+                                            @endforeach
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </div>
+
                             <div class="vr text-light opacity-25 mx-2"></div>
                             
                             <!-- User Profile Dropdown -->
