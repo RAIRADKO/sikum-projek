@@ -64,20 +64,18 @@ Route::middleware('auth')->group(function () {
 Route::prefix('admin')->name('admin.')->middleware('auth:admin')->group(function () {
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-    // Rute untuk Manajemen User (Digabungkan)
-    //Route::patch('user/{user}/approve', [UserController::class, 'approve'])->name('user.approve');
-    //Route::delete('user/{user}/reject', [UserController::class, 'reject'])->name('user.reject');
-    Route::resource('user', UserController::class);
+    // Rute hanya untuk Super Admin
+    Route::middleware(['role:superadmin'])->group(function () {
+        Route::resource('user', UserController::class);
+        Route::resource('admin', AdminController::class);
+    });
 
-    // Rute untuk Manajemen OPD
+    // Rute untuk Super Admin dan Admin
     Route::resource('opd', OpdController::class);
-
-    // Rute untuk Manajemen Admin
-    Route::resource('admin', AdminController::class);
+    Route::resource('asisten', \App\Http\Controllers\Admin\AsistenController::class)->except(['show']);
     Route::resource('nomorsk', NomorSkController::class)->except(['show']);
-    Route::resource('nomorperbup', \App\Http\Controllers\Admin\NomorPerbupController::class)->except(['show']);
     Route::resource('prosessk', ProsesSkController::class);
-    Route::resource('asisten', App\Http\Controllers\Admin\AsistenController::class)->except(['show']);
+    Route::resource('nomorperbup', \App\Http\Controllers\Admin\NomorPerbupController::class)->except(['show']);
     Route::resource('prosesperbup', \App\Http\Controllers\Admin\ProsesPerbupController::class);
     Route::resource('proseslain', \App\Http\Controllers\Admin\ProsesLainController::class);
 });

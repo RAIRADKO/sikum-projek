@@ -148,72 +148,70 @@
         <div id="sidebar-wrapper">
             <div class="sidebar-heading text-center">Admin SIKUM</div>
             <div class="sidebar-nav">
-                <!-- Dashboard -->
-                <a href="{{ route('admin.dashboard') }}" class="menu-item {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
-                    <i class="fas fa-tachometer-alt fa-fw me-2"></i>Dashboard
-                </a>
+            <a href="{{ route('admin.dashboard') }}" class="menu-item {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
+                <i class="fas fa-tachometer-alt fa-fw me-2"></i>Dashboard
+            </a>
 
-                <!-- Manajemen Pengguna -->
-                <div class="dropdown-menu-item {{ request()->routeIs('admin.opd.*') || request()->routeIs('admin.user.*') || request()->routeIs('admin.asisten.*') || request()->routeIs('admin.admin.*') ? 'active' : '' }}" onclick="toggleDropdown('userManagement')">
-                    <span><i class="fas fa-users fa-fw me-2"></i>Manajemen Pengguna</span>
-                    <i class="fas fa-chevron-right dropdown-arrow" id="userManagement-arrow"></i>
-                </div>
-                <div class="submenu {{ request()->routeIs('admin.opd.*') || request()->routeIs('admin.user.*') || request()->routeIs('admin.asisten.*') || request()->routeIs('admin.admin.*') ? 'show' : '' }}" id="userManagement-submenu">
-                    <a href="{{ route('admin.opd.index') }}" class="submenu-item {{ request()->routeIs('admin.opd.*') ? 'active' : '' }}">
-                        <i class="fas fa-building fa-fw me-2"></i>Manajemen OPD
-                    </a>
-                    <a href="{{ route('admin.user.index') }}" class="submenu-item {{ request()->routeIs('admin.user.*') ? 'active' : '' }}">
-                        <i class="fas fa-user fa-fw me-2"></i>Manajemen User
-                    </a>
-                    <a href="{{ route('admin.asisten.index') }}" class="submenu-item {{ request()->routeIs('admin.asisten.*') ? 'active' : '' }}">
-                        <i class="fas fa-user-tie fa-fw me-2"></i>Manajemen Asisten
-                    </a>
-                    <a href="{{ route('admin.admin.index') }}" class="submenu-item {{ request()->routeIs('admin.admin.*') ? 'active' : '' }}">
-                        <i class="fas fa-users-cog fa-fw me-2"></i>Manajemen Admin
-                    </a>
-                </div>
-
-                <!-- Manajemen SK -->
-                <div class="dropdown-menu-item {{ request()->routeIs('admin.nomorsk.*') || request()->routeIs('admin.prosessk.*') ? 'active' : '' }}" onclick="toggleDropdown('skManagement')">
-                    <span><i class="fas fa-file-alt fa-fw me-2"></i>Manajemen SK</span>
-                    <i class="fas fa-chevron-right dropdown-arrow" id="skManagement-arrow"></i>
-                </div>
-                <div class="submenu {{ request()->routeIs('admin.nomorsk.*') || request()->routeIs('admin.prosessk.*') ? 'show' : '' }}" id="skManagement-submenu">
-                    <a href="{{ route('admin.nomorsk.index') }}" class="submenu-item {{ request()->routeIs('admin.nomorsk.*') ? 'active' : '' }}">
-                        <i class="fas fa-hashtag fa-fw me-2"></i>Manajemen Nomor SK
-                    </a>
-                    <a href="{{ route('admin.prosessk.index') }}" class="submenu-item {{ request()->routeIs('admin.prosessk.*') ? 'active' : '' }}">
-                        <i class="fas fa-cogs fa-fw me-2"></i>Manajemen Proses SK
-                    </a>
-                </div>
-
-                <!-- Manajemen Perbup -->
-                <div class="dropdown-menu-item {{ request()->routeIs('admin.nomorperbup.*') || request()->routeIs('admin.prosesperbup.*') ? 'active' : '' }}" onclick="toggleDropdown('perbupManagement')">
-                    <span><i class="fas fa-file-contract fa-fw me-2"></i>Manajemen Perbup</span>
-                    <i class="fas fa-chevron-right dropdown-arrow" id="perbupManagement-arrow"></i>
-                </div>
-                <div class="submenu {{ request()->routeIs('admin.nomorperbup.*') || request()->routeIs('admin.prosesperbup.*') ? 'show' : '' }}" id="perbupManagement-submenu">
-                    <a href="{{ route('admin.nomorperbup.index') }}" class="submenu-item {{ request()->routeIs('admin.nomorperbup.*') ? 'active' : '' }}">
-                        <i class="fas fa-hashtag fa-fw me-2"></i>Manajemen Nomor Perbup
-                    </a>
-                    <a href="{{ route('admin.prosesperbup.index') }}" class="submenu-item {{ request()->routeIs('admin.prosesperbup.*') ? 'active' : '' }}">
-                        <i class="fas fa-cogs fa-fw me-2"></i>Manajemen Proses Perbup
-                    </a>
-                </div>
-
-                <!-- SK Lainnya -->
-                <a href="{{ route('admin.proseslain.index') }}" class="menu-item {{ request()->routeIs('admin.proseslain.*') ? 'active' : '' }}">
-                    <i class="fas fa-file-signature fa-fw me-2"></i>SK Lainnya
-                </a>
-
-                <!-- Logout -->
-                <a href="{{ route('logout') }}" class="menu-item" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                    <i class="fas fa-sign-out-alt fa-fw me-2"></i>Logout
-                </a>
-                <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
-                    @csrf
-                </form>
+            <div class="dropdown-menu-item {{ request()->routeIs('admin.opd.*') || request()->routeIs('admin.user.*') || request()->routeIs('admin.asisten.*') || request()->routeIs('admin.admin.*') ? 'active' : '' }}" onclick="toggleDropdown('userManagement')">
+                <span><i class="fas fa-users fa-fw me-2"></i>Data Master</span>
+                <i class="fas fa-chevron-right dropdown-arrow" id="userManagement-arrow"></i>
             </div>
+            <div class="submenu {{ request()->routeIs('admin.opd.*') || request()->routeIs('admin.user.*') || request()->routeIs('admin.asisten.*') || request()->routeIs('admin.admin.*') ? 'show' : '' }}" id="userManagement-submenu">
+                <a href="{{ route('admin.opd.index') }}" class="submenu-item {{ request()->routeIs('admin.opd.*') ? 'active' : '' }}">
+                    <i class="fas fa-building fa-fw me-2"></i>Manajemen OPD
+                </a>
+                @if(Auth::guard('admin')->user()->role == 'superadmin')
+                <a href="{{ route('admin.user.index') }}" class="submenu-item {{ request()->routeIs('admin.user.*') ? 'active' : '' }}">
+                    <i class="fas fa-user fa-fw me-2"></i>Manajemen User
+                </a>
+                @endif
+                <a href="{{ route('admin.asisten.index') }}" class="submenu-item {{ request()->routeIs('admin.asisten.*') ? 'active' : '' }}">
+                    <i class="fas fa-user-tie fa-fw me-2"></i>Manajemen Asisten
+                </a>
+                @if(Auth::guard('admin')->user()->role == 'superadmin')
+                <a href="{{ route('admin.admin.index') }}" class="submenu-item {{ request()->routeIs('admin.admin.*') ? 'active' : '' }}">
+                    <i class="fas fa-users-cog fa-fw me-2"></i>Manajemen Admin
+                </a>
+                @endif
+            </div>
+
+            <div class="dropdown-menu-item {{ request()->routeIs('admin.nomorsk.*') || request()->routeIs('admin.prosessk.*') ? 'active' : '' }}" onclick="toggleDropdown('skManagement')">
+                <span><i class="fas fa-file-alt fa-fw me-2"></i>Manajemen SK</span>
+                <i class="fas fa-chevron-right dropdown-arrow" id="skManagement-arrow"></i>
+            </div>
+            <div class="submenu {{ request()->routeIs('admin.nomorsk.*') || request()->routeIs('admin.prosessk.*') ? 'show' : '' }}" id="skManagement-submenu">
+                <a href="{{ route('admin.nomorsk.index') }}" class="submenu-item {{ request()->routeIs('admin.nomorsk.*') ? 'active' : '' }}">
+                    <i class="fas fa-hashtag fa-fw me-2"></i>Manajemen Nomor SK
+                </a>
+                <a href="{{ route('admin.prosessk.index') }}" class="submenu-item {{ request()->routeIs('admin.prosessk.*') ? 'active' : '' }}">
+                    <i class="fas fa-cogs fa-fw me-2"></i>Manajemen Proses SK
+                </a>
+            </div>
+
+            <div class="dropdown-menu-item {{ request()->routeIs('admin.nomorperbup.*') || request()->routeIs('admin.prosesperbup.*') ? 'active' : '' }}" onclick="toggleDropdown('perbupManagement')">
+                <span><i class="fas fa-file-contract fa-fw me-2"></i>Manajemen Perbup</span>
+                <i class="fas fa-chevron-right dropdown-arrow" id="perbupManagement-arrow"></i>
+            </div>
+            <div class="submenu {{ request()->routeIs('admin.nomorperbup.*') || request()->routeIs('admin.prosesperbup.*') ? 'show' : '' }}" id="perbupManagement-submenu">
+                <a href="{{ route('admin.nomorperbup.index') }}" class="submenu-item {{ request()->routeIs('admin.nomorperbup.*') ? 'active' : '' }}">
+                    <i class="fas fa-hashtag fa-fw me-2"></i>Manajemen Nomor Perbup
+                </a>
+                <a href="{{ route('admin.prosesperbup.index') }}" class="submenu-item {{ request()->routeIs('admin.prosesperbup.*') ? 'active' : '' }}">
+                    <i class="fas fa-cogs fa-fw me-2"></i>Manajemen Proses Perbup
+                </a>
+            </div>
+
+            <a href="{{ route('admin.proseslain.index') }}" class="menu-item {{ request()->routeIs('admin.proseslain.*') ? 'active' : '' }}">
+                <i class="fas fa-file-signature fa-fw me-2"></i>SK Lainnya
+            </a>
+
+            <a href="{{ route('logout') }}" class="menu-item" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                <i class="fas fa-sign-out-alt fa-fw me-2"></i>Logout
+            </a>
+            <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                @csrf
+            </form>
+        </div>
         </div>
         <div id="page-content-wrapper">
             <main class="py-0">
