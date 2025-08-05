@@ -6,27 +6,31 @@ use App\Http\Controllers\Controller;
 use App\Models\ProsesSk;
 use App\Models\Opd;
 use App\Models\Asisten;
+use App\Models\NomorSk;
 use App\Models\NotaPengajuanSk; 
 use Illuminate\Http\Request;
 
 class ProsesSkController extends Controller
 {
-    // Ubah metode index menjadi seperti ini
     public function index(Request $request)
     {
         $search = $request->input('search');
 
-        $prosesSks = ProsesSk::with('opd')
+        $prosesSks = ProsesSk::with(['opd', 'nomorSk'])
             ->when($search, function ($query, $search) {
                 return $query->where('kodesk', 'like', "%{$search}%")
                              ->orWhere('judulsk', 'like', "%{$search}%")
+                             ->orWhere('nosk', 'like', "%{$search}%")
                              ->orWhereHas('opd', function ($q) use ($search) {
                                  $q->where('namaopd', 'like', "%{$search}%");
+                             })
+                             ->orWhereHas('nomorSk', function ($q) use ($search) {
+                                 $q->where('judulsk', 'like', "%{$search}%");
                              });
             })
             ->orderBy('tglmasuksk', 'desc')
             ->paginate(10)
-            ->appends(['search' => $search]); // Agar pencarian tetap ada saat pindah halaman
+            ->appends(['search' => $search]);
 
         return view('admin.prosessk.index', compact('prosesSks'));
     }
@@ -35,7 +39,10 @@ class ProsesSkController extends Controller
     {
         $opds = Opd::all();
         $asistens = Asisten::all();
-        return view('admin.prosessk.create', compact('opds', 'asistens'));
+        // Ambil semua nomor SK yang tersedia untuk dipilih
+        $nomorSks = NomorSk::orderBy('nosk', 'desc')->get();
+        
+        return view('admin.prosessk.create', compact('opds', 'asistens', 'nomorSks'));
     }
 
     public function store(Request $request)
@@ -46,6 +53,7 @@ class ProsesSkController extends Controller
             'judulsk' => 'required|string',
             'kodeopd' => 'required|string|exists:opds,kodeopd',
             'kodeass' => 'required|string|exists:asisten,kodeass',
+            'nosk' => 'nullable|exists:nomorsk,nosk', // Validasi nomor SK
         ]);
 
         $data = $request->all();
@@ -60,7 +68,10 @@ class ProsesSkController extends Controller
     {
         $opds = Opd::all();
         $asistens = Asisten::all();
-        return view('admin.prosessk.edit', compact('prosessk', 'opds', 'asistens'));
+        // Ambil semua nomor SK yang tersedia untuk dipilih
+        $nomorSks = NomorSk::orderBy('nosk', 'desc')->get();
+        
+        return view('admin.prosessk.edit', compact('prosessk', 'opds', 'asistens', 'nomorSks'));
     }
 
     public function update(Request $request, ProsesSk $prosessk)
@@ -71,6 +82,14 @@ class ProsesSkController extends Controller
             'kodeopd' => 'required|string|exists:opds,kodeopd',
             'kodeass' => 'required|string|exists:asisten,kodeass',
             'status' => 'required|in:Proses,Selesai',
+            'nosk' => 'nullable|exists:nomorsk,nosk', // Validasi nomor SK
+            // Tambahkan validasi untuk field lainnya
+            'jmlttdsk' => 'nullable|integer',
+            'tglnaikkabag' => 'nullable|date',
+            'tglnaikass' => 'nullable|date',
+            'tglturunsk' => 'nullable|date',
+            'ketprosessk' => 'nullable|string',
+            'nowa' => 'nullable|string',
         ]);
 
         $prosessk->update($request->all());

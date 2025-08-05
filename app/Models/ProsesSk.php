@@ -27,8 +27,17 @@ class ProsesSk extends Model
         'tglturunsk',
         'ketprosessk',
         'nowa',
-        'nosk',
+        'nosk', // Pastikan field ini ada di fillable
         'status',
+    ];
+
+    protected $dates = [
+        'tglmasuksk',
+        'tglnaikkabag',
+        'tglnaikass',
+        'tglturunsk',
+        'created_at',
+        'updated_at',
     ];
 
     /**
@@ -40,7 +49,15 @@ class ProsesSk extends Model
     }
 
     /**
-     * Relasi ke model NomorSk untuk mendapatkan status
+     * Relasi ke model Asisten
+     */
+    public function asisten()
+    {
+        return $this->belongsTo(Asisten::class, 'kodeass', 'kodeass');
+    }
+
+    /**
+     * Relasi ke model NomorSk untuk mendapatkan detail SK
      */
     public function nomorSk()
     {
@@ -53,5 +70,45 @@ class ProsesSk extends Model
     public function notaPengajuan()
     {
         return $this->hasOne(NotaPengajuanSk::class, 'kodesk', 'kodesk');
+    }
+
+    /**
+     * Accessor untuk mendapatkan status gabungan
+     */
+    public function getStatusGabunganAttribute()
+    {
+        $statusProses = $this->status ?? 'Proses';
+        $statusSk = $this->nomorSk ? $this->nomorSk->status : null;
+        
+        return [
+            'proses' => $statusProses,
+            'sk' => $statusSk
+        ];
+    }
+
+    /**
+     * Scope untuk filter berdasarkan tahun
+     */
+    public function scopeByYear($query, $year)
+    {
+        return $query->whereYear('tglmasuksk', $year);
+    }
+
+    /**
+     * Scope untuk pencarian
+     */
+    public function scopeSearch($query, $search)
+    {
+        return $query->where(function ($q) use ($search) {
+            $q->where('kodesk', 'like', "%{$search}%")
+              ->orWhere('judulsk', 'like', "%{$search}%")
+              ->orWhere('nosk', 'like', "%{$search}%")
+              ->orWhereHas('opd', function ($subQuery) use ($search) {
+                  $subQuery->where('namaopd', 'like', "%{$search}%");
+              })
+              ->orWhereHas('nomorSk', function ($subQuery) use ($search) {
+                  $subQuery->where('judulsk', 'like', "%{$search}%");
+              });
+        });
     }
 }

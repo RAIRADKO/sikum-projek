@@ -52,6 +52,15 @@
 
                 <div class="row mb-3">
                     <div class="col-md-2">
+                        <label class="form-label fw-bold">Status Proses</label>
+                    </div>
+                    <div class="col-md-10">
+                        <input type="text" class="form-control" value="{{ $prosesSk->status ?? 'Proses' }}" readonly style="background-color: #e9ecef;">
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-2">
                         <label class="form-label fw-bold">Jumlah Ttd</label>
                     </div>
                     <div class="col-md-10">
@@ -97,6 +106,15 @@
 
                 <div class="row mb-3">
                     <div class="col-md-2">
+                        <label class="form-label fw-bold">No. WhatsApp</label>
+                    </div>
+                    <div class="col-md-10">
+                        <input type="text" class="form-control" value="{{ $prosesSk->nowa ?? '' }}" readonly style="background-color: #e9ecef;">
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-2">
                         <label class="form-label fw-bold">Keterangan Proses SK</label>
                     </div>
                     <div class="col-md-10">
@@ -106,7 +124,6 @@
             </div>
 
             {{-- Data Penomoran SK Section --}}
-            @if($prosesSk->nomorSk)
             <div class="mb-4">
                 <h6 class="fw-bold mb-3">Data Penomoran SK</h6>
                 
@@ -115,10 +132,11 @@
                         <label class="form-label fw-bold">Nomor SK</label>
                     </div>
                     <div class="col-md-10">
-                        <input type="text" class="form-control" value="{{ $prosesSk->nosk }}" readonly style="background-color: #e9ecef;">
+                        <input type="text" class="form-control" value="{{ $prosesSk->nosk ?? 'Belum Ada Nomor' }}" readonly style="background-color: #e9ecef;">
                     </div>
                 </div>
 
+                @if($prosesSk->nomorSk)
                 <div class="row mb-3">
                     <div class="col-md-2">
                         <label class="form-label fw-bold">Tanggal SK</label>
@@ -127,19 +145,31 @@
                         <input type="text" class="form-control" value="{{ $prosesSk->nomorSk->tglsk ? \Carbon\Carbon::parse($prosesSk->nomorSk->tglsk)->format('d-m-Y') : '' }}" readonly style="background-color: #e9ecef;">
                     </div>
                 </div>
-            </div>
-            @endif
 
-            {{-- Data Pengambilan SK Section --}}
-            <div class="mb-4">
-                <h6 class="fw-bold mb-3">Data Pengambilan SK</h6>
-                
+                <div class="row mb-3">
+                    <div class="col-md-2">
+                        <label class="form-label fw-bold">Status SK</label>
+                    </div>
+                    <div class="col-md-10">
+                        <input type="text" class="form-control" value="{{ ucfirst($prosesSk->nomorSk->status ?? 'proses') }}" readonly style="background-color: #e9ecef;">
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-2">
+                        <label class="form-label fw-bold">Tanggal Turun SK</label>
+                    </div>
+                    <div class="col-md-10">
+                        <input type="text" class="form-control" value="{{ $prosesSk->nomorSk->tglturunsk ? \Carbon\Carbon::parse($prosesSk->nomorSk->tglturunsk)->format('d-m-Y') : '' }}" readonly style="background-color: #e9ecef;">
+                    </div>
+                </div>
+
                 <div class="row mb-3">
                     <div class="col-md-2">
                         <label class="form-label fw-bold">Tanggal Ambil SK</label>
                     </div>
                     <div class="col-md-10">
-                        <input type="text" class="form-control" value="" readonly style="background-color: #e9ecef;">
+                        <input type="text" class="form-control" value="{{ $prosesSk->nomorSk->tglambilsk ? \Carbon\Carbon::parse($prosesSk->nomorSk->tglambilsk)->format('d-m-Y') : '' }}" readonly style="background-color: #e9ecef;">
                     </div>
                 </div>
 
@@ -148,12 +178,39 @@
                         <label class="form-label fw-bold">Nama Pengambil SK</label>
                     </div>
                     <div class="col-md-10">
-                        <input type="text" class="form-control" value="" readonly style="background-color: #e9ecef;">
+                        <input type="text" class="form-control" value="{{ $prosesSk->nomorSk->namapengambilsk ?? '' }}" readonly style="background-color: #e9ecef;">
                     </div>
                 </div>
+
+                {{-- Informasi Peminjaman jika status bon --}}
+                @if($prosesSk->nomorSk->status == 'bon')
+                <div class="alert alert-info">
+                    <h6 class="fw-bold">Informasi Peminjaman SK</h6>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <strong>Nama Peminjam:</strong><br>
+                            {{ $prosesSk->nomorSk->namabon ?? '-' }}
+                        </div>
+                        <div class="col-md-4">
+                            <strong>Tanggal Pinjam:</strong><br>
+                            {{ $prosesSk->nomorSk->tglbon ? \Carbon\Carbon::parse($prosesSk->nomorSk->tglbon)->format('d-m-Y') : '-' }}
+                        </div>
+                        <div class="col-md-4">
+                            <strong>Alasan Pinjam:</strong><br>
+                            {{ $prosesSk->nomorSk->alasanbonsk ?? '-' }}
+                        </div>
+                    </div>
+                </div>
+                @endif
+
+                @else
+                <div class="alert alert-warning">
+                    <i class="bi bi-exclamation-triangle"></i> Nomor SK belum tersedia untuk proses ini.
+                </div>
+                @endif
             </div>
 
-            {{-- Tombol Keluar --}}
+            {{-- Tombol Aksi --}}
             <div class="text-start">
                 <a href="{{ url()->previous() }}" class="btn btn-danger">
                     <i class="bi bi-box-arrow-left"></i> Keluar
@@ -191,6 +248,10 @@ h6.fw-bold {
     color: #495057;
     border-bottom: 1px solid #dee2e6;
     padding-bottom: 0.5rem;
+}
+
+.alert {
+    margin-top: 1rem;
 }
 </style>
 @endsection

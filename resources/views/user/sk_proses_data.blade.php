@@ -31,40 +31,75 @@
                             <th scope="col">Tgl Masuk</th>
                             <th scope="col">Judul SK</th>
                             <th scope="col">OPD/Dinas</th>
-                            <th scope="col">Status</th>
                             <th scope="col">No. SK</th>
+                            <th scope="col">Status Proses</th>
+                            <th scope="col">Status SK</th>
                             <th scope="col">Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
                         @forelse ($prosesSkData as $sk)
                         <tr>
-                            <td>{{ $sk->kodesk }}</td>
-                            {{-- Menggunakan Carbon untuk memformat tanggal --}}
+                            <td><strong>{{ $sk->kodesk }}</strong></td>
                             <td>{{ \Carbon\Carbon::parse($sk->tglmasuksk)->isoFormat('D MMMM YYYY') }}</td>
-                            <td>{{ $sk->judulsk }}</td>
+                            <td>
+                                <div style="max-width: 250px;">
+                                    {{ \Str::limit($sk->judulsk, 60) }}
+                                    @if(strlen($sk->judulsk) > 60)
+                                        <span class="text-muted" data-bs-toggle="tooltip" title="{{ $sk->judulsk }}">...</span>
+                                    @endif
+                                </div>
+                            </td>
                             <td>{{ $sk->opd->namaopd ?? 'N/A' }}</td>
                             <td>
-                                @php
-                                    // Ambil status dari relasi, jika tidak ada, anggap 'proses'
-                                    $status = optional($sk->nomorSk)->status ?? 'proses';
-                                    $badgeClass = ($status == 'selesai') ? 'bg-success' : 'bg-warning text-dark';
-                                @endphp
-                                <span class="badge {{ $badgeClass }}">{{ ucfirst($status) }}</span>
+                                @if($sk->nosk)
+                                    <span class="badge bg-info text-white">{{ $sk->nosk }}</span>
+                                    @if($sk->nomorSk && $sk->nomorSk->tglsk)
+                                        <br><small class="text-muted">{{ \Carbon\Carbon::parse($sk->nomorSk->tglsk)->format('d-m-Y') }}</small>
+                                    @endif
+                                @else
+                                    <span class="text-muted">Belum Ada</span>
+                                @endif
                             </td>
-                            <td>{{ $sk->nosk ?? '-' }}</td>
+                            <td>
+                                @php
+                                    $prosesStatus = $sk->status ?? 'Proses';
+                                    $badgeClass = ($prosesStatus == 'Selesai') ? 'bg-success' : 'bg-warning text-dark';
+                                @endphp
+                                <span class="badge {{ $badgeClass }}">{{ $prosesStatus }}</span>
+                            </td>
+                            <td>
+                                @if($sk->nomorSk)
+                                    @php
+                                        $skStatus = $sk->nomorSk->status ?? 'proses';
+                                        $skBadgeClass = 'bg-warning text-dark';
+                                        if ($skStatus == 'selesai') $skBadgeClass = 'bg-success';
+                                        if ($skStatus == 'bon') $skBadgeClass = 'bg-info text-dark';
+                                    @endphp
+                                    <span class="badge {{ $skBadgeClass }}">{{ ucfirst($skStatus) }}</span>
+                                @else
+                                    <span class="badge bg-secondary">Belum Ada SK</span>
+                                @endif
+                            </td>
                             <td>
                                 <div class="btn-group" role="group">
                                     {{-- Tombol Detail Proses SK --}}
                                     <a href="{{ route('sk-proses.detail', $sk->kodesk) }}" class="btn btn-sm btn-primary">
-                                        <i class="bi bi-eye"></i> Detail Proses
+                                        <i class="bi bi-eye"></i> Detail
                                     </a>
+                                    
+                                    {{-- Tombol Detail SK jika ada nomor SK --}}
+                                    @if($sk->nosk)
+                                        <a href="{{ route('sk.detail', $sk->nosk) }}" class="btn btn-sm btn-success">
+                                            <i class="bi bi-file-text"></i> Lihat SK
+                                        </a>
+                                    @endif
                                 </div>
                             </td>
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="7" class="text-center">
+                            <td colspan="8" class="text-center">
                                 <div class="alert alert-warning" role="alert">
                                     @if(request('search'))
                                         Data Proses SK dengan pencarian "{{ request('search') }}" untuk tahun {{ $year }} tidak ditemukan.
@@ -87,4 +122,16 @@
         </div>
     </div>
 </div>
+
+@push('scripts')
+<script>
+// Initialize Bootstrap tooltips
+document.addEventListener('DOMContentLoaded', function() {
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+});
+</script>
+@endpush
 @endsection
