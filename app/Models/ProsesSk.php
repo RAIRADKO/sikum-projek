@@ -28,7 +28,7 @@ class ProsesSk extends Model
         'ketprosessk',
         'nowa',
         'nosk',
-        'status', // <-- Tambahkan baris ini
+        'status',
     ];
 
     /**
@@ -45,5 +45,13 @@ class ProsesSk extends Model
     public function nomorSk()
     {
         return $this->belongsTo(NomorSk::class, 'nosk', 'nosk');
+    }
+
+    /**
+     * Relasi ke model NotaPengajuanSk
+     */
+    public function notaPengajuan()
+    {
+        return $this->hasOne(NotaPengajuanSk::class, 'kodesk', 'kodesk');
     }
 }
