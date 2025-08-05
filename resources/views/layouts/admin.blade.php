@@ -176,7 +176,7 @@
             </div>
 
             <div class="dropdown-menu-item {{ request()->routeIs('admin.nomorsk.*') || request()->routeIs('admin.prosessk.*') ? 'active' : '' }}" onclick="toggleDropdown('skManagement')">
-                <span><i class="fas fa-file-alt fa-fw me-2"></i>Manajemen SK</span>
+                <span><i class="fas fa-file-alt fa-fw me-2"></i>Modul SK</span>
                 <i class="fas fa-chevron-right dropdown-arrow" id="skManagement-arrow"></i>
             </div>
             <div class="submenu {{ request()->routeIs('admin.nomorsk.*') || request()->routeIs('admin.prosessk.*') ? 'show' : '' }}" id="skManagement-submenu">
@@ -189,7 +189,7 @@
             </div>
 
             <div class="dropdown-menu-item {{ request()->routeIs('admin.nomorperbup.*') || request()->routeIs('admin.prosesperbup.*') ? 'active' : '' }}" onclick="toggleDropdown('perbupManagement')">
-                <span><i class="fas fa-file-contract fa-fw me-2"></i>Manajemen Perbup</span>
+                <span><i class="fas fa-file-contract fa-fw me-2"></i>Modul Perbup</span>
                 <i class="fas fa-chevron-right dropdown-arrow" id="perbupManagement-arrow"></i>
             </div>
             <div class="submenu {{ request()->routeIs('admin.nomorperbup.*') || request()->routeIs('admin.prosesperbup.*') ? 'show' : '' }}" id="perbupManagement-submenu">
