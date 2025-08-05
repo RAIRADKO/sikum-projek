@@ -1,3 +1,4 @@
+{{-- resources/views/admin/prosessk/form.blade.php --}}
 @if ($errors->any())
     <div class="alert alert-danger">
         <ul class="mb-0">
@@ -31,18 +32,22 @@
         <select class="form-select @error('kodeopd') is-invalid @enderror" id="kodeopd" name="kodeopd">
             <option value="">Pilih OPD</option>
             @foreach($opds as $opd)
-                <option value="{{ $opd->kodeopd }}" @if(old('kodeopd', $prosessk->kodeopd ?? '') == $opd->kodeopd) selected @endif>{{ $opd->namaopd }}</option>
+                <option value="{{ $opd->kodeopd }}" 
+                        data-asisten="{{ $opd->kodeass }}" 
+                        data-nama-asisten="{{ $opd->asisten->namaass ?? '' }}"
+                        @if(old('kodeopd', $prosessk->kodeopd ?? '') == $opd->kodeopd) selected @endif>
+                    {{ $opd->namaopd }}
+                </option>
             @endforeach
         </select>
     </div>
     <div class="col-md-6 mb-3">
-        <label for="kodeass" class="form-label">Asisten <span class="text-danger">*</span></label>
-        <select class="form-select @error('kodeass') is-invalid @enderror" id="kodeass" name="kodeass">
-            <option value="">Pilih Asisten</option>
-            @foreach($asistens as $asisten)
-                <option value="{{ $asisten->kodeass }}" @if(old('kodeass', $prosessk->kodeass ?? '') == $asisten->kodeass) selected @endif>{{ $asisten->kodeass }} - {{ $asisten->namaass ?? '' }}</option>
-            @endforeach
-        </select>
+        <label for="asisten_display" class="form-label">Asisten</label>
+        <input type="text" class="form-control" id="asisten_display" readonly 
+               style="background-color: #e9ecef;" 
+               placeholder="Pilih OPD terlebih dahulu">
+        {{-- Hidden field untuk menyimpan kode asisten --}}
+        <input type="hidden" name="kodeass" id="kodeass" value="{{ old('kodeass', $prosessk->kodeass ?? '') }}">
     </div>
 </div>
 
@@ -51,7 +56,7 @@
     <label for="nosk" class="form-label">Nomor SK</label>
     <select class="form-select @error('nosk') is-invalid @enderror" id="nosk" name="nosk">
         <option value="">Pilih Nomor SK (Opsional)</option>
-        @foreach($nomorSks as $nomorSk)
+        @foreach($nomorSks->take(50) as $nomorSk)
             <option value="{{ $nomorSk->nosk }}" @if(old('nosk', $prosessk->nosk ?? '') == $nomorSk->nosk) selected @endif>
                 {{ $nomorSk->nosk }} - {{ \Str::limit($nomorSk->judulsk, 50) }}
             </option>
@@ -91,6 +96,11 @@
     </div>
 </div>
 
+<div class="mb-3">
+    <label for="ketprosessk" class="form-label">Keterangan Proses SK</label>
+    <textarea class="form-control @error('ketprosessk') is-invalid @enderror" id="ketprosessk" name="ketprosessk" rows="3" placeholder="Masukkan keterangan proses SK (opsional)">{{ old('ketprosessk', $prosessk->ketprosessk ?? '') }}</textarea>
+</div>
+
 {{-- Status (hanya untuk edit) --}}
 @isset($prosessk)
 <div class="mb-3">
@@ -101,7 +111,6 @@
     </select>
 </div>
 @endisset
-
 
 {{-- Bagian Nota Pengajuan (hanya tampil jika status Selesai) --}}
 @isset($prosessk)
@@ -163,11 +172,38 @@
 @push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    const opdSelect = document.getElementById('kodeopd');
+    const asistenDisplay = document.getElementById('asisten_display');
+    const asistenHidden = document.getElementById('kodeass');
     const statusEl = document.getElementById('status');
     const notaSection = document.getElementById('nota_pengajuan_section');
     
+    // Function untuk update display asisten
+    function updateAsistenDisplay() {
+        const selectedOption = opdSelect.options[opdSelect.selectedIndex];
+        
+        if (selectedOption.value && selectedOption.dataset.asisten) {
+            const kodeAsisten = selectedOption.dataset.asisten;
+            const namaAsisten = selectedOption.dataset.namaAsisten;
+            
+            asistenDisplay.value = `${kodeAsisten}${namaAsisten ? ' - ' + namaAsisten : ''}`;
+            asistenHidden.value = kodeAsisten;
+        } else {
+            asistenDisplay.value = '';
+            asistenHidden.value = '';
+        }
+    }
+    
+    // Set initial state berdasarkan data yang sudah ada
+    if (opdSelect.value) {
+        updateAsistenDisplay();
+    }
+    
+    // Event listener untuk perubahan OPD
+    opdSelect.addEventListener('change', updateAsistenDisplay);
+    
+    // Handle nota pengajuan section
     if (statusEl && notaSection) {
-        // Tampilkan section nota pengajuan jika status Selesai
         function toggleNotaSection() {
             if (statusEl.value === 'Selesai') {
                 notaSection.style.display = 'block';

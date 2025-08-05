@@ -37,12 +37,11 @@ class ProsesSkController extends Controller
 
     public function create()
     {
-        $opds = Opd::all();
-        $asistens = Asisten::all();
+        $opds = Opd::with('asisten')->orderBy('namaopd')->get();
         // Ambil semua nomor SK yang tersedia untuk dipilih
-        $nomorSks = NomorSk::orderBy('nosk', 'desc')->get();
+        $nomorSks = NomorSk::orderBy('tglsk', 'desc')->get();
         
-        return view('admin.prosessk.create', compact('opds', 'asistens', 'nomorSks'));
+        return view('admin.prosessk.create', compact('opds', 'nomorSks'));
     }
 
     public function store(Request $request)
@@ -53,8 +52,16 @@ class ProsesSkController extends Controller
             'judulsk' => 'required|string',
             'kodeopd' => 'required|string|exists:opds,kodeopd',
             'kodeass' => 'required|string|exists:asisten,kodeass',
-            'nosk' => 'nullable|exists:nomorsk,nosk', // Validasi nomor SK
+            'nosk' => 'nullable|exists:nomorsk,nosk',
         ]);
+
+        // Validasi tambahan: pastikan kodeass sesuai dengan OPD yang dipilih
+        $opd = Opd::where('kodeopd', $request->kodeopd)->first();
+        if ($opd && $opd->kodeass !== $request->kodeass) {
+            return back()->withErrors([
+                'kodeass' => 'Kode asisten tidak sesuai dengan OPD yang dipilih.'
+            ])->withInput();
+        }
 
         $data = $request->all();
         $data['status'] = 'Proses';
@@ -66,12 +73,11 @@ class ProsesSkController extends Controller
 
     public function edit(ProsesSk $prosessk)
     {
-        $opds = Opd::all();
-        $asistens = Asisten::all();
+        $opds = Opd::with('asisten')->orderBy('namaopd')->get();
         // Ambil semua nomor SK yang tersedia untuk dipilih
-        $nomorSks = NomorSk::orderBy('nosk', 'desc')->get();
+        $nomorSks = NomorSk::orderBy('tglsk', 'desc')->get();
         
-        return view('admin.prosessk.edit', compact('prosessk', 'opds', 'asistens', 'nomorSks'));
+        return view('admin.prosessk.edit', compact('prosessk', 'opds', 'nomorSks'));
     }
 
     public function update(Request $request, ProsesSk $prosessk)
@@ -82,7 +88,7 @@ class ProsesSkController extends Controller
             'kodeopd' => 'required|string|exists:opds,kodeopd',
             'kodeass' => 'required|string|exists:asisten,kodeass',
             'status' => 'required|in:Proses,Selesai',
-            'nosk' => 'nullable|exists:nomorsk,nosk', // Validasi nomor SK
+            'nosk' => 'nullable|exists:nomorsk,nosk',
             // Tambahkan validasi untuk field lainnya
             'jmlttdsk' => 'nullable|integer',
             'tglnaikkabag' => 'nullable|date',
@@ -91,6 +97,14 @@ class ProsesSkController extends Controller
             'ketprosessk' => 'nullable|string',
             'nowa' => 'nullable|string',
         ]);
+
+        // Validasi tambahan: pastikan kodeass sesuai dengan OPD yang dipilih
+        $opd = Opd::where('kodeopd', $request->kodeopd)->first();
+        if ($opd && $opd->kodeass !== $request->kodeass) {
+            return back()->withErrors([
+                'kodeass' => 'Kode asisten tidak sesuai dengan OPD yang dipilih.'
+            ])->withInput();
+        }
 
         $prosessk->update($request->all());
 
