@@ -33,7 +33,6 @@
                             <th scope="col">OPD/Dinas</th>
                             <th scope="col">No. SK</th>
                             <th scope="col">Status Proses</th>
-                            <th scope="col">Status SK</th>
                             <th scope="col">Aksi</th>
                         </tr>
                     </thead>
@@ -69,31 +68,11 @@
                                 <span class="badge {{ $badgeClass }}">{{ $prosesStatus }}</span>
                             </td>
                             <td>
-                                @if($sk->nomorSk)
-                                    @php
-                                        $skStatus = $sk->nomorSk->status ?? 'proses';
-                                        $skBadgeClass = 'bg-warning text-dark';
-                                        if ($skStatus == 'selesai') $skBadgeClass = 'bg-success';
-                                        if ($skStatus == 'bon') $skBadgeClass = 'bg-info text-dark';
-                                    @endphp
-                                    <span class="badge {{ $skBadgeClass }}">{{ ucfirst($skStatus) }}</span>
-                                @else
-                                    <span class="badge bg-secondary">Belum Ada SK</span>
-                                @endif
-                            </td>
-                            <td>
                                 <div class="btn-group" role="group">
                                     {{-- Tombol Detail Proses SK --}}
                                     <a href="{{ route('sk-proses.detail', $sk->kodesk) }}" class="btn btn-sm btn-primary">
                                         <i class="bi bi-eye"></i> Detail
                                     </a>
-                                    
-                                    {{-- Tombol Detail SK jika ada nomor SK --}}
-                                    @if($sk->nosk)
-                                        <a href="{{ route('sk.detail', $sk->nosk) }}" class="btn btn-sm btn-success">
-                                            <i class="bi bi-file-text"></i> Lihat SK
-                                        </a>
-                                    @endif
                                 </div>
                             </td>
                         </tr>
