@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\NomorSk;
 use App\Models\ProsesSk;
+use App\Models\NotaPengajuanSk;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 
@@ -94,5 +95,19 @@ class SkController extends Controller
         $prosesSk = ProsesSk::with(['opd', 'nomorSk'])->findOrFail($kodesk);
         
         return view('user.sk_proses_detail', ['prosesSk' => $prosesSk]);
+    }
+
+    /**
+     * Menampilkan halaman Nota Pengajuan SK
+     *
+     * @param  string  $kodesk
+     * @return \Illuminate\View\View
+     */
+    public function notaPengajuan($kodesk)
+    {
+        $prosesSk = ProsesSk::with(['opd', 'nomorSk', 'notaPengajuan'])->findOrFail($kodesk);
+        $notaPengajuan = $prosesSk->notaPengajuan;
+        
+        return view('user.nota_pengajuan', compact('prosesSk', 'notaPengajuan'));
     }
 }

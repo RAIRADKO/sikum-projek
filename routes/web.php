@@ -49,17 +49,22 @@ Route::middleware('auth')->group(function () {
     Route::get('/sk', [SkController::class, 'index'])->name('sk');
     Route::get('/sk/{year}', [SkController::class, 'showByYear'])->name('sk.year');
     Route::get('/sk/detail/{nomorsk}', [SkController::class, 'show'])->name('sk.detail');
-    
+
     // SK Proses Routes
     Route::get('/sk-proses', [SkController::class, 'prosesIndex'])->name('sk-proses');
     Route::get('/sk-proses/{year}', [SkController::class, 'prosesShowByYear'])->name('sk-proses.year');
     Route::get('/sk-proses/detail/{kodesk}', [SkController::class, 'prosesShow'])->name('sk-proses.detail');
 
+    // Route untuk Nota Pengajuan SK (untuk user)
+    Route::get('/sk-proses/nota-pengajuan/{kodesk}', [App\Http\Controllers\SkController::class, 'notaPengajuan'])
+        ->name('sk-proses.nota-pengajuan')
+        ->middleware('auth');
+
     // Perbup Routes
     Route::get('/perbup', [PerbupController::class, 'index'])->name('perbup');
     Route::get('/perbup/{year}', [PerbupController::class, 'showByYear'])->name('perbup.year');
     Route::get('/perbup/detail/{nomorperbup}', [PerbupController::class, 'show'])->name('perbup.detail');
-    
+
     // Perbup Proses Routes
     Route::get('/perbup-proses', [PerbupController::class, 'prosesIndex'])->name('perbup-proses');
     Route::get('/perbup-proses/{year}', [PerbupController::class, 'prosesShowByYear'])->name('perbup-proses.year');

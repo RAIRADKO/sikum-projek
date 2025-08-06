@@ -73,6 +73,13 @@
                                     <a href="{{ route('sk-proses.detail', $sk->kodesk) }}" class="btn btn-sm btn-primary">
                                         <i class="bi bi-eye"></i> Detail
                                     </a>
+                                    
+                                    {{-- Tombol Nota Pengajuan - hanya tampil jika status Selesai --}}
+                                    @if($sk->status === 'Selesai')
+                                        <a href="{{ route('sk-proses.nota-pengajuan', $sk->kodesk) }}" class="btn btn-sm btn-success">
+                                            <i class="bi bi-file-text"></i> Nota
+                                        </a>
+                                    @endif
                                 </div>
                             </td>
                         </tr>
