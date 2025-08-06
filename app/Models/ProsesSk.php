@@ -27,7 +27,7 @@ class ProsesSk extends Model
         'tglturunsk',
         'ketprosessk',
         'nowa',
-        'nosk', // Pastikan field ini ada di fillable
+        'nosk',
         'status',
     ];
 
@@ -87,6 +87,38 @@ class ProsesSk extends Model
     }
 
     /**
+     * Accessor untuk mendapatkan nama OPD
+     */
+    public function getNamaOpdAttribute()
+    {
+        return $this->opd ? $this->opd->namaopd : $this->kodeopd;
+    }
+
+    /**
+     * Accessor untuk mendapatkan nama asisten
+     */
+    public function getNamaAsistenAttribute()
+    {
+        return $this->asisten ? $this->asisten->namaass : $this->kodeass;
+    }
+
+    /**
+     * Accessor untuk format tanggal masuk
+     */
+    public function getTanggalMasukFormatAttribute()
+    {
+        return $this->tglmasuksk ? $this->tglmasuksk->format('d/m/Y') : '-';
+    }
+
+    /**
+     * Accessor untuk format jumlah tanda tangan
+     */
+    public function getJumlahTandaTanganFormatAttribute()
+    {
+        return $this->jmlttdsk ? $this->jmlttdsk . ' kali' : '1 kali';
+    }
+
+    /**
      * Scope untuk filter berdasarkan tahun
      */
     public function scopeByYear($query, $year)
@@ -110,5 +142,41 @@ class ProsesSk extends Model
                   $subQuery->where('judulsk', 'like', "%{$search}%");
               });
         });
+    }
+
+    /**
+     * Scope untuk status
+     */
+    public function scopeByStatus($query, $status)
+    {
+        return $query->where('status', $status);
+    }
+
+    /**
+     * Method untuk mendapatkan atau membuat nota pengajuan
+     */
+    public function getOrCreateNotaPengajuan()
+    {
+        if (!$this->notaPengajuan) {
+            return NotaPengajuanSk::createDefault($this->kodesk, $this);
+        }
+        
+        return $this->notaPengajuan;
+    }
+
+    /**
+     * Method untuk mengecek apakah SK sudah selesai
+     */
+    public function isSelesai()
+    {
+        return $this->status === 'Selesai';
+    }
+
+    /**
+     * Method untuk mengecek apakah memiliki nomor SK
+     */
+    public function hasNomorSk()
+    {
+        return !is_null($this->nosk) && $this->nomorSk;
     }
 }
