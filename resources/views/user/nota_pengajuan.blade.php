@@ -55,6 +55,16 @@
         margin-bottom: 25px;
         color: #1976d2;
     }
+    .btn-add-row {
+        padding: 4px 8px;
+        font-size: 12px;
+        margin-left: 5px;
+    }
+    .btn-remove-row {
+        padding: 2px 6px;
+        font-size: 10px;
+        margin-left: 5px;
+    }
 </style>
 @endpush
 
@@ -114,29 +124,67 @@
                                     </td>
                                 </tr>
                                 
-                                <tr>
-                                    <td>Lewat</td>
-                                    <td>:</td>
-                                    <td width="7%">
-                                        <input name="lewat_nomor_1" type="text" class="form-control" value="1.">
-                                    </td>
-                                    <td>
-                                        <input name="lewat_1" type="text" class="form-control" 
-                                               value="Sekretaris Daerah Kab. Purworejo.">
-                                    </td>
-                                </tr>
-                                
-                                <tr>
-                                    <td></td>
-                                    <td></td>
-                                    <td>
-                                        <input name="lewat_nomor_2" type="text" class="form-control" value="2.">
-                                    </td>
-                                    <td>
-                                        <input name="lewat_2" type="text" class="form-control" 
-                                               value="{{ ($prosesSk->asisten->namaass ?? 'Asisten') }} Setda Kab. Purworejo.">
-                                    </td>
-                                </tr>
+                                <!-- Dynamic Lewat Rows -->
+                                @php
+                                    $lewatData = [];
+                                    if ($notaPengajuan && $notaPengajuan->lewat) {
+                                        $lewatLines = explode("\n", $notaPengajuan->lewat);
+                                        foreach ($lewatLines as $line) {
+                                            $line = trim($line);
+                                            if (!empty($line)) {
+                                                // Extract number and text (e.g., "1. Sekretaris..." -> ["1.", "Sekretaris..."])
+                                                if (preg_match('/^(\d+\.)\s*(.*)$/', $line, $matches)) {
+                                                    $lewatData[] = ['number' => $matches[1], 'text' => $matches[2]];
+                                                } else {
+                                                    $lewatData[] = ['number' => '', 'text' => $line];
+                                                }
+                                            }
+                                        }
+                                    }
+                                    
+                                    // Default values if no data
+                                    if (empty($lewatData)) {
+                                        $lewatData = [
+                                            ['number' => '1.', 'text' => 'Sekretaris Daerah Kab. Purworejo.'],
+                                            ['number' => '2.', 'text' => ($prosesSk->asisten->namaass ?? 'Asisten') . ' Setda Kab. Purworejo.']
+                                        ];
+                                    }
+                                @endphp
+
+                                <tbody id="lewat-rows">
+                                    @foreach($lewatData as $index => $lewat)
+                                    <tr class="lewat-row" data-index="{{ $index }}">
+                                        @if($index == 0)
+                                        <td rowspan="{{ count($lewatData) }}" style="vertical-align: top;">
+                                            Lewat
+                                            <button type="button" class="btn btn-success btn-add-row btn-sm" onclick="addLewatRow()">
+                                                <i class="fas fa-plus"></i>
+                                            </button>
+                                        </td>
+                                        <td style="vertical-align: top;">:</td>
+                                        @else
+                                        <td></td>
+                                        <td></td>
+                                        @endif
+                                        <td width="7%">
+                                            <input name="lewat_nomor_{{ $index + 1 }}" type="text" class="form-control" 
+                                                   value="{{ $lewat['number'] }}">
+                                        </td>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <input name="lewat_{{ $index + 1 }}" type="text" class="form-control" 
+                                                       value="{{ $lewat['text'] }}">
+                                                @if($index > 0)
+                                                <button type="button" class="btn btn-danger btn-remove-row btn-sm" 
+                                                        onclick="removeLewatRow({{ $index }})">
+                                                    <i class="fas fa-times"></i>
+                                                </button>
+                                                @endif
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    @endforeach
+                                </tbody>
                                 
                                 <tr>
                                     <td>Dari</td>
@@ -176,38 +224,67 @@
                                     </td>
                                 </tr>
                                 
-                                <tr>
-                                    <td rowspan="3" style="vertical-align: top;">Lain-lain</td>
-                                    <td style="vertical-align: top;">:</td>
-                                    <td>
-                                        <input name="lain_prefix_1" type="text" class="form-control" value="-">
-                                    </td>
-                                    <td>
-                                        <input name="lain_1" type="text" class="form-control" 
-                                               value="Materi dari {{ $prosesSk->opd->namaopd ?? $prosesSk->kodeopd }} Kab. Purworejo.">
-                                    </td>
-                                </tr>
-                                
-                                <tr>
-                                    <td></td>
-                                    <td>
-                                        <input name="lain_prefix_2" type="text" class="form-control" value="-">
-                                    </td>
-                                    <td>
-                                        <input name="lain_2" type="text" class="form-control" 
-                                               value="Tata Naskah telah mendapatkan koreksi dan revisi dari Bagian Hukum Setda Kab. Purworejo.">
-                                    </td>
-                                </tr>
-                                
-                                <tr>
-                                    <td></td>
-                                    <td>
-                                        <input name="lain_prefix_3" type="text" class="form-control" value="">
-                                    </td>
-                                    <td>
-                                        <input name="lain_3" type="text" class="form-control" value="">
-                                    </td>
-                                </tr>
+                                <!-- Dynamic Lain-lain Rows -->
+                                @php
+                                    $lainData = [];
+                                    if ($notaPengajuan && $notaPengajuan->lain_lain) {
+                                        $lainLines = explode("\n", $notaPengajuan->lain_lain);
+                                        foreach ($lainLines as $line) {
+                                            $line = trim($line);
+                                            if (!empty($line)) {
+                                                // Extract prefix and text (e.g., "- Materi dari..." -> ["-", "Materi dari..."])
+                                                if (preg_match('/^(-|\*|•|\d+\.)\s*(.*)$/', $line, $matches)) {
+                                                    $lainData[] = ['prefix' => $matches[1], 'text' => $matches[2]];
+                                                } else {
+                                                    $lainData[] = ['prefix' => '-', 'text' => $line];
+                                                }
+                                            }
+                                        }
+                                    }
+                                    
+                                    // Default values if no data
+                                    if (empty($lainData)) {
+                                        $lainData = [
+                                            ['prefix' => '-', 'text' => 'Materi dari ' . ($prosesSk->opd->namaopd ?? $prosesSk->kodeopd) . ' Kab. Purworejo.'],
+                                            ['prefix' => '-', 'text' => 'Tata Naskah telah mendapatkan koreksi dan revisi dari Bagian Hukum Setda Kab. Purworejo.']
+                                        ];
+                                    }
+                                @endphp
+
+                                <tbody id="lain-rows">
+                                    @foreach($lainData as $index => $lain)
+                                    <tr class="lain-row" data-index="{{ $index }}">
+                                        @if($index == 0)
+                                        <td rowspan="{{ count($lainData) }}" style="vertical-align: top;">
+                                            Lain-lain
+                                            <button type="button" class="btn btn-success btn-add-row btn-sm" onclick="addLainRow()">
+                                                <i class="fas fa-plus"></i>
+                                            </button>
+                                        </td>
+                                        <td style="vertical-align: top;">:</td>
+                                        @else
+                                        <td></td>
+                                        <td></td>
+                                        @endif
+                                        <td>
+                                            <input name="lain_prefix_{{ $index + 1 }}" type="text" class="form-control" 
+                                                   value="{{ $lain['prefix'] }}">
+                                        </td>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <input name="lain_{{ $index + 1 }}" type="text" class="form-control" 
+                                                       value="{{ $lain['text'] }}">
+                                                @if($index > 0)
+                                                <button type="button" class="btn btn-danger btn-remove-row btn-sm" 
+                                                        onclick="removeLainRow({{ $index }})">
+                                                    <i class="fas fa-times"></i>
+                                                </button>
+                                                @endif
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    @endforeach
+                                </tbody>
                                 
                                 <tr>
                                     <td></td>
@@ -291,11 +368,203 @@
 
 @push('scripts')
 <script>
+let lewatCount = {{ count($lewatData) }};
+let lainCount = {{ count($lainData) }};
+
+function addLewatRow() {
+    lewatCount++;
+    const tbody = document.getElementById('lewat-rows');
+    
+    // Update rowspan of first cell
+    const firstCell = tbody.querySelector('tr:first-child td:first-child');
+    firstCell.setAttribute('rowspan', lewatCount);
+    
+    // Create new row
+    const newRow = document.createElement('tr');
+    newRow.className = 'lewat-row';
+    newRow.setAttribute('data-index', lewatCount - 1);
+    
+    newRow.innerHTML = `
+        <td></td>
+        <td></td>
+        <td width="7%">
+            <input name="lewat_nomor_${lewatCount}" type="text" class="form-control" value="${lewatCount}.">
+        </td>
+        <td>
+            <div class="d-flex align-items-center">
+                <input name="lewat_${lewatCount}" type="text" class="form-control" value="">
+                <button type="button" class="btn btn-danger btn-remove-row btn-sm" onclick="removeLewatRow(${lewatCount - 1})">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        </td>
+    `;
+    
+    tbody.appendChild(newRow);
+}
+
+function removeLewatRow(index) {
+    const tbody = document.getElementById('lewat-rows');
+    const rows = tbody.querySelectorAll('.lewat-row');
+    
+    if (rows.length <= 1) {
+        alert('Minimal harus ada satu baris "Lewat"');
+        return;
+    }
+    
+    // Remove the row
+    const rowToRemove = tbody.querySelector(`[data-index="${index}"]`);
+    if (rowToRemove) {
+        rowToRemove.remove();
+        lewatCount--;
+        
+        // Update rowspan
+        const firstCell = tbody.querySelector('tr:first-child td:first-child');
+        firstCell.setAttribute('rowspan', lewatCount);
+        
+        // Reindex remaining rows
+        reindexLewatRows();
+    }
+}
+
+function reindexLewatRows() {
+    const tbody = document.getElementById('lewat-rows');
+    const rows = tbody.querySelectorAll('.lewat-row');
+    
+    rows.forEach((row, index) => {
+        row.setAttribute('data-index', index);
+        const numberInput = row.querySelector(`input[name^="lewat_nomor_"]`);
+        const textInput = row.querySelector(`input[name^="lewat_"]`);
+        
+        if (numberInput) {
+            numberInput.name = `lewat_nomor_${index + 1}`;
+            if (numberInput.value.match(/^\d+\.$/)) {
+                numberInput.value = `${index + 1}.`;
+            }
+        }
+        
+        if (textInput) {
+            textInput.name = `lewat_${index + 1}`;
+        }
+        
+        // Update remove button onclick
+        const removeBtn = row.querySelector('.btn-remove-row');
+        if (removeBtn) {
+            removeBtn.setAttribute('onclick', `removeLewatRow(${index})`);
+        }
+    });
+}
+
+function addLainRow() {
+    lainCount++;
+    const tbody = document.getElementById('lain-rows');
+    
+    // Update rowspan of first cell
+    const firstCell = tbody.querySelector('tr:first-child td:first-child');
+    firstCell.setAttribute('rowspan', lainCount);
+    
+    // Create new row
+    const newRow = document.createElement('tr');
+    newRow.className = 'lain-row';
+    newRow.setAttribute('data-index', lainCount - 1);
+    
+    newRow.innerHTML = `
+        <td></td>
+        <td></td>
+        <td>
+            <input name="lain_prefix_${lainCount}" type="text" class="form-control" value="-">
+        </td>
+        <td>
+            <div class="d-flex align-items-center">
+                <input name="lain_${lainCount}" type="text" class="form-control" value="">
+                <button type="button" class="btn btn-danger btn-remove-row btn-sm" onclick="removeLainRow(${lainCount - 1})">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        </td>
+    `;
+    
+    tbody.appendChild(newRow);
+}
+
+function removeLainRow(index) {
+    const tbody = document.getElementById('lain-rows');
+    const rows = tbody.querySelectorAll('.lain-row');
+    
+    if (rows.length <= 1) {
+        alert('Minimal harus ada satu baris "Lain-lain"');
+        return;
+    }
+    
+    // Remove the row
+    const rowToRemove = tbody.querySelector(`[data-index="${index}"]`);
+    if (rowToRemove) {
+        rowToRemove.remove();
+        lainCount--;
+        
+        // Update rowspan
+        const firstCell = tbody.querySelector('tr:first-child td:first-child');
+        firstCell.setAttribute('rowspan', lainCount);
+        
+        // Reindex remaining rows
+        reindexLainRows();
+    }
+}
+
+function reindexLainRows() {
+    const tbody = document.getElementById('lain-rows');
+    const rows = tbody.querySelectorAll('.lain-row');
+    
+    rows.forEach((row, index) => {
+        row.setAttribute('data-index', index);
+        const prefixInput = row.querySelector(`input[name^="lain_prefix_"]`);
+        const textInput = row.querySelector(`input[name^="lain_"]`);
+        
+        if (prefixInput) {
+            prefixInput.name = `lain_prefix_${index + 1}`;
+        }
+        
+        if (textInput) {
+            textInput.name = `lain_${index + 1}`;
+        }
+        
+        // Update remove button onclick
+        const removeBtn = row.querySelector('.btn-remove-row');
+        if (removeBtn) {
+            removeBtn.setAttribute('onclick', `removeLainRow(${index})`);
+        }
+    });
+}
+
 function handlePrint(event) {
     event.preventDefault();
     
     // Collect form data
     const formData = new FormData(event.target);
+    
+    // Build lewat content dynamically
+    let lewatContent = '';
+    let lewatIndex = 1;
+    while (formData.get(`lewat_nomor_${lewatIndex}`)) {
+        const number = formData.get(`lewat_nomor_${lewatIndex}`) || '';
+        const text = formData.get(`lewat_${lewatIndex}`) || '';
+        if (number || text) {
+            lewatContent += `${number} ${text}<br/>`;
+        }
+        lewatIndex++;
+    }
+    
+    // Build lain-lain content dynamically
+    let lainContent = '';
+    let lainIndex = 1;
+    while (formData.get(`lain_prefix_${lainIndex}`)) {
+        const prefix = formData.get(`lain_prefix_${lainIndex}`) || '';
+        const text = formData.get(`lain_${lainIndex}`) || '';
+        if (prefix || text) {
+            lainContent += `${prefix} ${text}<br/>`;
+        }
+        lainIndex++;
+    }
     
     // Create print content
     let printContent = `
@@ -315,8 +584,7 @@ function handlePrint(event) {
                 <tr>
                     <td style="padding: 8px; font-weight: bold;">Lewat</td>
                     <td style="padding: 8px;">:</td>
-                    <td style="padding: 8px;">${formData.get('lewat_nomor_1')} ${formData.get('lewat_1')}<br/>
-                    ${formData.get('lewat_nomor_2')} ${formData.get('lewat_2')}</td>
+                    <td style="padding: 8px;">${lewatContent}</td>
                 </tr>
                 <tr>
                     <td style="padding: 8px; font-weight: bold;">Dari</td>
@@ -341,11 +609,7 @@ function handlePrint(event) {
                 <tr>
                     <td style="padding: 8px; font-weight: bold;">Lain-lain</td>
                     <td style="padding: 8px;">:</td>
-                    <td style="padding: 8px;">
-                        ${formData.get('lain_prefix_1')} ${formData.get('lain_1')}<br/>
-                        ${formData.get('lain_prefix_2')} ${formData.get('lain_2')}<br/>
-                        ${formData.get('lain_prefix_3') ? formData.get('lain_prefix_3') + ' ' + formData.get('lain_3') : ''}
-                    </td>
+                    <td style="padding: 8px;">${lainContent}</td>
                 </tr>
                 <tr>
                     <td colspan="3" style="padding: 20px; text-align: right;">
