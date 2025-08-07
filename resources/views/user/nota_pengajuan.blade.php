@@ -19,8 +19,8 @@
     .nota-card {
         background: #fff;
         border-radius: 12px;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-        padding: 30px 40px; /* Adjusted padding */
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        padding: 30px 40px;
         margin: 20px 0;
         border: none;
     }
@@ -59,7 +59,7 @@
     /* FORM TABLE & CELLS */
     .nota-table {
         border-collapse: separate;
-        border-spacing: 0 10px; /* Spacing between rows */
+        border-spacing: 0 10px;
     }
 
     .nota-table td {
@@ -92,12 +92,12 @@
         top: 50%;
         transform: translateY(-50%);
         color: #6c757d;
-        opacity: 0; /* Hidden by default */
+        opacity: 0;
         transition: opacity 0.3s;
     }
 
     .input-group-editable:hover .editable-indicator {
-        opacity: 0.7; /* Show on hover */
+        opacity: 0.7;
     }
     
     .form-control-custom {
@@ -144,7 +144,7 @@
     
     /* SIGNATURE SECTION */
     .signature-space {
-        height: 80px; /* Reduced height */
+        height: 80px;
         margin: 15px 0;
     }
     
@@ -163,31 +163,19 @@
         font-weight: 600;
         border-radius: 8px;
         min-width: 200px;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         transition: all 0.3s;
     }
     
     .btn-action:hover {
         transform: translateY(-2px);
-        box-shadow: 0 6px 10px rgba(0,0,0,0.15);
+        box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
     }
-
 </style>
 @endpush
 
 @section('content')
 <div class="container nota-container">
-    <div class="info-badge">
-        <div class="d-flex align-items-center">
-            <i class="fas fa-info-circle me-3 fs-5"></i>
-            <div>
-                <strong>Informasi:</strong> Form ini dapat diedit untuk keperluan preview dan cetak. 
-                Perubahan tidak akan disimpan ke database. 
-                Field "Perihal" dan "Tanda Tangan" tidak dapat diubah.
-            </div>
-        </div>
-    </div>
-
     <div class="card nota-card">
         <div class="nota-header">
             <h2>NOTA PENGAJUAN</h2>
@@ -215,7 +203,9 @@
                             <div class="input-group-editable">
                                 <input name="ditujukan_kepada" type="text" class="form-control form-control-custom" 
                                        value="{{ $notaPengajuan->ditujukan_kepada ?? 'Bupati Purworejo' }}">
-                                <span class="editable-indicator"><i class="fas fa-pencil-alt"></i></span>
+                                <span class="editable-indicator">
+                                    <i class="fas fa-pencil-alt"></i>
+                                </span>
                             </div>
                         </td>
                     </tr>
@@ -224,10 +214,12 @@
                         <td class="form-label-cell">Melalui</td>
                         <td class="colon-cell">:</td>
                         <td>
-                             <div class="input-group-editable">
+                            <div class="input-group-editable">
                                 <input name="melalui" type="text" class="form-control form-control-custom" 
                                        value="{{ $notaPengajuan->melalui ?? 'Wakil Bupati Purworejo' }}">
-                                <span class="editable-indicator"><i class="fas fa-pencil-alt"></i></span>
+                                <span class="editable-indicator">
+                                    <i class="fas fa-pencil-alt"></i>
+                                </span>
                             </div>
                         </td>
                     </tr>
@@ -254,16 +246,16 @@
                         }
                     @endphp
                     <tr>
-                        <td class="form-label-cell">
-                            Lewat
-                        </td>
+                        <td class="form-label-cell">Lewat</td>
                         <td class="colon-cell">:</td>
                         <td id="lewat-rows-container">
                             @foreach($lewatData as $index => $lewat)
-                            <div class="dynamic-row-item d-flex align-items-center" data-index="{{ $index }}">
-                                <input name="lewat_nomor_{{ $index }}" type="text" class="form-control form-control-custom" value="{{ $lewat['number'] }}" style="width: 60px;">
-                                <input name="lewat_text_{{ $index }}" type="text" class="form-control form-control-custom ms-2 flex-grow-1" value="{{ $lewat['text'] }}">
-                            </div>
+                                <div class="dynamic-row-item d-flex align-items-center" data-index="{{ $index }}">
+                                    <input name="lewat_nomor_{{ $index }}" type="text" class="form-control form-control-custom" 
+                                           value="{{ $lewat['number'] }}" style="width: 60px;">
+                                    <input name="lewat_text_{{ $index }}" type="text" class="form-control form-control-custom ms-2 flex-grow-1" 
+                                           value="{{ $lewat['text'] }}">
+                                </div>
                             @endforeach
                         </td>
                     </tr>
@@ -275,7 +267,9 @@
                             <div class="input-group-editable">
                                 <input name="dari" type="text" class="form-control form-control-custom" 
                                        value="{{ $notaPengajuan->dari ?? 'Bagian Hukum Setda Kab. Purworejo' }}">
-                                <span class="editable-indicator"><i class="fas fa-pencil-alt"></i></span>
+                                <span class="editable-indicator">
+                                    <i class="fas fa-pencil-alt"></i>
+                                </span>
                             </div>
                         </td>
                     </tr>
@@ -298,7 +292,9 @@
                             <div class="input-group-editable">
                                 <input name="mohon_untuk" type="text" class="form-control form-control-custom" 
                                        value="{{ $notaPengajuan->mohon_untuk ?? 'Tapak Asman' }}">
-                                <span class="editable-indicator"><i class="fas fa-pencil-alt"></i></span>
+                                <span class="editable-indicator">
+                                    <i class="fas fa-pencil-alt"></i>
+                                </span>
                             </div>
                         </td>
                     </tr>
@@ -334,16 +330,16 @@
                         }
                     @endphp
                     <tr>
-                        <td class="form-label-cell">
-                            Lain-lain
-                        </td>
+                        <td class="form-label-cell">Lain-lain</td>
                         <td class="colon-cell">:</td>
                         <td id="lain-rows-container">
                             @foreach($lainData as $index => $lain)
-                            <div class="dynamic-row-item d-flex align-items-center" data-index="{{ $index }}">
-                                <input name="lain_prefix_{{ $index }}" type="text" class="form-control form-control-custom" value="{{ $lain['prefix'] }}" style="width: 60px;">
-                                <input name="lain_text_{{ $index }}" type="text" class="form-control form-control-custom ms-2 flex-grow-1" value="{{ $lain['text'] }}">
-                            </div>
+                                <div class="dynamic-row-item d-flex align-items-center" data-index="{{ $index }}">
+                                    <input name="lain_prefix_{{ $index }}" type="text" class="form-control form-control-custom" 
+                                           value="{{ $lain['prefix'] }}" style="width: 60px;">
+                                    <input name="lain_text_{{ $index }}" type="text" class="form-control form-control-custom ms-2 flex-grow-1" 
+                                           value="{{ $lain['text'] }}">
+                                </div>
                             @endforeach
                         </td>
                     </tr>
@@ -353,36 +349,48 @@
                         <td></td>
                         <td class="text-center">
                             <div class="float-end w-75">
-                                 <div class="input-group-editable mt-3">
+                                <div class="input-group-editable mt-3">
                                     <input name="tempat_tanggal" type="text" class="form-control form-control-custom text-center" 
                                            value="{{ $notaPengajuan->tempat_tanggal ?? 'Purworejo, ' . date('j F Y') }}">
-                                    <span class="editable-indicator"><i class="fas fa-pencil-alt"></i></span>
+                                    <span class="editable-indicator">
+                                        <i class="fas fa-pencil-alt"></i>
+                                    </span>
                                 </div>
                                 <div class="input-group-editable mt-2">
                                     <input name="jabatan_penandatangan" type="text" class="form-control form-control-custom text-center" 
                                            value="{{ $notaPengajuan->jabatan_penandatangan ?? 'KEPALA BAGIAN HUKUM' }}">
-                                    <span class="editable-indicator"><i class="fas fa-pencil-alt"></i></span>
+                                    <span class="editable-indicator">
+                                        <i class="fas fa-pencil-alt"></i>
+                                    </span>
                                 </div>
                                 <div class="input-group-editable mt-2">
                                     <input name="instansi_penandatangan" type="text" class="form-control form-control-custom text-center" 
                                            value="{{ $notaPengajuan->instansi_penandatangan ?? 'SETDA KABUPATEN PURWOREJO' }}">
-                                    <span class="editable-indicator"><i class="fas fa-pencil-alt"></i></span>
+                                    <span class="editable-indicator">
+                                        <i class="fas fa-pencil-alt"></i>
+                                    </span>
                                 </div>
                                 <div class="signature-space"></div>
                                 <div class="input-group-editable">
                                     <input name="nama_penandatangan" type="text" class="form-control form-control-custom text-center fw-bold" 
                                            value="{{ $notaPengajuan->nama_penandatangan ?? 'PUGUH TRIHATMOKO, SH, MH' }}">
-                                     <span class="editable-indicator"><i class="fas fa-pencil-alt"></i></span>
+                                    <span class="editable-indicator">
+                                        <i class="fas fa-pencil-alt"></i>
+                                    </span>
                                 </div>
                                 <div class="input-group-editable mt-2">
                                     <input name="pangkat_penandatangan" type="text" class="form-control form-control-custom text-center" 
                                            value="{{ $notaPengajuan->pangkat_penandatangan ?? 'Pembina Tk I' }}">
-                                    <span class="editable-indicator"><i class="fas fa-pencil-alt"></i></span>
+                                    <span class="editable-indicator">
+                                        <i class="fas fa-pencil-alt"></i>
+                                    </span>
                                 </div>
                                 <div class="input-group-editable mt-2">
                                     <input name="nip_penandatangan" type="text" class="form-control form-control-custom text-center" 
                                            value="{{ $notaPengajuan->nip_penandatangan ?? 'NIP. 19750829 199903 1 005' }}">
-                                    <span class="editable-indicator"><i class="fas fa-pencil-alt"></i></span>
+                                    <span class="editable-indicator">
+                                        <i class="fas fa-pencil-alt"></i>
+                                    </span>
                                 </div>
                             </div>
                         </td>
