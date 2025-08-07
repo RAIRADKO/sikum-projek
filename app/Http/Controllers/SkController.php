@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\NomorSk;
 use App\Models\ProsesSk;
-use App\Models\NotaPengajuanSk;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 
@@ -123,7 +122,7 @@ class SkController extends Controller
 
     /**
      * Menampilkan halaman Nota Pengajuan SK.
-     * Jika nota belum ada, akan membuat instance baru dengan data default.
+     * Menggunakan data default seperti di file PHP asli.
      *
      * @param  string  $kodesk
      * @return \Illuminate\View\View
@@ -134,31 +133,9 @@ class SkController extends Controller
         $prosesSk = ProsesSk::with([
             'opd', 
             'asisten', 
-            'nomorSk', 
-            'notaPengajuan'
+            'nomorSk'
         ])->findOrFail($kodesk);
         
-        // Ambil atau buat data nota pengajuan
-        $notaPengajuan = $prosesSk->notaPengajuan;
-        
-        // Jika belum ada data nota pengajuan, buat instance baru dengan default values
-        if (!$notaPengajuan) {
-            $notaPengajuan = new NotaPengajuanSk([
-                'kodesk' => $kodesk,
-                'ditujukan_kepada' => 'Bupati Purworejo',
-                'melalui' => 'Wakil Bupati Purworejo',
-                'dari' => 'Bagian Hukum Setda Kab. Purworejo',
-                'perihal' => 'Keputusan Bupati Purworejo tentang',
-                'mohon_untuk' => 'Tapak Asman',
-                'tempat_tanggal' => 'Purworejo, ' . Carbon::now()->translatedFormat('j F Y'),
-                'jabatan_penandatangan' => 'KEPALA BAGIAN HUKUM',
-                'instansi_penandatangan' => 'SETDA KABUPATEN PURWOREJO',
-                'nama_penandatangan' => 'PUGUH TRIHATMOKO, SH, MH',
-                'pangkat_penandatangan' => 'Pembina Tk I',
-                'nip_penandatangan' => 'NIP. 19750829 199903 1 005',
-            ]);
-        }
-        
-        return view('user.nota_pengajuan', compact('prosesSk', 'notaPengajuan'));
+        return view('user.nota_pengajuan', compact('prosesSk'));
     }
 }

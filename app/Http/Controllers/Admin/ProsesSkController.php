@@ -7,7 +7,6 @@ use App\Models\ProsesSk;
 use App\Models\Opd;
 use App\Models\Asisten;
 use App\Models\NomorSk;
-use App\Models\NotaPengajuanSk; 
 use Illuminate\Http\Request;
 
 class ProsesSkController extends Controller
@@ -107,31 +106,6 @@ class ProsesSkController extends Controller
         }
 
         $prosessk->update($request->all());
-
-        if ($request->status == 'Selesai') {
-            $notaPengajuanData = $request->only([
-                'ditujukan_kepada',
-                'melalui',
-                'lewat',
-                'dari',
-                'perihal',
-                'mohon_untuk',
-                'tanda_tangan',
-                'lain_lain',
-                'tempat_tanggal',
-                'jabatan_penandatangan',
-                'instansi_penandatangan',
-                'nama_penandatangan',
-                'pangkat_penandatangan',
-                'nip_penandatangan',
-            ]);
-            $notaPengajuanData['kodesk'] = $prosessk->kodesk;
-
-            NotaPengajuanSk::updateOrCreate(
-                ['kodesk' => $prosessk->kodesk],
-                $notaPengajuanData
-            );
-        }
 
         return redirect()->route('admin.prosessk.index')->with('success', 'Proses SK berhasil diperbarui.');
     }

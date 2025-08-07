@@ -65,14 +65,6 @@ class ProsesSk extends Model
     }
 
     /**
-     * Relasi ke model NotaPengajuanSk
-     */
-    public function notaPengajuan()
-    {
-        return $this->hasOne(NotaPengajuanSk::class, 'kodesk', 'kodesk');
-    }
-
-    /**
      * Accessor untuk mendapatkan status gabungan
      */
     public function getStatusGabunganAttribute()
@@ -150,18 +142,6 @@ class ProsesSk extends Model
     public function scopeByStatus($query, $status)
     {
         return $query->where('status', $status);
-    }
-
-    /**
-     * Method untuk mendapatkan atau membuat nota pengajuan
-     */
-    public function getOrCreateNotaPengajuan()
-    {
-        if (!$this->notaPengajuan) {
-            return NotaPengajuanSk::createDefault($this->kodesk, $this);
-        }
-        
-        return $this->notaPengajuan;
     }
 
     /**
