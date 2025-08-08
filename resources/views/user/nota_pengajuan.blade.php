@@ -17,6 +17,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
+        /* CSS styles remain the same */
         body {
             background-color: #f8f9fa;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -125,6 +126,7 @@
                             <div class="table-responsive">
                                 <div class="col">
                                     <table class="table table-bordered">
+                                        {{-- ... (baris tabel lainnya tetap sama) ... --}}
                                         <tr>
                                             <td width="20%">Ditujukan Kepada</td>
                                             <td width="3%">:</td>
@@ -282,8 +284,9 @@
                                         </tr>
                                         <tr>
                                             <td>
-                                                <input name="tkode" type="text" id="tkode" size="5%" class="form-control readonly-input" value="SK-2025-08-001" readonly>
-                                                <input name="tno" type="text" id="tno" size="5%" class="form-control readonly-input" value="001" readonly>
+                                                {{-- PERBAIKAN: Menggunakan data dinamis dari $prosesSk --}}
+                                                <input name="tkode" type="text" id="tkode" size="5%" class="form-control readonly-input" value="{{ $prosesSk->kodesk ?? 'Belum ada kode' }}" readonly>
+                                                <input name="tno" type="text" id="tno" size="5%" class="form-control readonly-input" value="{{ $prosesSk->nosk ?? 'Belum ada nomor' }}" readonly>
                                             </td>
                                             <td></td>
                                             <td colspan="2"></td>
@@ -311,177 +314,222 @@
     </div>
 
     <script>
-        function handlePrint(event) {
-            event.preventDefault();
-            
-            // Mengambil semua data dari form
-            const formData = new FormData(event.target);
-            
-            // Membuat konten cetak dengan struktur sama seperti cetaknpsk.php
-            const printContent = `
-                <html>
-                <head>
-                    <title>Nota Pengajuan SK</title>
-                    <style>
-                        body {
-                            margin: 0;
-                            padding: 20px;
-                            font-family: 'Bookman Old Style', serif;
-                            font-size: 12pt;
-                        }
-                        
-                        @media print {
-                            @page { 
-                                margin: 2cm; 
-                                size: A4;
-                            }
-                            body { 
-                                font-size: 12pt; 
-                                line-height: 1.4;
-                            }
-                        }
-                        
-                        .kop-container {
-                            text-align: center;
-                            margin-bottom: 20px;
-                        }
-                        
-                        .kop-image {
-                            width: 100%;
-                            max-width: 800px;
-                            height: auto;
-                        }
-                        
-                        .print-header {
-                            text-align: center;
-                            text-transform: uppercase;
-                            margin: 20px 0 40px;
-                            font-size: 18pt;
-                            font-weight: bold;
-                        }
-                        
-                        .content-table {
-                            width: 100%;
-                            border-collapse: collapse;
-                            margin-bottom: 30px;
-                        }
-                        
-                        .content-table td {
-                            padding: 8px 0;
-                            vertical-align: top;
-                        }
-                        
-                        .content-table td:first-child {
-                            width: 25%;
-                        }
-                        
-                        .signature-area {
-                            float: right;
-                            width: 50%;
-                            text-align: center;
-                            margin-top: 100px;
-                        }
-                        
-                        .signature-name {
-                            font-weight: bold;
-                            text-decoration: underline;
-                            margin-top: 80px;
-                        }
-                        
-                        .document-code {
-                            margin-top: 20px;
-                            font-size: 10pt;
-                            color: #666;
-                        }
-                    </style>
-                </head>
-                <body>
-                    <div class="kop-container">
-                        <img src="{{ asset('img/kop.jpg') }}" alt="Kop Surat" class="kop-image">
-                    </div>
-                    
-                    <div class="print-header">NOTA PENGAJUAN</div>
-                    
-                    <table class="content-table">
-                        <tr>
-                            <td>Ditujukan Kepada</td>
-                            <td>:</td>
-                            <td>${formData.get('tkpd')}</td>
-                        </tr>
-                        <tr>
-                            <td>Melalui</td>
-                            <td>:</td>
-                            <td>${formData.get('tmll')}</td>
-                        </tr>
-                        <tr>
-                            <td>Lewat</td>
-                            <td>:</td>
-                            <td>
-                                ${formData.get('tnomor')} ${formData.get('tlwt')}<br>
-                                ${formData.get('tnomor2')} ${formData.get('tlwt2')}
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Dari</td>
-                            <td>:</td>
-                            <td>${formData.get('tdari')}</td>
-                        </tr>
-                        <tr>
-                            <td>Perihal</td>
-                            <td>:</td>
-                            <td>
-                                ${formData.get('tjudul2')}<br>
-                                ${formData.get('tjudul')}
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Mohon untuk</td>
-                            <td>:</td>
-                            <td>${formData.get('tmohon')}</td>
-                        </tr>
-                        <tr>
-                            <td>Tanda Tangan</td>
-                            <td>:</td>
-                            <td>${formData.get('tttd')}</td>
-                        </tr>
-                        <tr>
-                            <td>Lain-lain</td>
-                            <td>:</td>
-                            <td>
-                                ${formData.get('t')} ${formData.get('tlain')}<br>
-                                ${formData.get('t2')} ${formData.get('tlain2')}<br>
-                                ${formData.get('t3')} ${formData.get('tlain3')}
-                            </td>
-                        </tr>
-                    </table>
-                    
-                    <div class="signature-area">
-                        <div>${formData.get('ttgl')}</div>
-                        <div>${formData.get('tkabag')}</div>
-                        <div>${formData.get('tkabag2')}</div>
-                        <div class="signature-name">${formData.get('tkabag3')}</div>
-                        <div>${formData.get('tkabag4')}</div>
-                        <div>${formData.get('tnip')}</div>
-                    </div>
-                    
-                    <div class="document-code">
-                        Kode SK: ${formData.get('tkode')} | No SK: ${formData.get('tno') || 'Belum Ditentukan'}
-                    </div>
-                    
-                    <script>
-                        window.onload = function() {
-                            window.print();
-                        }
-                    <\/script>
-                </body>
-                </html>
-            `;
-            
-            // Membuka jendela baru untuk mencetak
-            const printWindow = window.open('', '_blank');
-            printWindow.document.write(printContent);
-            printWindow.document.close();
+function handlePrint(event) {
+    event.preventDefault();
+    const formData = new FormData(event.target);
+    
+    // Fungsi konversi bulan ke bahasa Inggris
+    function convertMonthToEnglish(dateString) {
+        const monthMap = {
+            'Januari': 'January',
+            'Februari': 'February',
+            'Maret': 'March',
+            'April': 'April',
+            'Mei': 'May',
+            'Juni': 'June',
+            'Juli': 'July',
+            'Agustus': 'August',
+            'September': 'September',
+            'Oktober': 'October',
+            'November': 'November',
+            'Desember': 'December'
+        };
+        
+        for (const [id, en] of Object.entries(monthMap)) {
+            if (dateString.includes(id)) {
+                return dateString.replace(id, en);
+            }
         }
+        return dateString;
+    }
+
+    const printContent = `
+        <html>
+        <head>
+            <title>Nota Pengajuan SK</title>
+            <style>
+                body {
+                    margin: 0;
+                    padding: 0;
+                    font-family: 'Bookman Old Style', serif;
+                    font-size: 12pt;
+                    line-height: 1.5;
+                }
+                
+                @media print {
+                    @page { 
+                        margin: 2.5cm 1.5cm 2cm; 
+                        size: A4;
+                    }
+                    body { 
+                        font-size: 12pt; 
+                        line-height: 1.5;
+                    }
+                }
+                
+                .header {
+                    text-align: center;
+                    margin-bottom: 20px;
+                }
+                
+                .header h1 {
+                    font-size: 14pt;
+                    font-weight: bold;
+                    margin: 0;
+                    text-transform: uppercase;
+                }
+                
+                .header h2 {
+                    font-size: 14pt;
+                    font-weight: bold;
+                    margin: 0;
+                    text-decoration: underline;
+                }
+                
+                .header p {
+                    margin: 0;
+                    font-size: 10pt;
+                }
+                
+                .judul-nota {
+                    text-align: center;
+                    font-weight: bold;
+                    text-transform: uppercase;
+                    font-size: 14pt;
+                    margin: 20px 0;
+                }
+                
+                .content {
+                    width: 100%;
+                    border-collapse: collapse;
+                }
+                
+                .content tr td {
+                    vertical-align: top;
+                    padding: 3px 0;
+                }
+                
+                .label {
+                    width: 25%;
+                }
+                
+                .titik-dua {
+                    width: 3%;
+                }
+                
+                .isi {
+                    width: 72%;
+                }
+                
+                .signature {
+                    margin-top: 60px;
+                    float: right;
+                    text-align: center;
+                    width: 50%;
+                }
+                
+                .signature-name {
+                    font-weight: bold;
+                    text-decoration: underline;
+                    margin-top: 80px;
+                }
+                
+                .document-code {
+                    position: absolute;
+                    bottom: 20px;
+                    right: 20px;
+                    font-size: 10pt;
+                }
+            </style>
+        </head>
+        <body>
+            <div class="header">
+                <img src="/img/kop.jpg" alt="Kop Surat" style="width: 100%; max-width: 800px; height: auto; margin-bottom: 20px;">
+            </div>
+            
+            <div class="judul-nota">NOTA DINAS</div>
+            
+            <table class="content">
+                <tr>
+                    <td class="label">Ditujukan kepada</td>
+                    <td class="titik-dua">:</td>
+                    <td class="isi">${formData.get('tkpd')}</td>
+                </tr>
+                <tr>
+                    <td class="label">Melalui</td>
+                    <td class="titik-dua">:</td>
+                    <td class="isi">${formData.get('tmll')}</td>
+                </tr>
+                <tr>
+                    <td class="label">Lewat</td>
+                    <td class="titik-dua">:</td>
+                    <td class="isi">
+                        ${formData.get('tnomor')} ${formData.get('tlwt')}<br>
+                        ${formData.get('tnomor2')} ${formData.get('tlwt2')}
+                    </td>
+                </tr>
+                <tr>
+                    <td class="label">Dari</td>
+                    <td class="titik-dua">:</td>
+                    <td class="isi">${formData.get('tdari')}</td>
+                </tr>
+                <tr>
+                    <td class="label">Perihal</td>
+                    <td class="titik-dua">:</td>
+                    <td class="isi">
+                        ${formData.get('tjudul2')}<br>
+                        ${formData.get('tjudul')}
+                    </td>
+                </tr>
+                <tr>
+                    <td class="label">Mohon untuk</td>
+                    <td class="titik-dua">:</td>
+                    <td class="isi">${formData.get('tmohon')}</td>
+                </tr>
+                <tr>
+                    <td class="label">Tanda Tangan</td>
+                    <td class="titik-dua">:</td>
+                    <td class="isi">${formData.get('tttd')}</td>
+                </tr>
+                <tr>
+                    <td class="label">Lain-lain</td>
+                    <td class="titik-dua">:</td>
+                    <td class="isi">
+                        ${formData.get('t')} ${formData.get('tlain')}<br>
+                        ${formData.get('t2')} ${formData.get('tlain2')}<br>
+                        ${formData.get('t3')} ${formData.get('tlain3')}
+                    </td>
+                </tr>
+            </table>
+            
+            <div class="signature">
+                <div>${convertMonthToEnglish(formData.get('ttgl'))}</div>
+                <div>${formData.get('tkabag')}</div>
+                <div>${formData.get('tkabag2')}</div>
+                <div class="signature-name">${formData.get('tkabag3')}</div>
+                <div>${formData.get('tkabag4')}</div>
+                <div>${formData.get('tnip')}</div>
+            </div>
+            
+            <div class="document-code">
+                ${formData.get('tkode')}/${formData.get('tno')}
+            </div>
+            
+            <script>
+                window.onload = function() {
+                    window.print();
+                }
+            <\/script>
+        </body>
+        </html>
+    `;
+    
+    const printWindow = window.open('', '_blank');
+    printWindow.document.write(printContent);
+    printWindow.document.close();
+}
+
+        // ... (JavaScript lainnya tetap sama) ...
 
         // Add some styling for better user experience
         document.addEventListener('DOMContentLoaded', function() {
