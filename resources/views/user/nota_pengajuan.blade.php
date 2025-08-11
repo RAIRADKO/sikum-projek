@@ -141,17 +141,17 @@
                                             <td></td>
                                             <td></td>
                                             <td>
-                                                <input name="tnomor2" type="text" id="tnomor2" class="form-control editable-input" value="2">
+                                                <input name="tnomor2" type="text" id="tnomor2" class="form-control editable-input" value="2.">
                                             </td>
                                             <td>
-                                                <input name="tlwt2" type="text" id="tlwt2" class="form-control editable-input" value="Asisten Perekonomian & Pembangunan Setda Kab.Purworejo.">
+                                                <input name="tlwt2" type="text" id="tlwt2" class="form-control editable-input" value="{{ $prosesSk->asisten ? $prosesSk->asisten->namaass . ' Setda Kab. Purworejo.' : 'Asisten Setda Kab. Purworejo.' }}">
                                             </td>
                                         </tr>
                                         <tr>
                                             <td>Dari</td>
                                             <td>:</td>
                                             <td colspan="2">
-                                                <input name="tdari" type="text" id="tdari" class="form-control editable-input" value="Bagian Hukum Setda Kab.Purworejo">
+                                                <input name="tdari" type="text" id="tdari" class="form-control editable-input" value="Bagian Hukum Setda Kab. Purworejo">
                                             </td>
                                         </tr>
                                         <tr>
@@ -159,7 +159,7 @@
                                             <td>:</td>
                                             <td colspan="2">
                                                 <input name="tjudul2" type="text" id="tjudul2" class="form-control readonly-input" value="Keputusan Bupati Purworejo tentang" readonly>
-                                                <input name="tjudul" type="text" id="tjudul" class="form-control readonly-input" value="Pengangkatan Wiyoto Harjono, S.T sebagai Dewan Pengawas Perusahaan Umum Daerah Air Minum Tirta Perwitasari Masa Jabatan Tahun 2025-2029" style="margin-top: 5px;" readonly>
+                                                <input name="tjudul" type="text" id="tjudul" class="form-control readonly-input" value="{{ $prosesSk->judulsk ?? 'Judul SK tidak tersedia' }}" style="margin-top: 5px;" readonly>
                                             </td>
                                         </tr>
                                         <tr>
@@ -173,7 +173,7 @@
                                             <td>Tanda Tangan</td>
                                             <td>:</td>
                                             <td colspan="2">
-                                                <input name="tttd" type="text" id="tttd" class="form-control readonly-input" value="3 (tiga) kali" readonly>
+                                                <input name="tttd" type="text" id="tttd" class="form-control readonly-input" value="{{ $prosesSk->jmlttdsk ? $prosesSk->jmlttdsk . ' kali' : '1 kali' }}" readonly>
                                             </td>
                                         </tr>
                                         <tr>
@@ -183,7 +183,7 @@
                                                 <input name="t" type="text" id="t" class="form-control editable-input" value="-">
                                             </td>
                                             <td>
-                                                <input name="tlain" type="text" id="tlain" class="form-control editable-input" value="Materi dari Bagian Perekonomian & SDA Setda Kab. Purworejo.">
+                                                <input name="tlain" type="text" id="tlain" class="form-control editable-input" value="Materi dari {{ $prosesSk->opd ? $prosesSk->opd->namaopd : 'OPD' }} Kab. Purworejo.">
                                             </td>
                                         </tr>
                                         <tr>
@@ -193,7 +193,7 @@
                                                 <input name="t2" type="text" id="t2" class="form-control editable-input" value="-">
                                             </td>
                                             <td>
-                                                <input name="tlain2" type="text" id="tlain2" class="form-control editable-input" value="Tata Naskah telah mendapatkan koreksi dan revisi dari Bagian Hukum Setda Kab.Purworejo.">
+                                                <input name="tlain2" type="text" id="tlain2" class="form-control editable-input" value="Tata Naskah telah mendapatkan koreksi dan revisi dari Bagian Hukum Setda Kab. Purworejo.">
                                             </td>
                                         </tr>
                                         <tr>
@@ -210,7 +210,7 @@
                                             <td></td>
                                             <td></td>
                                             <td colspan="2">
-                                                <input name="ttgl" type="text" id="ttgl" class="form-control editable-input" value="Purworejo, 8 August 2025">
+                                                <input name="ttgl" type="text" id="ttgl" class="form-control editable-input" value="Purworejo, {{ date('j F Y') }}">
                                             </td>
                                         </tr>
                                         <tr>
@@ -270,7 +270,7 @@
                                         </tr>
                                         <tr>
                                             <td>
-                                                <input name="tkode" type="text" id="tkode" size="5%" class="form-control readonly-input" value="SK0545/531" readonly>
+                                                <input name="tkode" type="text" id="tkode" size="5%" class="form-control readonly-input" value="{{ $prosesSk->kodesk }}" readonly>
                                             </td>
                                             <td></td>
                                             <td colspan="2"></td>
@@ -282,7 +282,7 @@
                                                 <button type="submit" class="btn btn-primary" name="btncetak">
                                                     <i class="fa fa-print"></i> Cetak
                                                 </button>
-                                                <a href="#" class="btn btn-danger">
+                                                <a href="{{ url()->previous() }}" class="btn btn-danger">
                                                     <i class="fa fa-reply"></i> Kembali
                                                 </a>
                                             </td>
