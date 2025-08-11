@@ -158,8 +158,8 @@
                                             <td>Perihal</td>
                                             <td>:</td>
                                             <td colspan="2">
-                                                <input name="tjudul2" type="text" id="tjudul2" class="form-control editable-input" value="Keputusan Bupati Purworejo tentang">
-                                                <input name="tjudul" type="text" id="tjudul" class="form-control editable-input" value="Pengangkatan Wiyoto Harjono, S.T sebagai Dewan Pengawas Perusahaan Umum Daerah Air Minum Tirta Perwitasari Masa Jabatan Tahun 2025-2029" style="margin-top: 5px;">
+                                                <input name="tjudul2" type="text" id="tjudul2" class="form-control readonly-input" value="Keputusan Bupati Purworejo tentang" readonly>
+                                                <input name="tjudul" type="text" id="tjudul" class="form-control readonly-input" value="Pengangkatan Wiyoto Harjono, S.T sebagai Dewan Pengawas Perusahaan Umum Daerah Air Minum Tirta Perwitasari Masa Jabatan Tahun 2025-2029" style="margin-top: 5px;" readonly>
                                             </td>
                                         </tr>
                                         <tr>
@@ -173,7 +173,7 @@
                                             <td>Tanda Tangan</td>
                                             <td>:</td>
                                             <td colspan="2">
-                                                <input name="tttd" type="text" id="tttd" class="form-control editable-input" value="3 (tiga) kali">
+                                                <input name="tttd" type="text" id="tttd" class="form-control readonly-input" value="3 (tiga) kali" readonly>
                                             </td>
                                         </tr>
                                         <tr>
