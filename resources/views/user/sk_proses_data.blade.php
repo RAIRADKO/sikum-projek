@@ -33,7 +33,7 @@
                             <th scope="col">OPD/Dinas</th>
                             <th scope="col">No. SK</th>
                             <th scope="col">Status Proses</th>
-                            <th scope="col">Aksi</th>
+                            <th scope="col" class="text-center" style="min-width: 140px;">Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -68,16 +68,24 @@
                                 <span class="badge {{ $badgeClass }}">{{ $prosesStatus }}</span>
                             </td>
                             <td>
-                                <div class="btn-group" role="group">
+                                <div class="d-flex justify-content-center gap-1">
                                     {{-- Tombol Detail Proses SK --}}
-                                    <a href="{{ route('sk-proses.detail', $sk->kodesk) }}" class="btn btn-sm btn-primary">
-                                        <i class="bi bi-eye"></i> Detail
+                                    <a href="{{ route('sk-proses.detail', $sk->kodesk) }}" 
+                                       class="btn btn-sm btn-outline-primary d-flex align-items-center" 
+                                       data-bs-toggle="tooltip" 
+                                       title="Lihat Detail">
+                                        <i class="bi bi-eye me-1"></i>
+                                        <span class="d-none d-md-inline">Detail</span>
                                     </a>
                                     
                                     {{-- Tombol Nota Pengajuan - hanya tampil jika status Selesai --}}
                                     @if($sk->status === 'Selesai')
-                                        <a href="{{ route('sk-proses.nota-pengajuan', $sk->kodesk) }}" class="btn btn-sm btn-success">
-                                            <i class="bi bi-file-text"></i> Nota
+                                        <a href="{{ route('sk-proses.nota-pengajuan', $sk->kodesk) }}" 
+                                           class="btn btn-sm btn-outline-success d-flex align-items-center" 
+                                           data-bs-toggle="tooltip" 
+                                           title="Download Nota Pengajuan">
+                                            <i class="bi bi-file-text me-1"></i>
+                                            <span class="d-none d-md-inline">Nota</span>
                                         </a>
                                     @endif
                                 </div>
@@ -85,10 +93,11 @@
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="8" class="text-center">
-                                <div class="alert alert-warning" role="alert">
+                            <td colspan="7" class="text-center">
+                                <div class="alert alert-warning mb-0" role="alert">
+                                    <i class="bi bi-exclamation-triangle me-2"></i>
                                     @if(request('search'))
-                                        Data Proses SK dengan pencarian "{{ request('search') }}" untuk tahun {{ $year }} tidak ditemukan.
+                                        Data Proses SK dengan pencarian "<strong>{{ request('search') }}</strong>" untuk tahun {{ $year }} tidak ditemukan.
                                     @else
                                         Data Proses SK untuk tahun {{ $year }} tidak ditemukan.
                                     @endif
@@ -101,13 +110,46 @@
             </div>
 
             {{-- Menampilkan link paginasi --}}
-            <div class="d-flex justify-content-center">
+            @if($prosesSkData->hasPages())
+            <div class="d-flex justify-content-center mt-4">
                 {{ $prosesSkData->appends(request()->query())->links() }}
             </div>
+            @endif
 
         </div>
     </div>
 </div>
+
+@push('styles')
+<style>
+/* Custom styles untuk responsive button */
+@media (max-width: 768px) {
+    .table-responsive .btn-sm {
+        padding: 0.25rem 0.4rem;
+        font-size: 0.75rem;
+    }
+    
+    .table-responsive .btn-sm i {
+        font-size: 0.8rem;
+    }
+}
+
+/* Hover effect untuk tombol aksi */
+.btn-outline-primary:hover,
+.btn-outline-success:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transition: all 0.2s ease-in-out;
+}
+
+/* Styling untuk gap di mobile */
+@media (max-width: 576px) {
+    .gap-1 {
+        gap: 0.25rem !important;
+    }
+}
+</style>
+@endpush
 
 @push('scripts')
 <script>

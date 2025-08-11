@@ -17,7 +17,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        /* CSS styles remain the same */
+        /* CSS styles untuk form */
         body {
             background-color: #f8f9fa;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -92,19 +92,6 @@
             cursor: not-allowed;
         }
         
-        .print-header {
-            text-align: center;
-            text-transform: uppercase;
-            margin-bottom: 40px;
-            font-size: 16pt;
-            font-weight: bold;
-        }
-        
-        .signature-area {
-            margin-top: 80px;
-            text-align: center;
-        }
-        
         .kop-image {
             width: 100%;
             max-width: 800px;
@@ -126,7 +113,6 @@
                             <div class="table-responsive">
                                 <div class="col">
                                     <table class="table table-bordered">
-                                        {{-- ... (baris tabel lainnya tetap sama) ... --}}
                                         <tr>
                                             <td width="20%">Ditujukan Kepada</td>
                                             <td width="3%">:</td>
@@ -155,10 +141,10 @@
                                             <td></td>
                                             <td></td>
                                             <td>
-                                                <input name="tnomor2" type="text" id="tnomor2" class="form-control editable-input" value="2.">
+                                                <input name="tnomor2" type="text" id="tnomor2" class="form-control editable-input" value="2">
                                             </td>
                                             <td>
-                                                <input name="tlwt2" type="text" id="tlwt2" class="form-control editable-input" value="Asisten Setda Kab.Purworejo.">
+                                                <input name="tlwt2" type="text" id="tlwt2" class="form-control editable-input" value="Asisten Perekonomian & Pembangunan Setda Kab.Purworejo.">
                                             </td>
                                         </tr>
                                         <tr>
@@ -173,7 +159,7 @@
                                             <td>:</td>
                                             <td colspan="2">
                                                 <input name="tjudul2" type="text" id="tjudul2" class="form-control editable-input" value="Keputusan Bupati Purworejo tentang">
-                                                <input name="tjudul" type="text" id="tjudul" class="form-control readonly-input" value="Pengangkatan Pegawai Negeri Sipil" readonly>
+                                                <input name="tjudul" type="text" id="tjudul" class="form-control editable-input" value="Pengangkatan Wiyoto Harjono, S.T sebagai Dewan Pengawas Perusahaan Umum Daerah Air Minum Tirta Perwitasari Masa Jabatan Tahun 2025-2029" style="margin-top: 5px;">
                                             </td>
                                         </tr>
                                         <tr>
@@ -187,7 +173,7 @@
                                             <td>Tanda Tangan</td>
                                             <td>:</td>
                                             <td colspan="2">
-                                                <input name="tttd" type="text" id="tttd" class="form-control readonly-input" value="1 kali" readonly>
+                                                <input name="tttd" type="text" id="tttd" class="form-control editable-input" value="3 (tiga) kali">
                                             </td>
                                         </tr>
                                         <tr>
@@ -197,7 +183,7 @@
                                                 <input name="t" type="text" id="t" class="form-control editable-input" value="-">
                                             </td>
                                             <td>
-                                                <input name="tlain" type="text" id="tlain" class="form-control editable-input" value="Materi dari Dinas Pendidikan Kab. Purworejo.">
+                                                <input name="tlain" type="text" id="tlain" class="form-control editable-input" value="Materi dari Bagian Perekonomian & SDA Setda Kab. Purworejo.">
                                             </td>
                                         </tr>
                                         <tr>
@@ -224,13 +210,13 @@
                                             <td></td>
                                             <td></td>
                                             <td colspan="2">
-                                                <input name="ttgl" type="text" id="ttgl" class="form-control editable-input" value="Purworejo, 8 Agustus 2025">
+                                                <input name="ttgl" type="text" id="ttgl" class="form-control editable-input" value="Purworejo, 8 August 2025">
                                             </td>
                                         </tr>
                                         <tr>
                                             <td></td>
                                             <td></td>
-                                            <td></td>
+                                            <td colspan="2"></td>
                                         </tr>
                                         <tr>
                                             <td></td>
@@ -284,9 +270,7 @@
                                         </tr>
                                         <tr>
                                             <td>
-                                                {{-- PERBAIKAN: Menggunakan data dinamis dari $prosesSk --}}
-                                                <input name="tkode" type="text" id="tkode" size="5%" class="form-control readonly-input" value="{{ $prosesSk->kodesk ?? 'Belum ada kode' }}" readonly>
-                                                <input name="tno" type="text" id="tno" size="5%" class="form-control readonly-input" value="{{ $prosesSk->nosk ?? 'Belum ada nomor' }}" readonly>
+                                                <input name="tkode" type="text" id="tkode" size="5%" class="form-control readonly-input" value="SK0545/531" readonly>
                                             </td>
                                             <td></td>
                                             <td colspan="2"></td>
@@ -318,242 +302,285 @@ function handlePrint(event) {
     event.preventDefault();
     const formData = new FormData(event.target);
     
-    // Fungsi konversi bulan ke bahasa Inggris
-    function convertMonthToEnglish(dateString) {
-        const monthMap = {
-            'Januari': 'January',
-            'Februari': 'February',
-            'Maret': 'March',
-            'April': 'April',
-            'Mei': 'May',
-            'Juni': 'June',
-            'Juli': 'July',
-            'Agustus': 'August',
-            'September': 'September',
-            'Oktober': 'October',
-            'November': 'November',
-            'Desember': 'December'
-        };
+    // Fungsi untuk membersihkan teks kosong
+    function cleanText(text) {
+        return text && text.trim() !== '' ? text : '';
+    }
+    
+    // Fungsi untuk membuat baris lain-lain
+    function createLainLainRows() {
+        let rows = [];
+        const items = [
+            { marker: formData.get('t'), text: formData.get('tlain') },
+            { marker: formData.get('t2'), text: formData.get('tlain2') },
+            { marker: formData.get('t3'), text: formData.get('tlain3') }
+        ];
         
-        for (const [id, en] of Object.entries(monthMap)) {
-            if (dateString.includes(id)) {
-                return dateString.replace(id, en);
+        items.forEach(item => {
+            if (cleanText(item.text)) {
+                rows.push(`${cleanText(item.marker)} ${item.text}`);
             }
-        }
-        return dateString;
+        });
+        
+        return rows.join('<br>');
     }
 
     const printContent = `
         <html>
         <head>
-            <title>Nota Pengajuan SK</title>
+            <title>Nota Dinas</title>
             <style>
                 body {
                     margin: 0;
                     padding: 0;
-                    font-family: 'Bookman Old Style', serif;
+                    font-family: 'Times New Roman', Times, serif;
                     font-size: 12pt;
-                    line-height: 1.5;
+                    line-height: 1.4;
+                    color: #000;
                 }
                 
                 @media print {
                     @page { 
-                        margin: 2.5cm 1.5cm 2cm; 
+                        margin: 2.5cm 2.5cm 2cm 2.5cm; 
                         size: A4;
                     }
                     body { 
                         font-size: 12pt; 
-                        line-height: 1.5;
+                        line-height: 1.4;
+                        -webkit-print-color-adjust: exact;
                     }
                 }
                 
-                .header {
-                    text-align: center;
-                    margin-bottom: 20px;
-                }
-                
-                .header h1 {
-                    font-size: 14pt;
-                    font-weight: bold;
-                    margin: 0;
-                    text-transform: uppercase;
-                }
-                
-                .header h2 {
-                    font-size: 14pt;
-                    font-weight: bold;
-                    margin: 0;
-                    text-decoration: underline;
-                }
-                
-                .header p {
-                    margin: 0;
-                    font-size: 10pt;
+                .header-image {
+                    width: 100%;
+                    height: auto;
+                    display: block;
+                    margin: 0 auto 20px;
                 }
                 
                 .judul-nota {
                     text-align: center;
                     font-weight: bold;
-                    text-transform: uppercase;
-                    font-size: 14pt;
-                    margin: 20px 0;
+                    font-size: 12pt;
+                    margin: 30px 0 25px 0;
+                    letter-spacing: 0.5px;
                 }
                 
-                .content {
+                .content-table {
                     width: 100%;
                     border-collapse: collapse;
+                    margin: 0;
                 }
                 
-                .content tr td {
+                .content-table td {
                     vertical-align: top;
-                    padding: 3px 0;
+                    padding: 0;
+                    line-height: 1.5;
+                    font-size: 12pt;
                 }
                 
-                .label {
-                    width: 25%;
+                .content-table tr {
+                    height: auto;
                 }
                 
-                .titik-dua {
-                    width: 3%;
+                .label-col {
+                    width: 22%;
+                    padding-right: 5px;
                 }
                 
-                .isi {
-                    width: 72%;
-                }
-                
-                .signature {
-                    margin-top: 60px;
-                    float: right;
+                .colon-col {
+                    width: 2%;
                     text-align: center;
+                }
+                
+                .content-col {
+                    width: 76%;
+                    padding-left: 5px;
+                    text-align: justify;
+                }
+                
+                .row-spacing {
+                    height: 8px;
+                }
+                
+                .signature-section {
+                    position: absolute;
+                    right: 0;
+                    top: 0;
                     width: 50%;
+                    text-align: center;
+                }
+                
+                .date-location {
+                    margin-bottom: 15px;
+                    font-size: 12pt;
+                }
+                
+                .position-title {
+                    font-weight: bold;
+                    font-size: 12pt;
+                    text-transform: uppercase;
+                    margin-bottom: 3px;
+                }
+                
+                .organization {
+                    font-weight: bold;
+                    font-size: 12pt;
+                    text-transform: uppercase;
+                    margin-bottom: 80px;
                 }
                 
                 .signature-name {
                     font-weight: bold;
+                    font-size: 12pt;
                     text-decoration: underline;
-                    margin-top: 80px;
+                    margin-bottom: 3px;
                 }
                 
-                .document-code {
+                .rank {
+                    font-size: 12pt;
+                    margin-bottom: 3px;
+                }
+                
+                .nip {
+                    font-size: 12pt;
+                }
+                
+                .footer-code {
                     position: absolute;
-                    bottom: 20px;
-                    right: 20px;
+                    bottom: -15px;
+                    left: 0;
                     font-size: 10pt;
+                    font-weight: normal;
+                }
+                
+                .signature-container {
+                    position: relative;
+                    margin-top: 25px;
+                    height: 120px;
                 }
             </style>
         </head>
         <body>
-            <div class="header">
-                <img src="/img/kop.jpg" alt="Kop Surat" style="width: 100%; max-width: 800px; height: auto; margin-bottom: 20px;">
-            </div>
+            <img src="/img/kop.jpg" alt="Kop Surat" class="header-image">
             
             <div class="judul-nota">NOTA DINAS</div>
             
-            <table class="content">
+            <table class="content-table">
                 <tr>
-                    <td class="label">Ditujukan kepada</td>
-                    <td class="titik-dua">:</td>
-                    <td class="isi">${formData.get('tkpd')}</td>
+                    <td class="label-col">Ditujukan Kepada</td>
+                    <td class="colon-col">:</td>
+                    <td class="content-col">${formData.get('tkpd')}</td>
                 </tr>
+                <tr class="row-spacing"><td colspan="3"></td></tr>
+                
                 <tr>
-                    <td class="label">Melalui</td>
-                    <td class="titik-dua">:</td>
-                    <td class="isi">${formData.get('tmll')}</td>
+                    <td class="label-col">Melalui</td>
+                    <td class="colon-col">:</td>
+                    <td class="content-col">${formData.get('tmll')}</td>
                 </tr>
+                <tr class="row-spacing"><td colspan="3"></td></tr>
+                
                 <tr>
-                    <td class="label">Lewat</td>
-                    <td class="titik-dua">:</td>
-                    <td class="isi">
-                        ${formData.get('tnomor')} ${formData.get('tlwt')}<br>
+                    <td class="label-col">Lewat</td>
+                    <td class="colon-col">:</td>
+                    <td class="content-col">
+                        ${formData.get('tnomor')}. ${formData.get('tlwt')}<br>
                         ${formData.get('tnomor2')} ${formData.get('tlwt2')}
                     </td>
                 </tr>
+                <tr class="row-spacing"><td colspan="3"></td></tr>
+                
                 <tr>
-                    <td class="label">Dari</td>
-                    <td class="titik-dua">:</td>
-                    <td class="isi">${formData.get('tdari')}</td>
+                    <td class="label-col">Dari</td>
+                    <td class="colon-col">:</td>
+                    <td class="content-col">${formData.get('tdari')}</td>
                 </tr>
+                <tr class="row-spacing"><td colspan="3"></td></tr>
+                
                 <tr>
-                    <td class="label">Perihal</td>
-                    <td class="titik-dua">:</td>
-                    <td class="isi">
+                    <td class="label-col">Perihal</td>
+                    <td class="colon-col">:</td>
+                    <td class="content-col">
                         ${formData.get('tjudul2')}<br>
                         ${formData.get('tjudul')}
                     </td>
                 </tr>
+                <tr class="row-spacing"><td colspan="3"></td></tr>
+                
                 <tr>
-                    <td class="label">Mohon untuk</td>
-                    <td class="titik-dua">:</td>
-                    <td class="isi">${formData.get('tmohon')}</td>
+                    <td class="label-col">Mohon untuk</td>
+                    <td class="colon-col">:</td>
+                    <td class="content-col">${formData.get('tmohon')}</td>
                 </tr>
+                <tr class="row-spacing"><td colspan="3"></td></tr>
+                
                 <tr>
-                    <td class="label">Tanda Tangan</td>
-                    <td class="titik-dua">:</td>
-                    <td class="isi">${formData.get('tttd')}</td>
+                    <td class="label-col">Tanda Tangan</td>
+                    <td class="colon-col">:</td>
+                    <td class="content-col">${formData.get('tttd')}</td>
                 </tr>
+                <tr class="row-spacing"><td colspan="3"></td></tr>
+                
                 <tr>
-                    <td class="label">Lain-lain</td>
-                    <td class="titik-dua">:</td>
-                    <td class="isi">
-                        ${formData.get('t')} ${formData.get('tlain')}<br>
-                        ${formData.get('t2')} ${formData.get('tlain2')}<br>
-                        ${formData.get('t3')} ${formData.get('tlain3')}
-                    </td>
+                    <td class="label-col">Lain-lain</td>
+                    <td class="colon-col">:</td>
+                    <td class="content-col">${createLainLainRows()}</td>
                 </tr>
             </table>
             
-            <div class="signature">
-                <div>${convertMonthToEnglish(formData.get('ttgl'))}</div>
-                <div>${formData.get('tkabag')}</div>
-                <div>${formData.get('tkabag2')}</div>
-                <div class="signature-name">${formData.get('tkabag3')}</div>
-                <div>${formData.get('tkabag4')}</div>
-                <div>${formData.get('tnip')}</div>
-            </div>
-            
-            <div class="document-code">
-                ${formData.get('tkode')}/${formData.get('tno')}
+            <div class="signature-container">
+                <div class="signature-section">
+                    <div class="date-location">${formData.get('ttgl')}</div>
+                    <div class="position-title">${formData.get('tkabag')}</div>
+                    <div class="organization">${formData.get('tkabag2')}</div>
+                    <div class="signature-name">${formData.get('tkabag3')}</div>
+                    <div class="rank">${formData.get('tkabag4')}</div>
+                    <div class="nip">${formData.get('tnip')}</div>
+                </div>
+                
+                <div class="footer-code">${formData.get('tkode')}</div>
             </div>
             
             <script>
                 window.onload = function() {
-                    window.print();
+                    setTimeout(() => {
+                        window.print();
+                    }, 500);
                 }
             <\/script>
         </body>
         </html>
     `;
     
-    const printWindow = window.open('', '_blank');
+    const printWindow = window.open('', '_blank', 'width=800,height=600');
     printWindow.document.write(printContent);
     printWindow.document.close();
 }
 
-        // ... (JavaScript lainnya tetap sama) ...
-
-        // Add some styling for better user experience
-        document.addEventListener('DOMContentLoaded', function() {
-            // Add hover effect to editable inputs
-            const editableInputs = document.querySelectorAll('input:not([readonly])');
-            editableInputs.forEach(input => {
-                input.classList.add('editable-input');
-                input.addEventListener('focus', function() {
-                    this.style.backgroundColor = '#fff3cd';
-                    this.style.borderColor = '#ffeaa7';
-                });
-                
-                input.addEventListener('blur', function() {
-                    this.style.backgroundColor = '';
-                    this.style.borderColor = '';
-                });
-            });
-            
-            // Add readonly styling
-            const readonlyInputs = document.querySelectorAll('input[readonly]');
-            readonlyInputs.forEach(input => {
-                input.classList.add('readonly-input');
-            });
+// Add some styling for better user experience
+document.addEventListener('DOMContentLoaded', function() {
+    // Add hover effect to editable inputs
+    const editableInputs = document.querySelectorAll('input:not([readonly])');
+    editableInputs.forEach(input => {
+        input.classList.add('editable-input');
+        input.addEventListener('focus', function() {
+            this.style.backgroundColor = '#fff3cd';
+            this.style.borderColor = '#ffeaa7';
         });
+        
+        input.addEventListener('blur', function() {
+            this.style.backgroundColor = '';
+            this.style.borderColor = '';
+        });
+    });
+    
+    // Add readonly styling
+    const readonlyInputs = document.querySelectorAll('input[readonly]');
+    readonlyInputs.forEach(input => {
+        input.classList.add('readonly-input');
+    });
+});
     </script>
 
     <!-- Bootstrap JS -->
