@@ -1,155 +1,187 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <title>Cetak Kartu Nomor Peraturan Bupati - {{ $perbup->nopb }}</title>
-    <style>
-        /* Font Definitions */
-        @font-face {
-            font-family: "Bookman Old Style";
-            panose-1: 2 5 6 4 5 5 5 2 2 4;
-        }
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Cetak Kartu Nomor Peraturan Bupati - {{ $perbup->nopb }}</title>
+<style>
+    body {
+        font-family: "Bookman Old Style", serif;
+        font-size: 12pt;
+        margin: 0;
+        padding: 0;
+    }
 
-        /* Style Definitions */
-        p, li, div {
-            margin: 0;
-            margin-bottom: .0001pt;
-            font-size: 12.0pt;
-            font-family: "Bookman Old Style", serif;
-        }
+    @page {
+        size: A4 landscape;
+        margin: 1.5cm 1cm 2cm 2cm;
+    }
 
-        .MsoTableGrid {
-            border-collapse: collapse;
-            border: none;
-            width: 100%;
-        }
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
 
-        td {
-            padding: 5px;
-            vertical-align: top;
-        }
+    td {
+        padding: 0.2cm;
+        vertical-align: top;
+    }
 
-        p {
-            line-height: 1.5; /* Menambah jarak antar baris agar lebih mudah dibaca */
-            text-align: justify;
-        }
+    .title {
+        text-align: center;
+        font-weight: bold;
+        font-size: 14pt;
+        margin-bottom: 0.5cm;
+        line-height: 1.3;
+    }
 
-        .card-container {
-            padding: 1cm;
-            border: 1px solid black;
-            height: 13cm; /* Menyesuaikan tinggi kartu */
-            display: flex;
-            flex-direction: column;
-        }
+    .divider {
+        border-right: 1px solid black;
+        width: 47.15pt;
+    }
 
-        .card-footer {
-            margin-top: auto; /* Mendorong footer ke bagian bawah kartu */
-        }
+    .info-label {
+        white-space: nowrap;
+    }
 
-        /* Page Definitions */
-        @page {
-            size: 21.0cm 29.7cm; /* Ukuran A4 */
-            margin: 1cm;
-        }
+    .berita-daerah {
+        margin-top: 0.3cm;
+    }
 
-        .WordSection1 {
-            page: WordSection1;
-        }
+    .tanda-terima {
+        text-align: center;
+        margin-top: 0.5cm;
+    }
 
-        @media print {
-            body, page {
-                margin: 0;
-                box-shadow: 0;
-            }
-        }
-    </style>
+    .tanda-terima-title {
+        margin-bottom: 0.3cm;
+    }
+
+    .signature {
+        margin-top: 0.5cm;
+    }
+
+    .signature span {
+        display: inline-block;
+        width: 3cm;
+        border-bottom: 1px solid black;
+    }
+
+    .kode {
+        font-size: 10pt;
+        margin-top: 0.2cm;
+    }
+
+    .footer {
+        font-style: italic;
+        font-size: 11pt;
+        text-align: right;
+        margin-top: 0.5cm;
+    }
+</style>
 </head>
 <body onload="window.print()">
 
-<div class="WordSection1">
-    <table class="MsoTableGrid">
-        <tr>
-            <td style="width: 48%; padding-right: 2%;">
-                <div class="card-container">
-                    <p style="text-align:center;"><b>KARTU NOMOR</b></p>
-                    <p style="text-align:center;"><b>PERATURAN BUPATI PURWOREJO</b></p>
-                    <br>
-                    <table>
-                        <tr>
-                            <td style="width: 150px;">NOMOR PERBUP</td>
-                            <td>: {{ $perbup->nopb }} TAHUN {{ \Carbon\Carbon::parse($perbup->tglpb)->format('Y') }}</td>
-                        </tr>
-                        <tr>
-                            <td>TANGGAL PERBUP</td>
-                            <td>: {{ \Carbon\Carbon::parse($perbup->tglpb)->format('d-m-Y') }}</td>
-                        </tr>
-                        <tr>
-                            <td>JUDUL PERBUP</td>
-                            <td>: {{ $perbup->judulpb }}</td>
-                        </tr>
-                        <tr>
-                            <td>OPD PEMRAKARSA</td>
-                            <td>: {{ $perbup->opd->namaopd ?? 'N/A' }}</td>
-                        </tr>
-                        <tr>
-                            <td>TGL PENGUNDANGAN</td>
-                            <td>: {{ $perbup->tglpengundangan ? \Carbon\Carbon::parse($perbup->tglpengundangan)->format('d-m-Y') : '-' }}</td>
-                        </tr>
-                        <tr>
-                            <td colspan="2">
-                                BERITA DAERAH TAHUN {{ \Carbon\Carbon::parse($perbup->tglpb)->format('Y') }} NOMOR {{ $perbup->nopb }} SERI {{ $perbup->seri }} NOMOR {{ $perbup->noseri }}
-                            </td>
-                        </tr>
-                    </table>
-                    <div class="card-footer">
-                        <p style="text-align:right;"><i>Lembar untuk OPD Pemrakarsa</i></p>
-                    </div>
-                </div>
-            </td>
+<table>
+    <tr>
+        <!-- Kartu Kiri -->
+        <td width="45%">
+            <div class="title">
+                KARTU NOMOR<br>
+                PERATURAN BUPATI PURWOREJO
+            </div>
 
-            <td style="width: 48%; padding-left: 2%;">
-                <div class="card-container">
-                    <p style="text-align:center;"><b>KARTU NOMOR</b></p>
-                    <p style="text-align:center;"><b>PERATURAN BUPATI PURWOREJO</b></p>
-                    <br>
-                    <table>
-                        <tr>
-                            <td style="width: 150px;">NOMOR PERBUP</td>
-                            <td>: {{ $perbup->nopb }} TAHUN {{ \Carbon\Carbon::parse($perbup->tglpb)->format('Y') }}</td>
-                        </tr>
-                        <tr>
-                            <td>TANGGAL PERBUP</td>
-                            <td>: {{ \Carbon\Carbon::parse($perbup->tglpb)->format('d-m-Y') }}</td>
-                        </tr>
-                        <tr>
-                            <td>JUDUL PERBUP</td>
-                            <td>: {{ $perbup->judulpb }}</td>
-                        </tr>
-                        <tr>
-                            <td>OPD PEMRAKARSA</td>
-                            <td>: {{ $perbup->opd->namaopd ?? 'N/A' }}</td>
-                        </tr>
-                        <tr>
-                            <td>TGL PENGUNDANGAN</td>
-                            <td>: {{ $perbup->tglpengundangan ? \Carbon\Carbon::parse($perbup->tglpengundangan)->format('d-m-Y') : '-' }}</td>
-                        </tr>
-                        <tr>
-                            <td colspan="2">
-                                BERITA DAERAH TAHUN {{ \Carbon\Carbon::parse($perbup->tglpb)->format('Y') }} NOMOR {{ $perbup->nopb }} SERI {{ $perbup->seri }} NOMOR {{ $perbup->noseri }}
-                            </td>
-                        </tr>
-                    </table>
-                    <div class="card-footer">
-                         <p style="text-align:center;">TANDA TERIMA AMBIL</p>
-                         <br><br>
-                         <p>TANGGAL: ...........................................</p>
-                        <p style="text-align:right;"><i>Lembar untuk Bagian Hukum</i></p>
-                    </div>
-                </div>
-            </td>
-        </tr>
-    </table>
-</div>
+            <table>
+                <tr>
+                    <td class="info-label">NOMOR PERBUP</td>
+                    <td width="5%">:</td>
+                    <td>{{ $perbup->nopb }} TAHUN {{ \Carbon\Carbon::parse($perbup->tglpb)->format('Y') }}</td>
+                </tr>
+                <tr>
+                    <td class="info-label">TANGGAL PERBUP</td>
+                    <td>:</td>
+                    <td>{{ \Carbon\Carbon::parse($perbup->tglpb)->format('d-m-Y') }}</td>
+                </tr>
+                <tr>
+                    <td class="info-label">JUDUL PERBUP</td>
+                    <td>:</td>
+                    <td>{{ $perbup->judulpb }}</td>
+                </tr>
+                <tr>
+                    <td class="info-label">DINAS/OPD</td>
+                    <td>:</td>
+                    <td>{{ $perbup->opd->namaopd ?? 'BAPPERIDA' }}</td>
+                </tr>
+                <tr>
+                    <td class="info-label">TGL PENGUNDANGAN</td>
+                    <td>:</td>
+                    <td>{{ $perbup->tglpengundangan ? \Carbon\Carbon::parse($perbup->tglpengundangan)->format('d-m-Y') : '01-08-2025' }}</td>
+                </tr>
+            </table>
+
+            <div class="berita-daerah">
+                BERITA DAERAH TAHUN {{ \Carbon\Carbon::parse($perbup->tglpb)->format('Y') }} NO {{ $perbup->nopb }} SERI {{ $perbup->seri ?? 'E' }} NO {{ $perbup->noseri ?? '19' }}
+            </div>
+
+            <div class="footer">
+                Lembar untuk OPD Pemrakarsa
+            </div>
+        </td>
+
+        <!-- Garis Vertikal Pemisah -->
+        <td class="divider"></td>
+
+        <!-- Kartu Kanan -->
+        <td width="45%">
+            <div class="title">
+                KARTU NOMOR<br>
+                PERATURAN BUPATI PURWOREJO
+            </div>
+
+            <table>
+                <tr>
+                    <td class="info-label">NOMOR PERBUP</td>
+                    <td width="5%">:</td>
+                    <td>{{ $perbup->nopb }} TAHUN {{ \Carbon\Carbon::parse($perbup->tglpb)->format('Y') }}</td>
+                </tr>
+                <tr>
+                    <td class="info-label">TANGGAL PERBUP</td>
+                    <td>:</td>
+                    <td>{{ \Carbon\Carbon::parse($perbup->tglpb)->format('d-m-Y') }}</td>
+                </tr>
+                <tr>
+                    <td class="info-label">JUDUL PERBUP</td>
+                    <td>:</td>
+                    <td>{{ $perbup->judulpb }}</td>
+                </tr>
+                <tr>
+                    <td class="info-label">DINAS/OPD</td>
+                    <td>:</td>
+                    <td>{{ $perbup->opd->namaopd ?? 'BAPPERIDA' }}</td>
+                </tr>
+                <tr>
+                    <td class="info-label">TGL PENGUNDANGAN</td>
+                    <td>:</td>
+                    <td>{{ $perbup->tglpengundangan ? \Carbon\Carbon::parse($perbup->tglpengundangan)->format('d-m-Y') : '01-08-2025' }}</td>
+                </tr>
+            </table>
+
+            <div class="berita-daerah">
+                BERITA DAERAH TAHUN {{ \Carbon\Carbon::parse($perbup->tglpb)->format('Y') }} NO {{ $perbup->nopb }} SERI {{ $perbup->seri ?? 'E' }} NO {{ $perbup->noseri ?? '19' }}
+            </div>
+
+            <div class="tanda-terima">
+                <div class="tanda-terima-title">TANDA TERIMA AMBIL</div>
+                <div>TANGGAL</div>
+                <div class="signature">( <span></span> )</div>
+                <div class="kode">PB0022/08-08-2025</div>
+            </div>
+
+            <div class="footer">
+                Lembar untuk Bagian Hukum
+            </div>
+        </td>
+    </tr>
+</table>
 
 </body>
 </html>
