@@ -68,6 +68,18 @@
                                         <i class="bi bi-eye me-1"></i>
                                         <span class="d-none d-md-inline">Detail</span>
                                     </a>
+                                    
+                                    {{-- Cetak Button Added Here --}}
+                                    @if($perbup->status === 'selesai')
+                                    <a href="{{ route('perbup.cetak', $perbup->id) }}" 
+                                       class="btn btn-sm btn-outline-success d-flex align-items-center" 
+                                       target="_blank"
+                                       data-bs-toggle="tooltip"
+                                       title="Cetak Data">
+                                        <i class="bi bi-printer me-1"></i>
+                                        <span class="d-none d-md-inline">Cetak</span>
+                                    </a>
+                                    @endif
                                 </div>
                             </td>
                         </tr>
