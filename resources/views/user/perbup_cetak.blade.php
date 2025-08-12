@@ -8,13 +8,13 @@
         font-family: "Times New Roman", serif;
         font-size: 11pt;
         margin: 0;
-        padding: 15px;
+        padding: 10px;
         background: white;
     }
 
     @page {
         size: A4 landscape;
-        margin: 1.5cm 1cm 2cm 2cm;
+        margin: 1.5cm 0.2cm 2cm 0.2cm; /* Further reduced left and right margins to 0.2cm */
     }
 
     .container {
@@ -29,20 +29,20 @@
     .card-wrapper {
         display: flex;
         width: 100%;
-        max-width: 750px;
+        max-width: 950px; /* Increased from 850px to utilize even more space */
         border: none;
     }
 
     .card {
         width: 47.5%;
-        padding: 20px 15px;
+        padding: 20px 5px; /* Further reduced horizontal padding from 10px to 5px */
         box-sizing: border-box;
     }
 
     .divider {
         width: 5%;
         border-right: 2px solid black;
-        margin: 0 10px;
+        margin: 0 3px; /* Further reduced from 5px to 3px */
     }
 
     .title {
@@ -129,15 +129,15 @@
         margin-top: 30px;
         position: absolute;
         bottom: 15px;
-        width: calc(47.5% - 30px);
+        width: calc(47.5% - 10px); /* Adjusted to match new padding */
     }
 
     .card-left .footer {
-        left: 15px;
+        left: 5px; /* Adjusted to match new padding */
     }
 
     .card-right .footer {
-        right: 15px;
+        right: 5px; /* Adjusted to match new padding */
     }
 
     .card-right {
