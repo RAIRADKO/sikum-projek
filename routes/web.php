@@ -68,7 +68,7 @@ Route::middleware('auth')->group(function () {
     // Perbup Proses Routes
     Route::get('/perbup-proses', [PerbupController::class, 'prosesIndex'])->name('perbup-proses');
     Route::get('/perbup-proses/{year}', [PerbupController::class, 'prosesShowByYear'])->name('perbup-proses.year');
-    Route::get('/perbup-proses/detail/{kodepb}', [PerbupController::class, 'prosesShow'])->name('perbup-proses.detail');
+    Route::get('/perbup-proses/detail/{prosesperbup}', [PerbupController::class, 'prosesShow'])->name('perbup-proses.detail');
 
     // SK Lainnya Routes
     Route::get('/sk-lainnya', [\App\Http\Controllers\SKLainnyaController::class, 'index'])->name('sk-lainnya.index');

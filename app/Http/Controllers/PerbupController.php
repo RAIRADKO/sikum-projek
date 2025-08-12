@@ -116,9 +116,11 @@ class PerbupController extends Controller
      * @param  mixed  $kodepb
      * @return \Illuminate\Http\JsonResponse
      */
-    public function prosesShow($kodepb)
+    public function prosesShow(ProsesPerbup $prosesperbup): View
     {
-        $prosesPerbup = ProsesPerbup::with('opd')->findOrFail($kodepb);
-        return response()->json($prosesPerbup);
+        // Eager load relasi untuk menghindari N+1 query problem
+        $prosesperbup->load(['opd', 'nomorPerbup']);
+
+        return view('user.perbup_proses_detail', ['prosesPerbup' => $prosesperbup]);
     }
 }
