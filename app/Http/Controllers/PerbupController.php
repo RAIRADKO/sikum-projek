@@ -123,4 +123,16 @@ class PerbupController extends Controller
 
         return view('user.perbup_proses_detail', ['prosesPerbup' => $prosesperbup]);
     }
+
+    /**
+     * Menampilkan halaman cetak untuk satu Peraturan Bupati.
+     *
+     * @param  mixed  $id
+     * @return \Illuminate\View\View
+     */
+    public function cetak($id): View
+    {
+        $perbup = NomorPerbup::findOrFail($id);
+        return view('user.perbup_cetak', ['perbup' => $perbup]);
+    }
 }

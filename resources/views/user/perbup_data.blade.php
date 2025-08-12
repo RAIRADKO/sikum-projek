@@ -71,7 +71,7 @@
                                     
                                     {{-- Cetak Button Added Here --}}
                                     @if($perbup->status === 'selesai')
-                                    <a href="{{ route('perbup.cetak', $perbup->id) }}" 
+                                    <a href="{{ route('perbup.cetak', ['id' => $perbup->nopb]) }}" 
                                        class="btn btn-sm btn-outline-success d-flex align-items-center" 
                                        target="_blank"
                                        data-bs-toggle="tooltip"
