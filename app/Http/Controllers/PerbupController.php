@@ -5,21 +5,34 @@ namespace App\Http\Controllers;
 use App\Models\NomorPerbup;
 use App\Models\ProsesPerbup;
 use Illuminate\Http\Request;
+use Illuminate\View\View;
 
 class PerbupController extends Controller
 {
-    public function index()
+    /**
+     * Menampilkan halaman utama dengan pilihan tahun.
+     *
+     * @return \Illuminate\View\View
+     */
+    public function index(): View
     {
         $years = range(date('Y'), 2021);
         return view('user.perbup', compact('years'));
     }
 
-    public function showByYear(Request $request, $year)
+    /**
+     * Menampilkan data Peraturan Bupati berdasarkan tahun dan pencarian.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $year
+     * @return \Illuminate\View\View
+     */
+    public function showByYear(Request $request, $year): View
     {
         $search = $request->input('search');
 
         $perbupDataQuery = NomorPerbup::whereYear('tglpb', $year)
-                                    ->with('opd')
+                                    ->with('opd') // Eager load relasi OPD
                                     ->orderBy('tglpb', 'desc');
 
         if ($search) {
@@ -40,18 +53,38 @@ class PerbupController extends Controller
         ]);
     }
 
-    public function show(NomorPerbup $nomorperbup)
+    /**
+     * Menampilkan halaman detail untuk satu Peraturan Bupati.
+     *
+     * @param  \App\Models\NomorPerbup  $nomorperbup
+     * @return \Illuminate\View\View
+     */
+    public function show(NomorPerbup $nomorperbup): View
     {
-        return response()->json($nomorperbup->load('opd'));
+        // Menggunakan Route Model Binding untuk mengambil data
+        // dan mengirimkannya ke view 'user.perbup_detail'
+        return view('user.perbup_detail', ['perbup' => $nomorperbup]);
     }
 
-    public function prosesIndex()
+    /**
+     * Menampilkan halaman utama untuk data PB yang masih dalam proses.
+     *
+     * @return \Illuminate\View\View
+     */
+    public function prosesIndex(): View
     {
         $years = range(date('Y'), 2021);
         return view('user.perbup_proses', compact('years'));
     }
 
-    public function prosesShowByYear(Request $request, $year)
+    /**
+     * Menampilkan data PB dalam proses berdasarkan tahun dan pencarian.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $year
+     * @return \Illuminate\View\View
+     */
+    public function prosesShowByYear(Request $request, $year): View
     {
         $search = $request->input('search');
 
@@ -76,8 +109,13 @@ class PerbupController extends Controller
             'prosesPerbupData' => $prosesPerbupData
         ]);
     }
-
-    // Tambahkan method untuk detail proses perbup
+    
+    /**
+     * Menampilkan detail data proses PB dalam format JSON.
+     *
+     * @param  mixed  $kodepb
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function prosesShow($kodepb)
     {
         $prosesPerbup = ProsesPerbup::with('opd')->findOrFail($kodepb);
