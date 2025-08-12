@@ -29,8 +29,19 @@ class NomorPerbup extends Model
         'kodepb',
     ];
 
+    /**
+     * Relasi dengan OPD
+     */
     public function opd()
     {
         return $this->belongsTo(Opd::class, 'kodeopd', 'kodeopd');
+    }
+
+    /**
+     * Relasi dengan Seri
+     */
+    public function seriModel()
+    {
+        return $this->belongsTo(Seri::class, 'seri', 'seri');
     }
 }
