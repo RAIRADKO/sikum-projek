@@ -14,7 +14,7 @@
 
     @page {
         size: A4 landscape;
-        margin: 1.5cm 0.2cm 2cm 0.2cm; /* Further reduced left and right margins to 0.2cm */
+        margin: 1.5cm 0.2cm 2cm 0.2cm;
     }
 
     .container {
@@ -24,27 +24,36 @@
         align-items: flex-start;
         justify-content: center;
         padding-top: 20px;
+        position: relative;
     }
 
     .card-wrapper {
         display: flex;
         width: 100%;
-        max-width: 950px; /* Increased from 850px to utilize even more space */
+        max-width: 950px;
         border: none;
+        height: calc(100vh - 40px);
     }
 
     .card {
         width: 47.5%;
-        padding: 20px 5px; /* Further reduced horizontal padding from 10px to 5px */
+        padding: 20px 5px;
         box-sizing: border-box;
-        position: relative; /* Tambahkan untuk positioning footer */
-        min-height: calc(100vh - 40px); /* Tambahkan untuk memastikan tinggi minimum */
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        min-height: 100%;
+    }
+
+    .card-content {
+        flex-grow: 1;
     }
 
     .divider {
         width: 5%;
         border-right: 2px solid black;
-        margin: 0 3px; /* Further reduced from 5px to 3px */
+        margin: 0 3px;
     }
 
     .title {
@@ -104,7 +113,7 @@
     }
 
     .tanda-terima-tanggal {
-        margin-bottom: 15px;
+        margin-bottom: 90px;
     }
 
     .signature-line {
@@ -126,13 +135,12 @@
 
     .footer {
         font-style: italic;
-        font-size: 5pt;
-        text-align: left; /* Ubah dari center ke left */
-        margin-top: 30px;
-        position: absolute;
-        bottom: 15px;
-        left: 5px; /* Posisi kiri untuk semua footer */
-        width: calc(100% - 10px); /* Sesuaikan lebar */
+        font-size:8pt;
+        text-align: left;
+        margin-top: auto;
+        padding-top: 20px;
+        align-self: flex-start;
+        width: 100%;
     }
 
     .card-left,
@@ -147,18 +155,35 @@
         }
         
         .container {
-            height: auto;
-            padding-top: 0;
+            height: 100vh;
+            padding-top: 20px;
+        }
+        
+        .card-wrapper {
+            height: calc(100vh - 40px);
         }
         
         .card {
-            min-height: auto; /* Reset min-height untuk print */
+            min-height: 100%;
+            page-break-inside: avoid;
         }
         
         .footer {
-            position: static;
-            margin-top: 20px;
-            text-align: left; /* Pastikan tetap align left saat print */
+            margin-top: auto;
+            text-align: left;
+            font-size: 5pt;
+            padding-top: 20px;
+        }
+
+        /* Pastikan tidak ada page break di dalam kartu */
+        .card-content {
+            page-break-inside: avoid;
+        }
+    }
+
+    @media screen {
+        .container {
+            min-height: 100vh;
         }
     }
 </style>
@@ -169,41 +194,43 @@
     <div class="card-wrapper">
         <!-- Kartu Kiri -->
         <div class="card card-left">
-            <div class="title">
-                KARTU NOMOR<br>
-                PERATURAN BUPATI PURWOREJO
-            </div>
+            <div class="card-content">
+                <div class="title">
+                    KARTU NOMOR<br>
+                    PERATURAN BUPATI PURWOREJO
+                </div>
 
-            <table class="info-table">
-                <tr>
-                    <td class="info-label">NOMOR PERBUP</td>
-                    <td class="info-separator">:</td>
-                    <td class="info-value">{{ $perbup->nopb }} TAHUN {{ \Carbon\Carbon::parse($perbup->tglpb)->format('Y') }}</td>
-                </tr>
-                <tr>
-                    <td class="info-label">TANGGAL PERBUP</td>
-                    <td class="info-separator">:</td>
-                    <td class="info-value">{{ \Carbon\Carbon::parse($perbup->tglpb)->format('d-m-Y') }}</td>
-                </tr>
-                <tr>
-                    <td class="info-label">JUDUL PERBUP</td>
-                    <td class="info-separator">:</td>
-                    <td class="info-value">{{ $perbup->judulpb }}</td>
-                </tr>
-                <tr>
-                    <td class="info-label">DINAS/OPD</td>
-                    <td class="info-separator">:</td>
-                    <td class="info-value">{{ $perbup->opd->namaopd ?? 'BAPPERIDA' }}</td>
-                </tr>
-                <tr>
-                    <td class="info-label">TGL PENGUNDANGAN</td>
-                    <td class="info-separator">:</td>
-                    <td class="info-value">{{ $perbup->tglpengundangan ? \Carbon\Carbon::parse($perbup->tglpengundangan)->format('d-m-Y') : '01-08-2025' }}</td>
-                </tr>
-            </table>
+                <table class="info-table">
+                    <tr>
+                        <td class="info-label">NOMOR PERBUP</td>
+                        <td class="info-separator">:</td>
+                        <td class="info-value">{{ $perbup->nopb }} TAHUN {{ \Carbon\Carbon::parse($perbup->tglpb)->format('Y') }}</td>
+                    </tr>
+                    <tr>
+                        <td class="info-label">TANGGAL PERBUP</td>
+                        <td class="info-separator">:</td>
+                        <td class="info-value">{{ \Carbon\Carbon::parse($perbup->tglpb)->format('d-m-Y') }}</td>
+                    </tr>
+                    <tr>
+                        <td class="info-label">JUDUL PERBUP</td>
+                        <td class="info-separator">:</td>
+                        <td class="info-value">{{ $perbup->judulpb }}</td>
+                    </tr>
+                    <tr>
+                        <td class="info-label">DINAS/OPD</td>
+                        <td class="info-separator">:</td>
+                        <td class="info-value">{{ $perbup->opd->namaopd ?? 'BAPPERIDA' }}</td>
+                    </tr>
+                    <tr>
+                        <td class="info-label">TGL PENGUNDANGAN</td>
+                        <td class="info-separator">:</td>
+                        <td class="info-value">{{ $perbup->tglpengundangan ? \Carbon\Carbon::parse($perbup->tglpengundangan)->format('d-m-Y') : '01-08-2025' }}</td>
+                    </tr>
+                </table>
 
-            <div class="berita-daerah">
-                BERITA DAERAH TAHUN {{ \Carbon\Carbon::parse($perbup->tglpb)->format('Y') }} NO {{ $perbup->nopb }} SERI {{ $perbup->seri ?? 'E' }} NO {{ $perbup->noseri ?? '19' }}
+                <div class="berita-daerah">
+                    BERITA DAERAH TAHUN {{ \Carbon\Carbon::parse($perbup->tglpb)->format('Y') }} NO {{ $perbup->nopb }} SERI {{ $perbup->seri ?? 'E' }} NO {{ $perbup->noseri ?? '19' }}
+                </div>
             </div>
 
             <div class="footer">
@@ -216,48 +243,50 @@
 
         <!-- Kartu Kanan -->
         <div class="card card-right">
-            <div class="title">
-                KARTU NOMOR<br>
-                PERATURAN BUPATI PURWOREJO
-            </div>
+            <div class="card-content">
+                <div class="title">
+                    KARTU NOMOR<br>
+                    PERATURAN BUPATI PURWOREJO
+                </div>
 
-            <table class="info-table">
-                <tr>
-                    <td class="info-label">NOMOR PERBUP</td>
-                    <td class="info-separator">:</td>
-                    <td class="info-value">{{ $perbup->nopb }} TAHUN {{ \Carbon\Carbon::parse($perbup->tglpb)->format('Y') }}</td>
-                </tr>
-                <tr>
-                    <td class="info-label">TANGGAL PERBUP</td>
-                    <td class="info-separator">:</td>
-                    <td class="info-value">{{ \Carbon\Carbon::parse($perbup->tglpb)->format('d-m-Y') }}</td>
-                </tr>
-                <tr>
-                    <td class="info-label">JUDUL PERBUP</td>
-                    <td class="info-separator">:</td>
-                    <td class="info-value">{{ $perbup->judulpb }}</td>
-                </tr>
-                <tr>
-                    <td class="info-label">DINAS/OPD</td>
-                    <td class="info-separator">:</td>
-                    <td class="info-value">{{ $perbup->opd->namaopd ?? 'BAPPERIDA' }}</td>
-                </tr>
-                <tr>
-                    <td class="info-label">TGL PENGUNDANGAN</td>
-                    <td class="info-separator">:</td>
-                    <td class="info-value">{{ $perbup->tglpengundangan ? \Carbon\Carbon::parse($perbup->tglpengundangan)->format('d-m-Y') : '01-08-2025' }}</td>
-                </tr>
-            </table>
+                <table class="info-table">
+                    <tr>
+                        <td class="info-label">NOMOR PERBUP</td>
+                        <td class="info-separator">:</td>
+                        <td class="info-value">{{ $perbup->nopb }} TAHUN {{ \Carbon\Carbon::parse($perbup->tglpb)->format('Y') }}</td>
+                    </tr>
+                    <tr>
+                        <td class="info-label">TANGGAL PERBUP</td>
+                        <td class="info-separator">:</td>
+                        <td class="info-value">{{ \Carbon\Carbon::parse($perbup->tglpb)->format('d-m-Y') }}</td>
+                    </tr>
+                    <tr>
+                        <td class="info-label">JUDUL PERBUP</td>
+                        <td class="info-separator">:</td>
+                        <td class="info-value">{{ $perbup->judulpb }}</td>
+                    </tr>
+                    <tr>
+                        <td class="info-label">DINAS/OPD</td>
+                        <td class="info-separator">:</td>
+                        <td class="info-value">{{ $perbup->opd->namaopd ?? 'BAPPERIDA' }}</td>
+                    </tr>
+                    <tr>
+                        <td class="info-label">TGL PENGUNDANGAN</td>
+                        <td class="info-separator">:</td>
+                        <td class="info-value">{{ $perbup->tglpengundangan ? \Carbon\Carbon::parse($perbup->tglpengundangan)->format('d-m-Y') : '01-08-2025' }}</td>
+                    </tr>
+                </table>
 
-            <div class="berita-daerah">
-                BERITA DAERAH TAHUN {{ \Carbon\Carbon::parse($perbup->tglpb)->format('Y') }} NO {{ $perbup->nopb }} SERI {{ $perbup->seri ?? 'E' }} NO {{ $perbup->noseri ?? '19' }}
-            </div>
+                <div class="berita-daerah">
+                    BERITA DAERAH TAHUN {{ \Carbon\Carbon::parse($perbup->tglpb)->format('Y') }} NO {{ $perbup->nopb }} SERI {{ $perbup->seri ?? 'E' }} NO {{ $perbup->noseri ?? '19' }}
+                </div>
 
-            <div class="tanda-terima">
-                <div class="tanda-terima-title">TANDA TERIMA AMBIL</div>
-                <div class="tanda-terima-tanggal">TANGGAL</div>
-                <div class="signature-line">( <span></span> )</div>
-                <div class="kode">PB{{ str_pad($perbup->nopb, 4, '0', STR_PAD_LEFT) }}/{{ \Carbon\Carbon::parse($perbup->tglpb)->format('d-m-Y') }}</div>
+                <div class="tanda-terima">
+                    <div class="tanda-terima-title">TANDA TERIMA AMBIL</div>
+                    <div class="tanda-terima-tanggal">TANGGAL</div>
+                    <div class="signature-line">( <span></span> )</div>
+                    <div class="kode">PB{{ str_pad($perbup->nopb, 4, '0', STR_PAD_LEFT) }}/{{ \Carbon\Carbon::parse($perbup->tglpb)->format('d-m-Y') }}</div>
+                </div>
             </div>
 
             <div class="footer">
