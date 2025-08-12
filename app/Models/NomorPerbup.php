@@ -44,4 +44,13 @@ class NomorPerbup extends Model
     {
         return $this->belongsTo(Seri::class, 'seri', 'seri');
     }
+
+    /**
+     * Relasi dengan ProsesPerbup
+     * NomorPerbup hasMany ProsesPerbup (karena satu nomor perbup bisa memiliki beberapa proses)
+     */
+    public function prosesPerbup()
+    {
+        return $this->hasMany(ProsesPerbup::class, 'nopb', 'nopb');
+    }
 }

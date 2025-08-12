@@ -28,4 +28,13 @@ class ProsesPerbup extends Model
     {
         return $this->belongsTo(Opd::class, 'kodeopd', 'kodeopd');
     }
+
+    /**
+     * Relasi dengan NomorPerbup melalui nopb
+     * ProsesPerbup belongsTo NomorPerbup
+     */
+    public function nomorPerbup()
+    {
+        return $this->belongsTo(NomorPerbup::class, 'nopb', 'nopb');
+    }
 }
