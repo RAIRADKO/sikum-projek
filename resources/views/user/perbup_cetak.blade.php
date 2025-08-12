@@ -37,6 +37,8 @@
         width: 47.5%;
         padding: 20px 5px; /* Further reduced horizontal padding from 10px to 5px */
         box-sizing: border-box;
+        position: relative; /* Tambahkan untuk positioning footer */
+        min-height: calc(100vh - 40px); /* Tambahkan untuk memastikan tinggi minimum */
     }
 
     .divider {
@@ -124,22 +126,16 @@
 
     .footer {
         font-style: italic;
-        font-size: 10pt;
-        text-align: center;
+        font-size: 5pt;
+        text-align: left; /* Ubah dari center ke left */
         margin-top: 30px;
         position: absolute;
         bottom: 15px;
-        width: calc(47.5% - 10px); /* Adjusted to match new padding */
+        left: 5px; /* Posisi kiri untuk semua footer */
+        width: calc(100% - 10px); /* Sesuaikan lebar */
     }
 
-    .card-left .footer {
-        left: 5px; /* Adjusted to match new padding */
-    }
-
-    .card-right .footer {
-        right: 5px; /* Adjusted to match new padding */
-    }
-
+    .card-left,
     .card-right {
         position: relative;
     }
@@ -155,9 +151,14 @@
             padding-top: 0;
         }
         
+        .card {
+            min-height: auto; /* Reset min-height untuk print */
+        }
+        
         .footer {
             position: static;
             margin-top: 20px;
+            text-align: left; /* Pastikan tetap align left saat print */
         }
     }
 </style>
