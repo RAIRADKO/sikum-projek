@@ -12,6 +12,7 @@ class NomorPerbup extends Model
     protected $table = 'nomorpb';
     protected $primaryKey = 'nopb';
     public $incrementing = false;
+    public $timestamps = false;
 
     protected $fillable = [
         'nopb',
