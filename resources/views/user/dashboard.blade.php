@@ -45,6 +45,66 @@
         </div>
     </div>
 
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <form action="{{ route('cetak') }}" method="GET" target="_blank">
+                        <div class="row align-items-end">
+                            <div class="col-md-4">
+                                <label for="tahun" class="form-label">Filter Berdasarkan Tahun:</label>
+                                <select name="tahun" id="tahun" class="form-select">
+                                    @for ($year = date('Y'); $year >= 2020; $year--)
+                                        <option value="{{ $year }}">{{ $year }}</option>
+                                    @endfor
+                                </select>
+                            </div>
+                            <div class="col-md-8">
+                                <p class="mb-2">Pilih format untuk mencetak:</p>
+                                <button type="submit" name="format" value="pdf" class="btn btn-danger">
+                                    <i class="fas fa-file-pdf me-1"></i> Cetak PDF
+                                </button>
+                                <button type="submit" name="format" value="excel" class="btn btn-success">
+                                    <i class="fas fa-file-excel me-1"></i> Cetak Excel
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-xl-4 col-md-6 mb-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-file-alt fa-3x text-primary mb-3"></i>
+                    <h5 class="card-title">Nomor SK</h5>
+                    <p class="card-text">Cetak daftar Nomor SK berdasarkan tahun yang dipilih.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-4 col-md-6 mb-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-file-signature fa-3x text-success mb-3"></i>
+                    <h5 class="card-title">Nomor Perbup</h5>
+                    <p class="card-text">Cetak daftar Nomor Perbup berdasarkan tahun yang dipilih.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-4 col-md-6 mb-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-file-invoice fa-3x text-info mb-3"></i>
+                    <h5 class="card-title">SK Lainnya</h5>
+                    <p class="card-text">Cetak daftar SK Lainnya berdasarkan tahun yang dipilih.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Laporan Terbaru Sidebar -->
     @if(!empty($ringkasan['laporan_terbaru']) && $ringkasan['laporan_terbaru']->count() > 0)
     <div class="row mt-4">

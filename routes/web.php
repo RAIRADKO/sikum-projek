@@ -14,6 +14,8 @@ use App\Http\Controllers\SKLainnyaController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\NomorSkController;
 use App\Http\Controllers\Admin\ProsesSkController;
+use App\Http\Controllers\CetakController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -44,6 +46,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/dashboard/update-profile', [HomeController::class, 'updateProfile'])->name('dashboard.update-profile');
     Route::get('/dashboard/notifications', [HomeController::class, 'getNotifications'])->name('dashboard.notifications');
     Route::post('/dashboard/update-profile', [HomeController::class, 'updateProfile'])->name('dashboard.update-profile');
+    Route::get('/cetak', [CetakController::class, 'cetak'])->name('cetak')->middleware('auth');
 
     // Print Routes
     Route::get('/dashboard/cetak-tahunan', [HomeController::class, 'cetakTahunan'])->name('dashboard.cetak-tahunan');
