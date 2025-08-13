@@ -10,6 +10,7 @@ use App\Http\Controllers\SkController;
 use App\Http\Controllers\PerbupController;
 use App\Http\Controllers\OpdController;
 use App\Http\Controllers\AsistenController;
+use App\Http\Controllers\SKLainnyaController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\NomorSkController;
 use App\Http\Controllers\Admin\ProsesSkController;
@@ -39,6 +40,13 @@ Route::post('register', [AuthController::class, 'register']);
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [HomeController::class, 'dashboard'])->name('dashboard');
 
+    // Profile & Settings Routes
+    Route::post('/dashboard/update-profile', [HomeController::class, 'updateProfile'])->name('dashboard.update-profile');
+    Route::get('/dashboard/notifications', [HomeController::class, 'getNotifications'])->name('dashboard.notifications');
+
+    // Print Routes
+    Route::get('/dashboard/cetak-tahunan', [HomeController::class, 'cetakTahunan'])->name('dashboard.cetak-tahunan');
+
     // Rute untuk menampilkan data OPD bagi user
     Route::get('/opd', [OpdController::class, 'index'])->name('opd.index');
 
@@ -49,6 +57,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/sk', [SkController::class, 'index'])->name('sk');
     Route::get('/sk/{year}', [SkController::class, 'showByYear'])->name('sk.year');
     Route::get('/sk/detail/{nomorsk}', [SkController::class, 'show'])->name('sk.detail');
+    Route::get('/sk/cetak/{id}', [SkController::class, 'cetak'])->name('sk.cetak');
+
 
     // SK Proses Routes
     Route::get('/sk-proses', [SkController::class, 'prosesIndex'])->name('sk-proses');
@@ -72,9 +82,11 @@ Route::middleware('auth')->group(function () {
     Route::get('/perbup-proses/detail/{prosesperbup}', [PerbupController::class, 'prosesShow'])->name('perbup-proses.detail');
 
     // SK Lainnya Routes
-    Route::get('/sk-lainnya', [\App\Http\Controllers\SKLainnyaController::class, 'index'])->name('sk-lainnya.index');
-    Route::get('/sk-lainnya/{year}', [\App\Http\Controllers\SKLainnyaController::class, 'showByYear'])->name('sk-lainnya.year');
-    Route::get('/sk-lainnya/detail/{proseslain}', [\App\Http\Controllers\SKLainnyaController::class, 'show'])->name('sk-lainnya.detail');
+    Route::get('/sk-lainnya', [SKLainnyaController::class, 'index'])->name('sk-lainnya.index');
+    Route::get('/sk-lainnya/{year}', [SKLainnyaController::class, 'showByYear'])->name('sk-lainnya.year');
+    Route::get('/sk-lainnya/detail/{proseslain}', [SKLainnyaController::class, 'show'])->name('sk-lainnya.detail');
+    Route::get('/sk-lainnya/cetak/{id}', [SKLainnyaController::class, 'cetak'])->name('sk-lainnya.cetak');
+
 
     Route::redirect('/profile', '/dashboard')->name('profile');
 });
