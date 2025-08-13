@@ -43,6 +43,7 @@ Route::middleware('auth')->group(function () {
     // Profile & Settings Routes
     Route::post('/dashboard/update-profile', [HomeController::class, 'updateProfile'])->name('dashboard.update-profile');
     Route::get('/dashboard/notifications', [HomeController::class, 'getNotifications'])->name('dashboard.notifications');
+    Route::post('/dashboard/update-profile', [HomeController::class, 'updateProfile'])->name('dashboard.update-profile');
 
     // Print Routes
     Route::get('/dashboard/cetak-tahunan', [HomeController::class, 'cetakTahunan'])->name('dashboard.cetak-tahunan');

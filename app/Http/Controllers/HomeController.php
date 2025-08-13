@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -59,6 +62,36 @@ class HomeController extends Controller
         ));
     }
     
+    public function updateProfile(Request $request)
+    {
+        $user = Auth::user();
+
+        $validator = Validator::make($request->all(), [
+            'email' => ['required', 'string', 'email', 'max:255', Rule::unique('users')->ignore($user->id)],
+            'whatsapp' => ['nullable', 'string', 'max:15'],
+            'old_password' => ['nullable', 'string'],
+            'new_password' => ['nullable', 'string', 'min:8', 'confirmed'],
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['success' => false, 'message' => $validator->errors()->first()]);
+        }
+
+        $user->email = $request->email;
+        $user->whatsapp = $request->whatsapp;
+
+        if ($request->filled('old_password') && $request->filled('new_password')) {
+            if (!Hash::check($request->old_password, $user->password)) {
+                return response()->json(['success' => false, 'message' => 'Password lama tidak sesuai.']);
+            }
+            $user->password = Hash::make($request->new_password);
+        }
+
+        $user->save();
+
+        return response()->json(['success' => true, 'message' => 'Profil berhasil diperbarui.']);
+    }
+
     private function getDateRange($periode)
     {
         $now = Carbon::now();
