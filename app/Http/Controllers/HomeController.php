@@ -23,6 +23,11 @@ class HomeController extends Controller
     public function dashboard(Request $request)
     {
         $user = Auth::user();
+        
+        if (!$user || !$user->opd_id) {
+            return redirect()->route('login')->withErrors(['error' => 'Sesi berakhir atau OPD tidak ditemukan']);
+        }
+        
         $userOpdId = $user->opd_id;
         
         // Filter parameters
@@ -34,288 +39,346 @@ class HomeController extends Controller
         // Date range based on periode
         $dateRange = $this->getDateRange($periode);
         
-        // Ringkasan Data Penting
-        $ringkasan = $this->getRingkasanData($userOpdId, $dateRange);
-        
-        // Daftar Laporan dengan filter dan pencarian
-        $laporanQuery = $this->buildLaporanQuery($userOpdId, $jenisLaporan, $kategori, $search, $dateRange);
-        $laporan = $laporanQuery->paginate(10)->appends($request->query());
-        
-        // Notifikasi
-        $notifikasi = $this->getNotifikasi($userOpdId);
-        
-        // Data untuk filter dropdown
-        $filterData = $this->getFilterData();
-        
-        return view('user.dashboard', compact(
-            'user',
-            'ringkasan',
-            'laporan',
-            'notifikasi',
-            'filterData',
-            'periode',
-            'jenisLaporan',
-            'kategori',
-            'search'
-        ));
+        try {
+            // Ringkasan Data Penting
+            $ringkasan = $this->getRingkasanData($userOpdId, $dateRange);
+            
+            // Daftar Laporan dengan filter dan pencarian
+            $laporanQuery = $this->buildLaporanQuery($userOpdId, $jenisLaporan, $kategori, $search, $dateRange);
+            $laporan = $laporanQuery->paginate(10)->appends($request->query());
+            
+            // Notifikasi
+            $notifikasi = $this->getNotifikasi($userOpdId);
+            
+            // Data untuk filter dropdown
+            $filterData = $this->getFilterData();
+            
+            return view('user.dashboard', compact(
+                'user',
+                'ringkasan',
+                'laporan',
+                'notifikasi',
+                'filterData',
+                'periode',
+                'jenisLaporan',
+                'kategori',
+                'search'
+            ));
+        } catch (\Exception $e) {
+            \Log::error('Dashboard Error: ' . $e->getMessage());
+            return view('user.dashboard', [
+                'user' => $user,
+                'ringkasan' => $this->getEmptyRingkasan(),
+                'laporan' => collect()->paginate(10),
+                'notifikasi' => [],
+                'filterData' => $this->getFilterData(),
+                'periode' => $periode,
+                'jenisLaporan' => $jenisLaporan,
+                'kategori' => $kategori,
+                'search' => $search,
+                'error' => 'Terjadi kesalahan saat memuat data dashboard'
+            ]);
+        }
     }
     
     private function getDateRange($periode)
     {
         $now = Carbon::now();
         
-        switch ($periode) {
-            case 'hari_ini':
-                return [
-                    'start' => $now->startOfDay(),
-                    'end' => $now->endOfDay()
-                ];
-            case 'minggu_ini':
-                return [
-                    'start' => $now->startOfWeek(),
-                    'end' => $now->endOfWeek()
-                ];
-            case 'bulan_ini':
-                return [
-                    'start' => $now->startOfMonth(),
-                    'end' => $now->endOfMonth()
-                ];
-            case 'tahun_ini':
-                return [
-                    'start' => $now->startOfYear(),
-                    'end' => $now->endOfYear()
-                ];
-            case 'semua':
-            default:
-                return [
-                    'start' => Carbon::create(2020, 1, 1),
-                    'end' => $now->endOfYear()
-                ];
+        try {
+            switch ($periode) {
+                case 'hari_ini':
+                    return [
+                        'start' => $now->copy()->startOfDay(),
+                        'end' => $now->copy()->endOfDay()
+                    ];
+                case 'minggu_ini':
+                    return [
+                        'start' => $now->copy()->startOfWeek(),
+                        'end' => $now->copy()->endOfWeek()
+                    ];
+                case 'bulan_ini':
+                    return [
+                        'start' => $now->copy()->startOfMonth(),
+                        'end' => $now->copy()->endOfMonth()
+                    ];
+                case 'tahun_ini':
+                    return [
+                        'start' => $now->copy()->startOfYear(),
+                        'end' => $now->copy()->endOfYear()
+                    ];
+                case 'semua':
+                default:
+                    return [
+                        'start' => Carbon::create(2020, 1, 1),
+                        'end' => $now->copy()->endOfYear()
+                    ];
+            }
+        } catch (\Exception $e) {
+            // Return default range if error
+            return [
+                'start' => Carbon::create(2020, 1, 1),
+                'end' => Carbon::now()->endOfYear()
+            ];
         }
     }
     
     private function getRingkasanData($opdId, $dateRange)
     {
-        // SK yang sudah selesai dan bisa dicetak
-        $skSelesai = NomorSk::where('kodeopd', $opdId)
-            ->where('status', 'selesai')
-            ->whereBetween('tglsk', [$dateRange['start'], $dateRange['end']])
-            ->count();
+        try {
+            // SK yang sudah selesai dan bisa dicetak
+            $skSelesai = NomorSk::where('kodeopd', $opdId)
+                ->where('status', 'selesai')
+                ->whereBetween('tglsk', [$dateRange['start'], $dateRange['end']])
+                ->count();
+                
+            // Perbup yang sudah selesai dan bisa dicetak
+            $perbupSelesai = NomorPerbup::where('kodeopd', $opdId)
+                ->where('status', 'selesai')
+                ->whereBetween('tglpb', [$dateRange['start'], $dateRange['end']])
+                ->count();
+                
+            // SK Lainnya yang sudah selesai
+            $skLainSelesai = ProsesLain::where('kodeopd', $opdId)
+                ->where('status', 'Selesai')
+                ->whereBetween('tglmasuk', [$dateRange['start'], $dateRange['end']])
+                ->count();
             
-        // Perbup yang sudah selesai dan bisa dicetak
-        $perbupSelesai = NomorPerbup::where('kodeopd', $opdId)
-            ->where('status', 'selesai')
-            ->whereBetween('tglpb', [$dateRange['start'], $dateRange['end']])
-            ->count();
+            // Total laporan tersedia
+            $totalTersedia = $skSelesai + $perbupSelesai + $skLainSelesai;
             
-        // SK Lainnya yang sudah selesai
-        $skLainSelesai = ProsesLain::where('kodeopd', $opdId)
-            ->where('status', 'Selesai')
-            ->whereBetween('tglmasuk', [$dateRange['start'], $dateRange['end']])
-            ->count();
-        
-        // Total laporan tersedia
-        $totalTersedia = $skSelesai + $perbupSelesai + $skLainSelesai;
-        
-        // Laporan dalam proses
-        $skProses = ProsesSk::where('kodeopd', $opdId)
-            ->where('status', 'Proses')
-            ->whereBetween('tglmasuksk', [$dateRange['start'], $dateRange['end']])
-            ->count();
+            // Laporan dalam proses
+            $skProses = ProsesSk::where('kodeopd', $opdId)
+                ->where('status', 'Proses')
+                ->whereBetween('tglmasuksk', [$dateRange['start'], $dateRange['end']])
+                ->count();
+                
+            $perbupProses = ProsesPerbup::where('kodeopd', $opdId)
+                ->where('status', 'proses')
+                ->whereBetween('tglmasukpb', [$dateRange['start'], $dateRange['end']])
+                ->count();
+                
+            $skLainProses = ProsesLain::where('kodeopd', $opdId)
+                ->where('status', 'Diproses')
+                ->whereBetween('tglmasuk', [$dateRange['start'], $dateRange['end']])
+                ->count();
             
-        $perbupProses = ProsesPerbup::where('kodeopd', $opdId)
-            ->where('status', 'proses')
-            ->whereBetween('tglmasukpb', [$dateRange['start'], $dateRange['end']])
-            ->count();
+            $totalDalamProses = $skProses + $perbupProses + $skLainProses;
             
-        $skLainProses = ProsesLain::where('kodeopd', $opdId)
-            ->where('status', 'Diproses')
-            ->whereBetween('tglmasuk', [$dateRange['start'], $dateRange['end']])
-            ->count();
-        
-        $totalDalamProses = $skProses + $perbupProses + $skLainProses;
-        
-        // Laporan terbaru (5 terbaru)
-        $laporanTerbaru = $this->getLaporanTerbaru($opdId, 5);
-        
-        // Laporan yang belum dicetak (status diambil = null atau kosong)
-        $belumDicetak = NomorSk::where('kodeopd', $opdId)
-            ->where('status', 'selesai')
-            ->whereNull('tglambilsk')
-            ->count() +
-            NomorPerbup::where('kodeopd', $opdId)
-            ->where('status', 'selesai')
-            ->whereNull('tglambilpb')
-            ->count();
-        
+            // Laporan yang belum dicetak (status diambil = null atau kosong)
+            $belumDicetak = NomorSk::where('kodeopd', $opdId)
+                ->where('status', 'selesai')
+                ->whereNull('tglambilsk')
+                ->count() +
+                NomorPerbup::where('kodeopd', $opdId)
+                ->where('status', 'selesai')
+                ->whereNull('tglambilpb')
+                ->count();
+            
+            // Laporan terbaru (5 terbaru)
+            $laporanTerbaru = $this->getLaporanTerbaru($opdId, 5);
+            
+            return [
+                'total_tersedia' => $totalTersedia,
+                'dalam_proses' => $totalDalamProses,
+                'belum_dicetak' => $belumDicetak,
+                'laporan_terbaru' => $laporanTerbaru,
+                'sk_selesai' => $skSelesai,
+                'perbup_selesai' => $perbupSelesai,
+                'sk_lain_selesai' => $skLainSelesai
+            ];
+        } catch (\Exception $e) {
+            \Log::error('Error getting ringkasan data: ' . $e->getMessage());
+            return $this->getEmptyRingkasan();
+        }
+    }
+    
+    private function getEmptyRingkasan()
+    {
         return [
-            'total_tersedia' => $totalTersedia,
-            'dalam_proses' => $totalDalamProses,
-            'belum_dicetak' => $belumDicetak,
-            'laporan_terbaru' => $laporanTerbaru,
-            'sk_selesai' => $skSelesai,
-            'perbup_selesai' => $perbupSelesai,
-            'sk_lain_selesai' => $skLainSelesai
+            'total_tersedia' => 0,
+            'dalam_proses' => 0,
+            'belum_dicetak' => 0,
+            'laporan_terbaru' => collect(),
+            'sk_selesai' => 0,
+            'perbup_selesai' => 0,
+            'sk_lain_selesai' => 0
         ];
     }
     
     private function getLaporanTerbaru($opdId, $limit = 5)
     {
-        $sk = NomorSk::select(DB::raw("CAST(nosk AS CHAR) as id"), 'judulsk as judul', 'tglsk as tanggal', 'status', DB::raw("'SK' as jenis"))
-            ->where('kodeopd', $opdId)
-            ->whereNotNull('tglsk');
+        try {
+            $sk = NomorSk::select(DB::raw("CAST(nosk AS CHAR) as id"), 'judulsk as judul', 'tglsk as tanggal', 'status', DB::raw("'SK' as jenis"))
+                ->where('kodeopd', $opdId)
+                ->whereNotNull('tglsk');
+                
+            $perbup = NomorPerbup::select(DB::raw("CAST(nopb AS CHAR) as id"), 'judulpb as judul', 'tglpb as tanggal', 'status', DB::raw("'Perbup' as jenis"))
+                ->where('kodeopd', $opdId)
+                ->whereNotNull('tglpb');
+                
+            $skLain = ProsesLain::select('kodelain as id', 'judul', 'tglmasuk as tanggal', 'status', DB::raw("'SK Lainnya' as jenis"))
+                ->where('kodeopd', $opdId)
+                ->whereNotNull('tglmasuk');
             
-        $perbup = NomorPerbup::select(DB::raw("CAST(nopb AS CHAR) as id"), 'judulpb as judul', 'tglpb as tanggal', 'status', DB::raw("'Perbup' as jenis"))
-            ->where('kodeopd', $opdId)
-            ->whereNotNull('tglpb');
-            
-        $skLain = ProsesLain::select('kodelain as id', 'judul', 'tglmasuk as tanggal', 'status', DB::raw("'SK Lainnya' as jenis"))
-            ->where('kodeopd', $opdId)
-            ->whereNotNull('tglmasuk');
-        
-        return $sk->union($perbup)->union($skLain)
-            ->orderBy('tanggal', 'desc')
-            ->limit($limit)
-            ->get();
+            return $sk->union($perbup)->union($skLain)
+                ->orderBy('tanggal', 'desc')
+                ->limit($limit)
+                ->get();
+        } catch (\Exception $e) {
+            \Log::error('Error getting laporan terbaru: ' . $e->getMessage());
+            return collect();
+        }
     }
     
     private function buildLaporanQuery($opdId, $jenisLaporan, $kategori, $search, $dateRange)
     {
-        $sk = NomorSk::select(
-                DB::raw("CAST(nosk AS CHAR) as id"),
-                'judulsk as judul',
-                'tglsk as tanggal',
-                'status',
-                'tglambilsk as tgl_ambil',
-                'kodeopd',
-                DB::raw("'SK' as jenis"),
-                DB::raw("CASE WHEN status = 'selesai' THEN 'selesai' ELSE 'proses' END as kategori_status")
-            )
-            ->where('kodeopd', $opdId)
-            ->whereBetween('tglsk', [$dateRange['start'], $dateRange['end']]);
+        try {
+            $sk = NomorSk::select(
+                    DB::raw("CAST(nosk AS CHAR) as id"),
+                    'judulsk as judul',
+                    'tglsk as tanggal',
+                    'status',
+                    'tglambilsk as tgl_ambil',
+                    'kodeopd',
+                    DB::raw("'SK' as jenis"),
+                    DB::raw("CASE WHEN status = 'selesai' THEN 'selesai' ELSE 'proses' END as kategori_status")
+                )
+                ->where('kodeopd', $opdId)
+                ->whereBetween('tglsk', [$dateRange['start'], $dateRange['end']]);
+                
+            $perbup = NomorPerbup::select(
+                    DB::raw("CAST(nopb AS CHAR) as id"),
+                    'judulpb as judul',
+                    'tglpb as tanggal',
+                    'status',
+                    'tglambilpb as tgl_ambil',
+                    'kodeopd',
+                    DB::raw("'Perbup' as jenis"),
+                    DB::raw("CASE WHEN status = 'selesai' THEN 'selesai' ELSE 'proses' END as kategori_status")
+                )
+                ->where('kodeopd', $opdId)
+                ->whereBetween('tglpb', [$dateRange['start'], $dateRange['end']]);
+                
+            $skProses = ProsesSk::select(
+                    'kodesk as id',
+                    'judulsk as judul',
+                    'tglmasuksk as tanggal',
+                    'status',
+                    DB::raw('NULL as tgl_ambil'),
+                    'kodeopd',
+                    DB::raw("'SK Proses' as jenis"),
+                    DB::raw("CASE WHEN status = 'Selesai' THEN 'selesai' ELSE 'proses' END as kategori_status")
+                )
+                ->where('kodeopd', $opdId)
+                ->whereBetween('tglmasuksk', [$dateRange['start'], $dateRange['end']]);
+                
+            $perbupProses = ProsesPerbup::select(
+                    'kodepb as id',
+                    'judulpb as judul',
+                    'tglmasukpb as tanggal',
+                    'status',
+                    DB::raw('NULL as tgl_ambil'),
+                    'kodeopd',
+                    DB::raw("'Perbup Proses' as jenis"),
+                    DB::raw("CASE WHEN status = 'selesai' THEN 'selesai' ELSE 'proses' END as kategori_status")
+                )
+                ->where('kodeopd', $opdId)
+                ->whereBetween('tglmasukpb', [$dateRange['start'], $dateRange['end']]);
+                
+            $skLain = ProsesLain::select(
+                    'kodelain as id',
+                    'judul',
+                    'tglmasuk as tanggal',
+                    'status',
+                    'tglambil as tgl_ambil',
+                    'kodeopd',
+                    DB::raw("'SK Lainnya' as jenis"),
+                    DB::raw("CASE WHEN status = 'Selesai' THEN 'selesai' ELSE 'proses' END as kategori_status")
+                )
+                ->where('kodeopd', $opdId)
+                ->whereBetween('tglmasuk', [$dateRange['start'], $dateRange['end']]);
             
-        $perbup = NomorPerbup::select(
-                DB::raw("CAST(nopb AS CHAR) as id"),
-                'judulpb as judul',
-                'tglpb as tanggal',
-                'status',
-                'tglambilpb as tgl_ambil',
-                'kodeopd',
-                DB::raw("'Perbup' as jenis"),
-                DB::raw("CASE WHEN status = 'selesai' THEN 'selesai' ELSE 'proses' END as kategori_status")
-            )
-            ->where('kodeopd', $opdId)
-            ->whereBetween('tglpb', [$dateRange['start'], $dateRange['end']]);
+            // Union all queries
+            $query = $sk->union($perbup)->union($skProses)->union($perbupProses)->union($skLain);
             
-        $skProses = ProsesSk::select(
-                'kodesk as id',
-                'judulsk as judul',
-                'tglmasuksk as tanggal',
-                'status',
-                DB::raw('NULL as tgl_ambil'),
-                'kodeopd',
-                DB::raw("'SK Proses' as jenis"),
-                DB::raw("CASE WHEN status = 'Selesai' THEN 'selesai' ELSE 'proses' END as kategori_status")
-            )
-            ->where('kodeopd', $opdId)
-            ->whereBetween('tglmasuksk', [$dateRange['start'], $dateRange['end']]);
+            // Apply filters
+            if ($jenisLaporan != 'semua') {
+                $query->where('jenis', $jenisLaporan);
+            }
             
-        $perbupProses = ProsesPerbup::select(
-                'kodepb as id',
-                'judulpb as judul',
-                'tglmasukpb as tanggal',
-                'status',
-                DB::raw('NULL as tgl_ambil'),
-                'kodeopd',
-                DB::raw("'Perbup Proses' as jenis"),
-                DB::raw("CASE WHEN status = 'selesai' THEN 'selesai' ELSE 'proses' END as kategori_status")
-            )
-            ->where('kodeopd', $opdId)
-            ->whereBetween('tglmasukpb', [$dateRange['start'], $dateRange['end']]);
+            if ($kategori != 'semua') {
+                $query->where('kategori_status', $kategori);
+            }
             
-        $skLain = ProsesLain::select(
-                'kodelain as id',
-                'judul',
-                'tglmasuk as tanggal',
-                'status',
-                'tglambil as tgl_ambil',
-                'kodeopd',
-                DB::raw("'SK Lainnya' as jenis"),
-                DB::raw("CASE WHEN status = 'Selesai' THEN 'selesai' ELSE 'proses' END as kategori_status")
-            )
-            ->where('kodeopd', $opdId)
-            ->whereBetween('tglmasuk', [$dateRange['start'], $dateRange['end']]);
-        
-        // Union all queries
-        $query = $sk->union($perbup)->union($skProses)->union($perbupProses)->union($skLain);
-        
-        // Apply filters
-        if ($jenisLaporan != 'semua') {
-            $query->where('jenis', $jenisLaporan);
+            if ($search) {
+                $query->where('judul', 'like', "%{$search}%");
+            }
+            
+            return $query->orderBy('tanggal', 'desc');
+        } catch (\Exception $e) {
+            \Log::error('Error building laporan query: ' . $e->getMessage());
+            // Return empty query builder
+            return NomorSk::whereRaw('1 = 0');
         }
-        
-        if ($kategori != 'semua') {
-            $query->where('kategori_status', $kategori);
-        }
-        
-        if ($search) {
-            $query->where('judul', 'like', "%{$search}%");
-        }
-        
-        return $query->orderBy('tanggal', 'desc');
     }
     
     private function getNotifikasi($opdId)
     {
-        $notifikasi = [];
-        
-        // Cek laporan baru dalam 7 hari terakhir
-        $laporanBaru = NomorSk::where('kodeopd', $opdId)
-            ->where('status', 'selesai')
-            ->where('tglsk', '>=', Carbon::now()->subDays(7))
-            ->count() +
-            NomorPerbup::where('kodeopd', $opdId)
-            ->where('status', 'selesai') 
-            ->where('tglpb', '>=', Carbon::now()->subDays(7))
-            ->count();
+        try {
+            $notifikasi = [];
             
-        if ($laporanBaru > 0) {
-            $notifikasi[] = [
-                'type' => 'success',
-                'icon' => 'fas fa-check-circle',
-                'message' => "Ada {$laporanBaru} laporan baru yang sudah selesai dalam 7 hari terakhir"
-            ];
-        }
-        
-        // Cek laporan yang sudah lama dalam proses
-        $prosesLama = ProsesSk::where('kodeopd', $opdId)
-            ->where('status', 'Proses')
-            ->where('tglmasuksk', '<=', Carbon::now()->subDays(30))
-            ->count();
+            // Cek laporan baru dalam 7 hari terakhir
+            $laporanBaru = NomorSk::where('kodeopd', $opdId)
+                ->where('status', 'selesai')
+                ->where('tglsk', '>=', Carbon::now()->subDays(7))
+                ->count() +
+                NomorPerbup::where('kodeopd', $opdId)
+                ->where('status', 'selesai') 
+                ->where('tglpb', '>=', Carbon::now()->subDays(7))
+                ->count();
+                
+            if ($laporanBaru > 0) {
+                $notifikasi[] = [
+                    'type' => 'success',
+                    'icon' => 'fas fa-check-circle',
+                    'message' => "Ada {$laporanBaru} laporan baru yang sudah selesai dalam 7 hari terakhir"
+                ];
+            }
             
-        if ($prosesLama > 0) {
-            $notifikasi[] = [
-                'type' => 'warning',
-                'icon' => 'fas fa-clock',
-                'message' => "Ada {$prosesLama} laporan yang sudah dalam proses lebih dari 30 hari"
-            ];
-        }
-        
-        // Cek laporan belum diambil
-        $belumDiambil = NomorSk::where('kodeopd', $opdId)
-            ->where('status', 'selesai')
-            ->whereNull('tglambilsk')
-            ->count();
+            // Cek laporan yang sudah lama dalam proses
+            $prosesLama = ProsesSk::where('kodeopd', $opdId)
+                ->where('status', 'Proses')
+                ->where('tglmasuksk', '<=', Carbon::now()->subDays(30))
+                ->count();
+                
+            if ($prosesLama > 0) {
+                $notifikasi[] = [
+                    'type' => 'warning',
+                    'icon' => 'fas fa-clock',
+                    'message' => "Ada {$prosesLama} laporan yang sudah dalam proses lebih dari 30 hari"
+                ];
+            }
             
-        if ($belumDiambil > 0) {
-            $notifikasi[] = [
-                'type' => 'info',
-                'icon' => 'fas fa-download',
-                'message' => "Ada {$belumDiambil} laporan yang sudah selesai namun belum dicetak/diambil"
-            ];
+            // Cek laporan belum diambil
+            $belumDiambil = NomorSk::where('kodeopd', $opdId)
+                ->where('status', 'selesai')
+                ->whereNull('tglambilsk')
+                ->count();
+                
+            if ($belumDiambil > 0) {
+                $notifikasi[] = [
+                    'type' => 'info',
+                    'icon' => 'fas fa-download',
+                    'message' => "Ada {$belumDiambil} laporan yang sudah selesai namun belum dicetak/diambil"
+                ];
+            }
+            
+            return $notifikasi;
+        } catch (\Exception $e) {
+            \Log::error('Error getting notifikasi: ' . $e->getMessage());
+            return [];
         }
-        
-        return $notifikasi;
     }
     
     private function getFilterData()
@@ -346,48 +409,70 @@ class HomeController extends Controller
     
     public function cetakTahunan(Request $request)
     {
-        $user = Auth::user();
-        $tahun = $request->get('tahun', date('Y'));
-        $jenis = $request->get('jenis', 'semua');
-        
-        // Generate laporan tahunan berdasarkan filter
-        $data = $this->getDataTahunan($user->opd_id, $tahun, $jenis);
-        
-        return view('user.cetak-tahunan', compact('data', 'tahun', 'jenis', 'user'));
+        try {
+            $user = Auth::user();
+            
+            if (!$user || !$user->opd_id) {
+                return redirect()->route('login')->withErrors(['error' => 'Sesi berakhir']);
+            }
+            
+            $tahun = $request->get('tahun', date('Y'));
+            $jenis = $request->get('jenis', 'semua');
+            
+            // Generate laporan tahunan berdasarkan filter
+            $data = $this->getDataTahunan($user->opd_id, $tahun, $jenis);
+            
+            return view('user.cetak-tahunan', compact('data', 'tahun', 'jenis', 'user'));
+        } catch (\Exception $e) {
+            \Log::error('Error cetak tahunan: ' . $e->getMessage());
+            return back()->withErrors(['error' => 'Terjadi kesalahan saat mencetak laporan tahunan']);
+        }
     }
     
     private function getDataTahunan($opdId, $tahun, $jenis)
     {
-        $data = [];
-        
-        if ($jenis == 'semua' || $jenis == 'sk') {
-            $data['sk'] = NomorSk::where('kodeopd', $opdId)
-                ->whereYear('tglsk', $tahun)
-                ->orderBy('tglsk', 'asc')
-                ->get();
+        try {
+            $data = [];
+            
+            if ($jenis == 'semua' || $jenis == 'sk') {
+                $data['sk'] = NomorSk::where('kodeopd', $opdId)
+                    ->whereYear('tglsk', $tahun)
+                    ->orderBy('tglsk', 'asc')
+                    ->get();
+            }
+            
+            if ($jenis == 'semua' || $jenis == 'perbup') {
+                $data['perbup'] = NomorPerbup::where('kodeopd', $opdId)
+                    ->whereYear('tglpb', $tahun)
+                    ->orderBy('tglpb', 'asc')
+                    ->get();
+            }
+            
+            if ($jenis == 'semua' || $jenis == 'sk_lainnya') {
+                $data['sk_lainnya'] = ProsesLain::where('kodeopd', $opdId)
+                    ->whereYear('tglmasuk', $tahun)
+                    ->orderBy('tglmasuk', 'asc')
+                    ->get();
+            }
+            
+            return $data;
+        } catch (\Exception $e) {
+            \Log::error('Error getting data tahunan: ' . $e->getMessage());
+            return [];
         }
-        
-        if ($jenis == 'semua' || $jenis == 'perbup') {
-            $data['perbup'] = NomorPerbup::where('kodeopd', $opdId)
-                ->whereYear('tglpb', $tahun)
-                ->orderBy('tglpb', 'asc')
-                ->get();
-        }
-        
-        if ($jenis == 'semua' || $jenis == 'sk_lainnya') {
-            $data['sk_lainnya'] = ProsesLain::where('kodeopd', $opdId)
-                ->whereYear('tglmasuk', $tahun)
-                ->orderBy('tglmasuk', 'asc')
-                ->get();
-        }
-        
-        return $data;
     }
 
     public function updateProfile(Request $request)
     {
         try {
             $user = Auth::user();
+            
+            if (!$user) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Sesi berakhir, silakan login kembali'
+                ]);
+            }
             
             $request->validate([
                 'email' => 'required|email|unique:users,email,' . $user->id,
@@ -427,7 +512,13 @@ class HomeController extends Controller
                 'message' => 'Profil berhasil diperbarui'
             ]);
             
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Data tidak valid: ' . implode(', ', $e->validator->errors()->all())
+            ]);
         } catch (\Exception $e) {
+            \Log::error('Error updating profile: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
                 'message' => 'Terjadi kesalahan: ' . $e->getMessage()
@@ -437,30 +528,43 @@ class HomeController extends Controller
 
     public function getNotifications()
     {
-        $user = Auth::user();
-        $opdId = $user->opd_id;
-        
-        // Get recent notifications
-        $notifications = $this->getNotifikasi($opdId);
-        
-        // Count new items since last check (you might want to implement a last_check timestamp)
-        $newCount = 0;
-        
-        // Check for new completed documents in last hour
-        $recentCompleted = NomorSk::where('kodeopd', $opdId)
-            ->where('status', 'selesai')
-            ->where('updated_at', '>=', Carbon::now()->subHour())
-            ->count() +
-            NomorPerbup::where('kodeopd', $opdId)
-            ->where('status', 'selesai')
-            ->where('updated_at', '>=', Carbon::now()->subHour())
-            ->count();
+        try {
+            $user = Auth::user();
             
-        $newCount = $recentCompleted;
-        
-        return response()->json([
-            'notifications' => $notifications,
-            'newCount' => $newCount
-        ]);
+            if (!$user || !$user->opd_id) {
+                return response()->json([
+                    'notifications' => [],
+                    'newCount' => 0
+                ]);
+            }
+            
+            $opdId = $user->opd_id;
+            
+            // Get recent notifications
+            $notifications = $this->getNotifikasi($opdId);
+            
+            // Check for new completed documents in last hour
+            $recentCompleted = NomorSk::where('kodeopd', $opdId)
+                ->where('status', 'selesai')
+                ->where('updated_at', '>=', Carbon::now()->subHour())
+                ->count() +
+                NomorPerbup::where('kodeopd', $opdId)
+                ->where('status', 'selesai')
+                ->where('updated_at', '>=', Carbon::now()->subHour())
+                ->count();
+                
+            $newCount = $recentCompleted;
+            
+            return response()->json([
+                'notifications' => $notifications,
+                'newCount' => $newCount
+            ]);
+        } catch (\Exception $e) {
+            \Log::error('Error getting notifications: ' . $e->getMessage());
+            return response()->json([
+                'notifications' => [],
+                'newCount' => 0
+            ]);
+        }
     }
 }
