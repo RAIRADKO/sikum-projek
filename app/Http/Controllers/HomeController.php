@@ -161,11 +161,11 @@ class HomeController extends Controller
     
     private function getLaporanTerbaru($opdId, $limit = 5)
     {
-        $sk = NomorSk::select('nosk as id', 'judulsk as judul', 'tglsk as tanggal', 'status', DB::raw("'SK' as jenis"))
+        $sk = NomorSk::select(DB::raw("CAST(nosk AS CHAR) as id"), 'judulsk as judul', 'tglsk as tanggal', 'status', DB::raw("'SK' as jenis"))
             ->where('kodeopd', $opdId)
             ->whereNotNull('tglsk');
             
-        $perbup = NomorPerbup::select('nopb as id', 'judulpb as judul', 'tglpb as tanggal', 'status', DB::raw("'Perbup' as jenis"))
+        $perbup = NomorPerbup::select(DB::raw("CAST(nopb AS CHAR) as id"), 'judulpb as judul', 'tglpb as tanggal', 'status', DB::raw("'Perbup' as jenis"))
             ->where('kodeopd', $opdId)
             ->whereNotNull('tglpb');
             
@@ -182,27 +182,27 @@ class HomeController extends Controller
     private function buildLaporanQuery($opdId, $jenisLaporan, $kategori, $search, $dateRange)
     {
         $sk = NomorSk::select(
-                'nosk as id',
-                'judulsk as judul', 
+                DB::raw("CAST(nosk AS CHAR) as id"),
+                'judulsk as judul',
                 'tglsk as tanggal',
                 'status',
                 'tglambilsk as tgl_ambil',
                 'kodeopd',
                 DB::raw("'SK' as jenis"),
-                DB::raw("'selesai' as kategori_status")
+                DB::raw("CASE WHEN status = 'selesai' THEN 'selesai' ELSE 'proses' END as kategori_status")
             )
             ->where('kodeopd', $opdId)
             ->whereBetween('tglsk', [$dateRange['start'], $dateRange['end']]);
             
         $perbup = NomorPerbup::select(
-                'nopb as id',
+                DB::raw("CAST(nopb AS CHAR) as id"),
                 'judulpb as judul',
-                'tglpb as tanggal', 
+                'tglpb as tanggal',
                 'status',
                 'tglambilpb as tgl_ambil',
                 'kodeopd',
                 DB::raw("'Perbup' as jenis"),
-                DB::raw("'selesai' as kategori_status")
+                DB::raw("CASE WHEN status = 'selesai' THEN 'selesai' ELSE 'proses' END as kategori_status")
             )
             ->where('kodeopd', $opdId)
             ->whereBetween('tglpb', [$dateRange['start'], $dateRange['end']]);
@@ -215,7 +215,7 @@ class HomeController extends Controller
                 DB::raw('NULL as tgl_ambil'),
                 'kodeopd',
                 DB::raw("'SK Proses' as jenis"),
-                DB::raw("'proses' as kategori_status")
+                DB::raw("CASE WHEN status = 'Selesai' THEN 'selesai' ELSE 'proses' END as kategori_status")
             )
             ->where('kodeopd', $opdId)
             ->whereBetween('tglmasuksk', [$dateRange['start'], $dateRange['end']]);
@@ -228,7 +228,7 @@ class HomeController extends Controller
                 DB::raw('NULL as tgl_ambil'),
                 'kodeopd',
                 DB::raw("'Perbup Proses' as jenis"),
-                DB::raw("'proses' as kategori_status")
+                DB::raw("CASE WHEN status = 'selesai' THEN 'selesai' ELSE 'proses' END as kategori_status")
             )
             ->where('kodeopd', $opdId)
             ->whereBetween('tglmasukpb', [$dateRange['start'], $dateRange['end']]);
