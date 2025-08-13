@@ -4,7 +4,6 @@
 
 @section('content')
 <div class="container-fluid py-4">
-    <!-- Header Profil -->
     <div class="row mb-4">
         <div class="col-12">
             <div class="card border-0 shadow-sm gradient-custom">
@@ -59,7 +58,18 @@
                                     @endfor
                                 </select>
                             </div>
-                            <div class="col-md-8">
+                            {{-- KODE TAMBAHAN --}}
+                            <div class="col-md-4">
+                                <label for="jenis_dokumen" class="form-label">Jenis Dokumen:</label>
+                                <select name="jenis_dokumen" id="jenis_dokumen" class="form-select">
+                                    <option value="semua">Semua</option>
+                                    <option value="nomor_sk">Nomor SK</option>
+                                    <option value="nomor_perbup">Nomor Perbup</option>
+                                    <option value="sk_lainnya">SK Lainnya</option>
+                                </select>
+                            </div>
+                            {{-- BATAS KODE TAMBAHAN --}}
+                            <div class="col-md-4">
                                 <p class="mb-2">Pilih format untuk mencetak:</p>
                                 <button type="submit" name="format" value="pdf" class="btn btn-danger">
                                     <i class="fas fa-file-pdf me-1"></i> Cetak PDF
@@ -105,7 +115,6 @@
         </div>
     </div>
 
-    <!-- Laporan Terbaru Sidebar -->
     @if(!empty($ringkasan['laporan_terbaru']) && $ringkasan['laporan_terbaru']->count() > 0)
     <div class="row mt-4">
         <div class="col-12">
@@ -139,7 +148,6 @@
     @endif
 </div>
 
-<!-- Modal Pengaturan Akun -->
 <div class="modal fade" id="profileModal" tabindex="-1">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
@@ -219,7 +227,6 @@
     </div>
 </div>
 
-<!-- Modal Bantuan -->
 <div class="modal fade" id="helpModal" tabindex="-1">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
@@ -289,7 +296,6 @@
     </div>
 </div>
 
-<!-- Modal Cetak Custom -->
 <div class="modal fade" id="printModal" tabindex="-1">
     <div class="modal-dialog">
         <div class="modal-content">
