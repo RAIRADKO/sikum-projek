@@ -4,19 +4,6 @@
 
 @section('content')
 <div class="container-fluid py-4">
-    <!-- Error Alert (jika ada) -->
-    @if(isset($error))
-    <div class="row mb-4">
-        <div class="col-12">
-            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                <i class="fas fa-exclamation-triangle me-2"></i>
-                {{ $error }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
-        </div>
-    </div>
-    @endif
-
     <!-- Header Profil -->
     <div class="row mb-4">
         <div class="col-12">
@@ -34,12 +21,12 @@
                                     </span>
                                 </div>
                                 <div class="ms-3 text-white">
-                                    <h3 class="h4 mb-1">{{ $user->nama ?? 'Nama tidak tersedia' }}</h3>
+                                    <h3 class="h4 mb-1">{{ $user->nama }}</h3>
                                     <p class="mb-0 opacity-75">
-                                        <i class="fas fa-id-card me-2"></i>NIP: {{ $user->nip ?? 'NIP tidak tersedia' }}
+                                        <i class="fas fa-id-card me-2"></i>NIP: {{ $user->nip }}
                                     </p>
                                     <p class="mb-0 opacity-75">
-                                        <i class="fas fa-building me-2"></i>{{ optional($user->opd)->namaopd ?? 'OPD Tidak Ditemukan' }}
+                                        <i class="fas fa-building me-2"></i>{{ $user->opd->namaopd ?? 'OPD Tidak Ditemukan' }}
                                     </p>
                                 </div>
                             </div>
@@ -59,13 +46,13 @@
     </div>
 
     <!-- Notifikasi -->
-    @if(!empty($notifikasi) && is_array($notifikasi))
+    @if(!empty($notifikasi))
     <div class="row mb-4">
         <div class="col-12">
             @foreach($notifikasi as $notif)
-            <div class="alert alert-{{ $notif['type'] ?? 'info' }} alert-dismissible fade show" role="alert">
-                <i class="{{ $notif['icon'] ?? 'fas fa-info-circle' }} me-2"></i>
-                {{ $notif['message'] ?? 'Notifikasi tidak tersedia' }}
+            <div class="alert alert-{{ $notif['type'] }} alert-dismissible fade show" role="alert">
+                <i class="{{ $notif['icon'] }} me-2"></i>
+                {{ $notif['message'] }}
                 <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
             </div>
             @endforeach
@@ -79,15 +66,51 @@
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-start">
+                        <div class="stats-icon bg-primary bg-opacity-10 rounded-3 p-3">
+                            <i class="bi bi-file-text text-primary"></i>
+                        </div>
+                        <span class="badge bg-primary">Total</span>
+                    </div>
+                    <h3 class="fs-2 mt-3 mb-1">{{ $ringkasan['total_tersedia'] }}</h3>
+                    <p class="text-muted mb-0">Laporan Tersedia</p>
+                    <div class="progress mt-2" style="height: 4px;">
+                        <div class="progress-bar bg-primary" style="width: 100%" role="progressbar"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div class="stats-icon bg-warning bg-opacity-10 rounded-3 p-3">
+                            <i class="fas fa-clock text-warning"></i>
+                        </div>
+                        <span class="badge bg-warning">Proses</span>
+                    </div>
+                    <h3 class="fs-2 mt-3 mb-1">{{ $ringkasan['dalam_proses'] }}</h3>
+                    <p class="text-muted mb-0">Dalam Proses</p>
+                    <div class="progress mt-2" style="height: 4px;">
+                        <div class="progress-bar bg-warning" style="width: 75%" role="progressbar"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start">
                         <div class="stats-icon bg-info bg-opacity-10 rounded-3 p-3">
                             <i class="fas fa-download text-info"></i>
                         </div>
                         <span class="badge bg-info">Belum Cetak</span>
                     </div>
-                    <h3 class="fs-2 mt-3 mb-1">{{ $ringkasan['belum_dicetak'] ?? 0 }}</h3>
+                    <h3 class="fs-2 mt-3 mb-1">{{ $ringkasan['belum_dicetak'] }}</h3>
                     <p class="text-muted mb-0">Belum Dicetak</p>
                     <div class="progress mt-2" style="height: 4px;">
-                        <div class="progress-bar bg-info" style="width: {{ ($ringkasan['belum_dicetak'] ?? 0) > 0 ? 60 : 0 }}%" role="progressbar"></div>
+                        <div class="progress-bar bg-info" style="width: {{ $ringkasan['belum_dicetak'] > 0 ? 60 : 0 }}%" role="progressbar"></div>
                     </div>
                 </div>
             </div>
@@ -105,11 +128,11 @@
                                 Cetak
                             </button>
                             <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" href="javascript:void(0)" onclick="cetakTahunan('semua')">Semua Laporan</a></li>
-                                <li><a class="dropdown-item" href="javascript:void(0)" onclick="cetakTahunan('sk')">SK Saja</a></li>
-                                <li><a class="dropdown-item" href="javascript:void(0)" onclick="cetakTahunan('perbup')">Perbup Saja</a></li>
+                                <li><a class="dropdown-item" href="#" onclick="cetakTahunan('semua')">Semua Laporan</a></li>
+                                <li><a class="dropdown-item" href="#" onclick="cetakTahunan('sk')">SK Saja</a></li>
+                                <li><a class="dropdown-item" href="#" onclick="cetakTahunan('perbup')">Perbup Saja</a></li>
                                 <li><hr class="dropdown-divider"></li>
-                                <li><a class="dropdown-item" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#printModal">Cetak Custom</a></li>
+                                <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#printModal">Cetak Custom</a></li>
                             </ul>
                         </div>
                     </div>
@@ -248,7 +271,7 @@
     </div>
 
     <!-- Laporan Terbaru Sidebar -->
-    @if(isset($ringkasan['laporan_terbaru']) && $ringkasan['laporan_terbaru']->count() > 0)
+    @if(!empty($ringkasan['laporan_terbaru']) && $ringkasan['laporan_terbaru']->count() > 0)
     <div class="row mt-4">
         <div class="col-12">
             <div class="card border-0 shadow-sm">
@@ -263,24 +286,12 @@
                         <div class="list-group-item border-0 py-3">
                             <div class="d-flex justify-content-between align-items-start">
                                 <div class="flex-grow-1">
-                                    <h6 class="mb-1 text-truncate" style="max-width: 250px;">{{ $recent->judul ?? 'Judul tidak tersedia' }}</h6>
+                                    <h6 class="mb-1 text-truncate" style="max-width: 250px;">{{ $recent->judul }}</h6>
                                     <p class="mb-1">
-                                        <span class="badge bg-light text-dark">{{ $recent->jenis ?? 'Tidak diketahui' }}</span>
-                                        @php
-                                            $statusClass = 'warning';
-                                            if (in_array(strtolower($recent->status ?? ''), ['selesai', 'completed'])) {
-                                                $statusClass = 'success';
-                                            }
-                                        @endphp
-                                        <span class="badge bg-{{ $statusClass }}">{{ $recent->status ?? 'Status tidak diketahui' }}</span>
+                                        <span class="badge bg-light text-dark">{{ $recent->jenis }}</span>
+                                        <span class="badge bg-{{ $recent->status == 'selesai' || $recent->status == 'Selesai' ? 'success' : 'warning' }}">{{ $recent->status }}</span>
                                     </p>
-                                    <small class="text-muted">
-                                        @if($recent->tanggal)
-                                            {{ \Carbon\Carbon::parse($recent->tanggal)->diffForHumans() }}
-                                        @else
-                                            Tanggal tidak tersedia
-                                        @endif
-                                    </small>
+                                    <small class="text-muted">{{ \Carbon\Carbon::parse($recent->tanggal)->diffForHumans() }}</small>
                                 </div>
                             </div>
                         </div>
@@ -313,17 +324,17 @@
                             <div class="card-body">
                                 <div class="mb-3">
                                     <label class="form-label">Nama Lengkap</label>
-                                    <input type="text" class="form-control" value="{{ $user->nama ?? 'Tidak tersedia' }}" readonly>
+                                    <input type="text" class="form-control" value="{{ $user->nama }}" readonly>
                                     <small class="text-muted">Nama tidak dapat diubah</small>
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label">NIP</label>
-                                    <input type="text" class="form-control" value="{{ $user->nip ?? 'Tidak tersedia' }}" readonly>
+                                    <input type="text" class="form-control" value="{{ $user->nip }}" readonly>
                                     <small class="text-muted">NIP tidak dapat diubah</small>
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label">OPD</label>
-                                    <input type="text" class="form-control" value="{{ optional($user->opd)->namaopd ?? 'Tidak ada' }}" readonly>
+                                    <input type="text" class="form-control" value="{{ $user->opd->namaopd ?? 'Tidak ada' }}" readonly>
                                 </div>
                             </div>
                         </div>
@@ -338,11 +349,11 @@
                                     @csrf
                                     <div class="mb-3">
                                         <label class="form-label">Email</label>
-                                        <input type="email" class="form-control" name="email" value="{{ $user->email ?? '' }}" required>
+                                        <input type="email" class="form-control" name="email" value="{{ $user->email }}" required>
                                     </div>
                                     <div class="mb-3">
                                         <label class="form-label">WhatsApp</label>
-                                        <input type="text" class="form-control" name="whatsapp" value="{{ $user->whatsapp ?? '' }}">
+                                        <input type="text" class="form-control" name="whatsapp" value="{{ $user->whatsapp }}">
                                     </div>
                                     <hr>
                                     <div class="mb-3">
@@ -534,9 +545,6 @@
         </div>
     </div>
 </div>
-
-<!-- Toast Container -->
-<div id="toast-container" class="position-fixed top-0 end-0 p-3" style="z-index: 11"></div>
 @endsection
 
 @section('styles')
@@ -655,325 +663,175 @@
 <script>
 let currentPrintType = '';
 
-// Prevent JavaScript errors by checking if elements exist
-function safeGetElement(id) {
-    return document.getElementById(id);
-}
-
-function safeQuerySelector(selector) {
-    return document.querySelector(selector);
-}
-
 function cetakTahunan(jenis) {
-    try {
-        const tahun = new Date().getFullYear();
-        const baseUrl = window.location.origin;
-        const url = `${baseUrl}/dashboard/cetak-tahunan?tahun=${tahun}&jenis=${jenis}`;
-        window.open(url, '_blank');
-    } catch (error) {
-        console.error('Error in cetakTahunan:', error);
-        alert('Terjadi kesalahan saat mencetak laporan tahunan');
-    }
+    const tahun = new Date().getFullYear();
+    const url = `{{ route('dashboard') }}/cetak-tahunan?tahun=${tahun}&jenis=${jenis}`;
+    window.open(url, '_blank');
 }
 
 function cetakCustom() {
-    try {
-        const form = safeGetElement('printForm');
-        if (!form) {
-            alert('Form cetak tidak ditemukan');
-            return;
-        }
-        
-        const formData = new FormData(form);
-        const tahun = formData.get('tahun');
-        const jenis = formData.get('jenis');
-        
-        const baseUrl = window.location.origin;
-        const url = `${baseUrl}/dashboard/cetak-tahunan?tahun=${tahun}&jenis=${jenis}`;
-        window.open(url, '_blank');
-        
-        // Close modal safely
-        const modalElement = safeGetElement('printModal');
-        if (modalElement && typeof bootstrap !== 'undefined') {
-            const modal = bootstrap.Modal.getInstance(modalElement);
-            if (modal) modal.hide();
-        }
-    } catch (error) {
-        console.error('Error in cetakCustom:', error);
-        alert('Terjadi kesalahan saat mencetak laporan custom');
-    }
+    const form = document.getElementById('printForm');
+    const formData = new FormData(form);
+    const tahun = formData.get('tahun');
+    const jenis = formData.get('jenis');
+    
+    const url = `{{ route('dashboard') }}/cetak-tahunan?tahun=${tahun}&jenis=${jenis}`;
+    window.open(url, '_blank');
+    
+    // Close modal
+    const modal = bootstrap.Modal.getInstance(document.getElementById('printModal'));
+    modal.hide();
 }
 
 function openPrintModal(type) {
-    try {
-        currentPrintType = type;
-        const modalElement = safeGetElement('printSpecificModal');
-        if (!modalElement) {
-            alert('Modal cetak tidak ditemukan');
-            return;
-        }
-        
-        // Update modal title
-        const typeNames = {
-            'sk': 'Surat Keputusan',
-            'perbup': 'Peraturan Bupati', 
-            'sk_lainnya': 'SK Lainnya'
-        };
-        
-        const printTypeElement = safeGetElement('printType');
-        if (printTypeElement) {
-            printTypeElement.textContent = typeNames[type] || type.toUpperCase();
-        }
-        
-        // Show/hide specific filters
-        const seriFilter = safeGetElement('seriFilter');
-        if (seriFilter) {
-            if (type === 'perbup') {
-                seriFilter.style.display = 'block';
-            } else {
-                seriFilter.style.display = 'none';
-            }
-        }
-        
-        // Show modal safely
-        if (typeof bootstrap !== 'undefined') {
-            const modal = new bootstrap.Modal(modalElement);
-            modal.show();
-        }
-    } catch (error) {
-        console.error('Error in openPrintModal:', error);
-        alert('Terjadi kesalahan saat membuka modal cetak');
+    currentPrintType = type;
+    const modal = new bootstrap.Modal(document.getElementById('printSpecificModal'));
+    
+    // Update modal title
+    const typeNames = {
+        'sk': 'Surat Keputusan',
+        'perbup': 'Peraturan Bupati', 
+        'sk_lainnya': 'SK Lainnya'
+    };
+    
+    document.getElementById('printType').textContent = typeNames[type] || type.toUpperCase();
+    
+    // Show/hide specific filters
+    const seriFilter = document.getElementById('seriFilter');
+    if (type === 'perbup') {
+        seriFilter.style.display = 'block';
+    } else {
+        seriFilter.style.display = 'none';
     }
+    
+    modal.show();
 }
 
 function cetakSpesifik() {
-    try {
-        const form = safeGetElement('printSpecificForm');
-        if (!form) {
-            alert('Form cetak spesifik tidak ditemukan');
+    const form = document.getElementById('printSpecificForm');
+    const formData = new FormData(form);
+    const tahun = formData.get('tahun');
+    const status = formData.get('status');
+    const seri = formData.get('seri');
+    
+    let url = '';
+    
+    switch(currentPrintType) {
+        case 'sk':
+            url = `{{ route('sk.index') }}/${tahun}?cetak=1&status=${status}`;
+            break;
+        case 'perbup':
+            url = `{{ route('perbup.index') }}/${tahun}?cetak=1&status=${status}&seri=${seri}`;
+            break;
+        case 'sk_lainnya':
+            url = `{{ route('sk-lainnya.index') }}/${tahun}?cetak=1&status=${status}`;
+            break;
+        default:
+            alert('Jenis cetak tidak valid');
             return;
-        }
-        
-        const formData = new FormData(form);
-        const tahun = formData.get('tahun');
-        const status = formData.get('status');
-        const seri = formData.get('seri');
-        
-        let url = '';
-        const baseUrl = window.location.origin;
-        
-        switch(currentPrintType) {
-            case 'sk':
-                url = `${baseUrl}/sk/${tahun}?cetak=1&status=${status}`;
-                break;
-            case 'perbup':
-                url = `${baseUrl}/perbup/${tahun}?cetak=1&status=${status}&seri=${seri}`;
-                break;
-            case 'sk_lainnya':
-                url = `${baseUrl}/sk-lainnya/${tahun}?cetak=1&status=${status}`;
-                break;
-            default:
-                alert('Jenis cetak tidak valid');
-                return;
-        }
-        
-        window.open(url, '_blank');
-        
-        // Close modal safely
-        const modalElement = safeGetElement('printSpecificModal');
-        if (modalElement && typeof bootstrap !== 'undefined') {
-            const modal = bootstrap.Modal.getInstance(modalElement);
-            if (modal) modal.hide();
-        }
-    } catch (error) {
-        console.error('Error in cetakSpesifik:', error);
-        alert('Terjadi kesalahan saat mencetak laporan spesifik');
     }
+    
+    window.open(url, '_blank');
+    
+    // Close modal
+    const modal = bootstrap.Modal.getInstance(document.getElementById('printSpecificModal'));
+    modal.hide();
 }
 
 function updateProfile() {
-    try {
-        const form = safeGetElement('updateProfileForm');
-        if (!form) {
-            alert('Form update profil tidak ditemukan');
-            return;
+    const form = document.getElementById('updateProfileForm');
+    const formData = new FormData(form);
+    
+    // Add CSRF token
+    const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+    formData.append('_token', csrfToken);
+    
+    // Show loading state
+    const btn = event.target;
+    const originalText = btn.innerHTML;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Menyimpan...';
+    btn.disabled = true;
+    
+    fetch('{{ route("dashboard") }}/update-profile', {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-CSRF-TOKEN': csrfToken
         }
-        
-        const formData = new FormData(form);
-        
-        // Get CSRF token safely
-        const csrfToken = safeQuerySelector('meta[name="csrf-token"]');
-        if (csrfToken) {
-            formData.append('_token', csrfToken.getAttribute('content'));
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('Profil berhasil diperbarui!');
+            // Close modal
+            const modal = bootstrap.Modal.getInstance(document.getElementById('profileModal'));
+            modal.hide();
+            // Reload page to show updated data
+            window.location.reload();
+        } else {
+            alert('Terjadi kesalahan: ' + (data.message || 'Unknown error'));
         }
-        
-        // Show loading state
-        const btn = event.target;
-        const originalText = btn.innerHTML;
-        btn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Menyimpan...';
-        btn.disabled = true;
-        
-        const baseUrl = window.location.origin;
-        fetch(`${baseUrl}/dashboard/update-profile`, {
-            method: 'POST',
-            body: formData,
-            headers: {
-                'X-Requested-With': 'XMLHttpRequest'
-            }
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            return response.json();
-        })
-        .then(data => {
-            if (data.success) {
-                alert('Profil berhasil diperbarui!');
-                // Close modal safely
-                const modalElement = safeGetElement('profileModal');
-                if (modalElement && typeof bootstrap !== 'undefined') {
-                    const modal = bootstrap.Modal.getInstance(modalElement);
-                    if (modal) modal.hide();
-                }
-                // Reload page to show updated data
-                setTimeout(() => {
-                    window.location.reload();
-                }, 1000);
-            } else {
-                alert('Terjadi kesalahan: ' + (data.message || 'Unknown error'));
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('Terjadi kesalahan saat menyimpan data: ' + error.message);
-        })
-        .finally(() => {
-            btn.innerHTML = originalText;
-            btn.disabled = false;
-        });
-    } catch (error) {
-        console.error('Error in updateProfile:', error);
-        alert('Terjadi kesalahan saat memperbarui profil');
-    }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Terjadi kesalahan saat menyimpan data');
+    })
+    .finally(() => {
+        btn.innerHTML = originalText;
+        btn.disabled = false;
+    });
 }
 
-// Auto-refresh notifications every 5 minutes (optional)
-function startNotificationRefresh() {
-    setInterval(() => {
-        try {
-            const baseUrl = window.location.origin;
-            fetch(`${baseUrl}/dashboard/notifications`)
-                .then(response => response.json())
-                .then(data => {
-                    // Update notification badges if needed
-                    if (data.newCount > 0) {
-                        showNewNotification(data.newCount);
-                    }
-                })
-                .catch(error => console.log('Notification refresh failed:', error.message));
-        } catch (error) {
-            console.log('Error in notification refresh:', error.message);
-        }
-    }, 300000); // 5 minutes
-}
+// Auto-refresh notifications every 5 minutes
+setInterval(() => {
+    fetch('{{ route("dashboard") }}/notifications')
+        .then(response => response.json())
+        .then(data => {
+            // Update notification badges if needed
+            if (data.newCount > 0) {
+                // Show toast or update UI
+                showNewNotification(data.newCount);
+            }
+        })
+        .catch(error => console.error('Error fetching notifications:', error));
+}, 300000); // 5 minutes
 
 function showNewNotification(count) {
-    try {
-        const toast = `
-            <div class="toast align-items-center text-white bg-info border-0" role="alert" data-bs-autohide="true" data-bs-delay="5000">
-                <div class="d-flex">
-                    <div class="toast-body">
-                        <i class="fas fa-bell me-2"></i>Ada ${count} pembaruan laporan baru
-                    </div>
-                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+    const toast = `
+        <div class="toast align-items-center text-white bg-info border-0" role="alert">
+            <div class="d-flex">
+                <div class="toast-body">
+                    <i class="fas fa-bell me-2"></i>Ada ${count} pembaruan laporan baru
                 </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
             </div>
-        `;
-        
-        // Add toast to toast container
-        const toastContainer = safeGetElement('toast-container');
-        if (toastContainer) {
-            toastContainer.insertAdjacentHTML('beforeend', toast);
-            const toastElement = toastContainer.lastElementChild;
-            if (typeof bootstrap !== 'undefined') {
-                const bsToast = new bootstrap.Toast(toastElement);
-                bsToast.show();
-            }
-        }
-    } catch (error) {
-        console.error('Error showing notification:', error);
+        </div>
+    `;
+    
+    // Add toast to toast container (you need to add this to your layout)
+    const toastContainer = document.getElementById('toast-container');
+    if (toastContainer) {
+        toastContainer.insertAdjacentHTML('beforeend', toast);
+        const toastElement = toastContainer.lastElementChild;
+        const bsToast = new bootstrap.Toast(toastElement);
+        bsToast.show();
     }
 }
 
 // Add click event listeners to print menu cards
 document.addEventListener('DOMContentLoaded', function() {
-    try {
-        const printCards = document.querySelectorAll('.print-menu-card');
-        printCards.forEach(card => {
-            card.addEventListener('click', function(e) {
-                // Only trigger if not clicking on buttons or links
-                if (!e.target.closest('.btn') && !e.target.closest('a')) {
-                    const printBtn = this.querySelector('.btn-primary, .btn-success, .btn-warning');
-                    if (printBtn) {
-                        printBtn.click();
-                    }
+    const printCards = document.querySelectorAll('.print-menu-card');
+    printCards.forEach(card => {
+        card.addEventListener('click', function(e) {
+            // Only trigger if not clicking on buttons
+            if (!e.target.closest('.btn')) {
+                const printBtn = this.querySelector('.btn-primary, .btn-success, .btn-warning');
+                if (printBtn) {
+                    printBtn.click();
                 }
-            });
+            }
         });
-        
-        // Start notification refresh (optional)
-        // startNotificationRefresh();
-        
-    } catch (error) {
-        console.error('Error in DOMContentLoaded:', error);
-    }
-});
-
-// Handle potential route errors
-window.addEventListener('error', function(e) {
-    console.error('JavaScript Error:', e.error);
-});
-
-// Handle unhandled promise rejections
-window.addEventListener('unhandledrejection', function(e) {
-    console.error('Unhandled Promise Rejection:', e.reason);
+    });
 });
 </script>
-@endsection-3">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-start">
-                        <div class="stats-icon bg-primary bg-opacity-10 rounded-3 p-3">
-                            <i class="bi bi-file-text text-primary"></i>
-                        </div>
-                        <span class="badge bg-primary">Total</span>
-                    </div>
-                    <h3 class="fs-2 mt-3 mb-1">{{ $ringkasan['total_tersedia'] ?? 0 }}</h3>
-                    <p class="text-muted mb-0">Laporan Tersedia</p>
-                    <div class="progress mt-2" style="height: 4px;">
-                        <div class="progress-bar bg-primary" style="width: 100%" role="progressbar"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-lg-3 col-md-6 mb-3">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-start">
-                        <div class="stats-icon bg-warning bg-opacity-10 rounded-3 p-3">
-                            <i class="fas fa-clock text-warning"></i>
-                        </div>
-                        <span class="badge bg-warning">Proses</span>
-                    </div>
-                    <h3 class="fs-2 mt-3 mb-1">{{ $ringkasan['dalam_proses'] ?? 0 }}</h3>
-                    <p class="text-muted mb-0">Dalam Proses</p>
-                    <div class="progress mt-2" style="height: 4px;">
-                        <div class="progress-bar bg-warning" style="width: 75%" role="progressbar"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-lg-3 col-md-6 mb
+@endsection

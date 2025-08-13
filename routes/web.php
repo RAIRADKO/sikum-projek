@@ -38,7 +38,6 @@ Route::post('register', [AuthController::class, 'register']);
 
 // Rute untuk Pengguna yang Terautentikasi
 Route::middleware('auth')->group(function () {
-    // Dashboard Routes
     Route::get('/dashboard', [HomeController::class, 'dashboard'])->name('dashboard');
 
     // Profile & Settings Routes
@@ -54,46 +53,41 @@ Route::middleware('auth')->group(function () {
     // Rute untuk menampilkan data Asisten bagi user
     Route::get('/asisten', [AsistenController::class, 'index'])->name('asisten.index');
 
-    // SK Routes - Fixed route names and structure
-    Route::prefix('sk')->name('sk.')->group(function () {
-        Route::get('/', [SkController::class, 'index'])->name('index');
-        Route::get('/{year}', [SkController::class, 'showByYear'])->name('year');
-        Route::get('/detail/{nomorsk}', [SkController::class, 'show'])->name('detail');
-        Route::get('/cetak/{id}', [SkController::class, 'cetak'])->name('cetak');
-    });
+    // SK Routes
+    Route::get('/sk', [SkController::class, 'index'])->name('sk');
+    Route::get('/sk/{year}', [SkController::class, 'showByYear'])->name('sk.year');
+    Route::get('/sk/detail/{nomorsk}', [SkController::class, 'show'])->name('sk.detail');
+    Route::get('/sk/cetak/{id}', [SkController::class, 'cetak'])->name('sk.cetak');
 
-    // SK Proses Routes - Fixed route names and structure
-    Route::prefix('sk-proses')->name('sk-proses.')->group(function () {
-        Route::get('/', [SkController::class, 'prosesIndex'])->name('index');
-        Route::get('/{year}', [SkController::class, 'prosesShowByYear'])->name('year');
-        Route::get('/detail/{kodesk}', [SkController::class, 'prosesShow'])->name('detail');
-        Route::get('/nota-pengajuan/{kodesk}', [SkController::class, 'notaPengajuan'])->name('nota-pengajuan');
-    });
 
-    // Perbup Routes - Fixed route names and structure
-    Route::prefix('perbup')->name('perbup.')->group(function () {
-        Route::get('/', [PerbupController::class, 'index'])->name('index');
-        Route::get('/{year}', [PerbupController::class, 'showByYear'])->name('year');
-        Route::get('/detail/{nomorperbup}', [PerbupController::class, 'show'])->name('detail');
-        Route::get('/cetak/{id}', [PerbupController::class, 'cetak'])->name('cetak');
-    });
+    // SK Proses Routes
+    Route::get('/sk-proses', [SkController::class, 'prosesIndex'])->name('sk-proses');
+    Route::get('/sk-proses/{year}', [SkController::class, 'prosesShowByYear'])->name('sk-proses.year');
+    Route::get('/sk-proses/detail/{kodesk}', [SkController::class, 'prosesShow'])->name('sk-proses.detail');
 
-    // Perbup Proses Routes - Fixed route names and structure
-    Route::prefix('perbup-proses')->name('perbup-proses.')->group(function () {
-        Route::get('/', [PerbupController::class, 'prosesIndex'])->name('index');
-        Route::get('/{year}', [PerbupController::class, 'prosesShowByYear'])->name('year');
-        Route::get('/detail/{prosesperbup}', [PerbupController::class, 'prosesShow'])->name('detail');
-    });
+    // Route untuk Nota Pengajuan SK (untuk user)
+    Route::get('/sk-proses/nota-pengajuan/{kodesk}', [App\Http\Controllers\SkController::class, 'notaPengajuan'])
+        ->name('sk-proses.nota-pengajuan')
+        ->middleware('auth');
 
-    // SK Lainnya Routes - Fixed route names and structure
-    Route::prefix('sk-lainnya')->name('sk-lainnya.')->group(function () {
-        Route::get('/', [SKLainnyaController::class, 'index'])->name('index');
-        Route::get('/{year}', [SKLainnyaController::class, 'showByYear'])->name('year');
-        Route::get('/detail/{proseslain}', [SKLainnyaController::class, 'show'])->name('detail');
-        Route::get('/cetak/{id}', [SKLainnyaController::class, 'cetak'])->name('cetak');
-    });
+    // Perbup Routes
+    Route::get('/perbup', [PerbupController::class, 'index'])->name('perbup');
+    Route::get('/perbup/{year}', [PerbupController::class, 'showByYear'])->name('perbup.year');
+    Route::get('/perbup/detail/{nomorperbup}', [PerbupController::class, 'show'])->name('perbup.detail');
+    Route::get('/perbup/cetak/{id}', [PerbupController::class, 'cetak'])->name('perbup.cetak')->middleware('auth');
 
-    // Profile redirect
+    // Perbup Proses Routes
+    Route::get('/perbup-proses', [PerbupController::class, 'prosesIndex'])->name('perbup-proses');
+    Route::get('/perbup-proses/{year}', [PerbupController::class, 'prosesShowByYear'])->name('perbup-proses.year');
+    Route::get('/perbup-proses/detail/{prosesperbup}', [PerbupController::class, 'prosesShow'])->name('perbup-proses.detail');
+
+    // SK Lainnya Routes
+    Route::get('/sk-lainnya', [SKLainnyaController::class, 'index'])->name('sk-lainnya.index');
+    Route::get('/sk-lainnya/{year}', [SKLainnyaController::class, 'showByYear'])->name('sk-lainnya.year');
+    Route::get('/sk-lainnya/detail/{proseslain}', [SKLainnyaController::class, 'show'])->name('sk-lainnya.detail');
+    Route::get('/sk-lainnya/cetak/{id}', [SKLainnyaController::class, 'cetak'])->name('sk-lainnya.cetak');
+
+
     Route::redirect('/profile', '/dashboard')->name('profile');
 });
 
@@ -115,9 +109,4 @@ Route::prefix('admin')->name('admin.')->middleware('auth:admin')->group(function
     Route::resource('nomorperbup', \App\Http\Controllers\Admin\NomorPerbupController::class)->except(['show']);
     Route::resource('prosesperbup', \App\Http\Controllers\Admin\ProsesPerbupController::class);
     Route::resource('proseslain', \App\Http\Controllers\Admin\ProsesLainController::class);
-});
-
-// Additional error handling routes (optional)
-Route::fallback(function () {
-    return redirect()->route('home')->withErrors(['error' => 'Halaman tidak ditemukan']);
 });
