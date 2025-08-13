@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Hash;
 use App\Models\NomorSk;
 use App\Models\NomorPerbup;
 use App\Models\ProsesSk;
@@ -161,11 +160,11 @@ class HomeController extends Controller
     
     private function getLaporanTerbaru($opdId, $limit = 5)
     {
-        $sk = NomorSk::select(DB::raw("CAST(nosk AS CHAR) as id"), 'judulsk as judul', 'tglsk as tanggal', 'status', DB::raw("'SK' as jenis"))
+        $sk = NomorSk::select('nosk as id', 'judulsk as judul', 'tglsk as tanggal', 'status', DB::raw("'SK' as jenis"))
             ->where('kodeopd', $opdId)
             ->whereNotNull('tglsk');
             
-        $perbup = NomorPerbup::select(DB::raw("CAST(nopb AS CHAR) as id"), 'judulpb as judul', 'tglpb as tanggal', 'status', DB::raw("'Perbup' as jenis"))
+        $perbup = NomorPerbup::select('nopb as id', 'judulpb as judul', 'tglpb as tanggal', 'status', DB::raw("'Perbup' as jenis"))
             ->where('kodeopd', $opdId)
             ->whereNotNull('tglpb');
             
@@ -182,27 +181,27 @@ class HomeController extends Controller
     private function buildLaporanQuery($opdId, $jenisLaporan, $kategori, $search, $dateRange)
     {
         $sk = NomorSk::select(
-                DB::raw("CAST(nosk AS CHAR) as id"),
-                'judulsk as judul',
+                'nosk as id',
+                'judulsk as judul', 
                 'tglsk as tanggal',
                 'status',
                 'tglambilsk as tgl_ambil',
                 'kodeopd',
                 DB::raw("'SK' as jenis"),
-                DB::raw("CASE WHEN status = 'selesai' THEN 'selesai' ELSE 'proses' END as kategori_status")
+                DB::raw("'selesai' as kategori_status")
             )
             ->where('kodeopd', $opdId)
             ->whereBetween('tglsk', [$dateRange['start'], $dateRange['end']]);
             
         $perbup = NomorPerbup::select(
-                DB::raw("CAST(nopb AS CHAR) as id"),
+                'nopb as id',
                 'judulpb as judul',
-                'tglpb as tanggal',
+                'tglpb as tanggal', 
                 'status',
                 'tglambilpb as tgl_ambil',
                 'kodeopd',
                 DB::raw("'Perbup' as jenis"),
-                DB::raw("CASE WHEN status = 'selesai' THEN 'selesai' ELSE 'proses' END as kategori_status")
+                DB::raw("'selesai' as kategori_status")
             )
             ->where('kodeopd', $opdId)
             ->whereBetween('tglpb', [$dateRange['start'], $dateRange['end']]);
@@ -215,7 +214,7 @@ class HomeController extends Controller
                 DB::raw('NULL as tgl_ambil'),
                 'kodeopd',
                 DB::raw("'SK Proses' as jenis"),
-                DB::raw("CASE WHEN status = 'Selesai' THEN 'selesai' ELSE 'proses' END as kategori_status")
+                DB::raw("'proses' as kategori_status")
             )
             ->where('kodeopd', $opdId)
             ->whereBetween('tglmasuksk', [$dateRange['start'], $dateRange['end']]);
@@ -228,7 +227,7 @@ class HomeController extends Controller
                 DB::raw('NULL as tgl_ambil'),
                 'kodeopd',
                 DB::raw("'Perbup Proses' as jenis"),
-                DB::raw("CASE WHEN status = 'selesai' THEN 'selesai' ELSE 'proses' END as kategori_status")
+                DB::raw("'proses' as kategori_status")
             )
             ->where('kodeopd', $opdId)
             ->whereBetween('tglmasukpb', [$dateRange['start'], $dateRange['end']]);
@@ -382,85 +381,5 @@ class HomeController extends Controller
         }
         
         return $data;
-    }
-
-    public function updateProfile(Request $request)
-    {
-        try {
-            $user = Auth::user();
-            
-            $request->validate([
-                'email' => 'required|email|unique:users,email,' . $user->id,
-                'whatsapp' => 'nullable|string|max:15',
-                'old_password' => 'nullable|string',
-                'new_password' => 'nullable|string|min:8|confirmed',
-            ]);
-            
-            $updateData = [
-                'email' => $request->email,
-                'whatsapp' => $request->whatsapp,
-            ];
-            
-            // Check if password update is requested
-            if ($request->filled('new_password')) {
-                if (!$request->filled('old_password')) {
-                    return response()->json([
-                        'success' => false,
-                        'message' => 'Password lama harus diisi untuk mengubah password'
-                    ]);
-                }
-                
-                if (!Hash::check($request->old_password, $user->password)) {
-                    return response()->json([
-                        'success' => false,
-                        'message' => 'Password lama tidak sesuai'
-                    ]);
-                }
-                
-                $updateData['password'] = Hash::make($request->new_password);
-            }
-            
-            $user->update($updateData);
-            
-            return response()->json([
-                'success' => true,
-                'message' => 'Profil berhasil diperbarui'
-            ]);
-            
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Terjadi kesalahan: ' . $e->getMessage()
-            ]);
-        }
-    }
-
-    public function getNotifications()
-    {
-        $user = Auth::user();
-        $opdId = $user->opd_id;
-        
-        // Get recent notifications
-        $notifications = $this->getNotifikasi($opdId);
-        
-        // Count new items since last check (you might want to implement a last_check timestamp)
-        $newCount = 0;
-        
-        // Check for new completed documents in last hour
-        $recentCompleted = NomorSk::where('kodeopd', $opdId)
-            ->where('status', 'selesai')
-            ->where('updated_at', '>=', Carbon::now()->subHour())
-            ->count() +
-            NomorPerbup::where('kodeopd', $opdId)
-            ->where('status', 'selesai')
-            ->where('updated_at', '>=', Carbon::now()->subHour())
-            ->count();
-            
-        $newCount = $recentCompleted;
-        
-        return response()->json([
-            'notifications' => $notifications,
-            'newCount' => $newCount
-        ]);
     }
 }

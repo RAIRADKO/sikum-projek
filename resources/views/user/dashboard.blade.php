@@ -146,126 +146,190 @@
         </div>
     </div>
 
-    <!-- Menu Cetak Laporan -->
+    <!-- Filter & Pencarian -->
     <div class="row mb-4">
         <div class="col-12">
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-white border-bottom-0">
                     <h5 class="card-title mb-0">
-                        <i class="fas fa-print me-2"></i>Menu Cetak Laporan
+                        <i class="fas fa-filter me-2"></i>Filter & Pencarian Cepat
                     </h5>
                 </div>
                 <div class="card-body">
-                    <div class="row g-4">
-                        <!-- Nomor SK -->
-                        <div class="col-lg-4 col-md-6">
-                            <div class="card border h-100 print-menu-card">
-                                <div class="card-body text-center">
-                                    <div class="print-icon mb-3">
-                                        <i class="fas fa-file-alt text-primary fa-3x"></i>
-                                    </div>
-                                    <h5 class="card-title">Nomor SK</h5>
-                                    <p class="card-text text-muted">Cetak dokumen Surat Keputusan berdasarkan tahun dan kategori</p>
-                                    <div class="d-grid gap-2">
-                                        <button class="btn btn-primary" onclick="openPrintModal('sk')">
-                                            <i class="fas fa-print me-2"></i>Cetak SK
-                                        </button>
-                                        <a href="{{ route('sk.index') }}" class="btn btn-outline-primary">
-                                            <i class="fas fa-eye me-2"></i>Lihat Daftar
-                                        </a>
-                                    </div>
+                    <form method="GET" action="{{ route('dashboard') }}">
+                        <div class="row g-3">
+                            <div class="col-md-3">
+                                <label class="form-label">Periode</label>
+                                <select name="periode" class="form-select">
+                                    @foreach($filterData['periode'] as $key => $value)
+                                        <option value="{{ $key }}" {{ $periode == $key ? 'selected' : '' }}>
+                                            {{ $value }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Jenis Laporan</label>
+                                <select name="jenis_laporan" class="form-select">
+                                    @foreach($filterData['jenis_laporan'] as $key => $value)
+                                        <option value="{{ $key }}" {{ $jenisLaporan == $key ? 'selected' : '' }}>
+                                            {{ $value }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Status</label>
+                                <select name="kategori" class="form-select">
+                                    @foreach($filterData['kategori'] as $key => $value)
+                                        <option value="{{ $key }}" {{ $kategori == $key ? 'selected' : '' }}>
+                                            {{ $value }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Pencarian</label>
+                                <div class="input-group">
+                                    <input type="text" name="search" class="form-control" placeholder="Cari judul..." value="{{ $search }}">
+                                    <button class="btn btn-primary" type="submit">
+                                        <i class="fas fa-search"></i>
+                                    </button>
                                 </div>
                             </div>
                         </div>
-
-                        <!-- Nomor Perbup -->
-                        <div class="col-lg-4 col-md-6">
-                            <div class="card border h-100 print-menu-card">
-                                <div class="card-body text-center">
-                                    <div class="print-icon mb-3">
-                                        <i class="fas fa-balance-scale text-success fa-3x"></i>
-                                    </div>
-                                    <h5 class="card-title">Nomor Perbup</h5>
-                                    <p class="card-text text-muted">Cetak dokumen Peraturan Bupati berdasarkan tahun dan seri</p>
-                                    <div class="d-grid gap-2">
-                                        <button class="btn btn-success" onclick="openPrintModal('perbup')">
-                                            <i class="fas fa-print me-2"></i>Cetak Perbup
-                                        </button>
-                                        <a href="{{ route('perbup.index') }}" class="btn btn-outline-success">
-                                            <i class="fas fa-eye me-2"></i>Lihat Daftar
-                                        </a>
-                                    </div>
-                                </div>
+                        <div class="row mt-3">
+                            <div class="col-12">
+                                <button type="submit" class="btn btn-primary me-2">
+                                    <i class="fas fa-filter me-1"></i> Terapkan Filter
+                                </button>
+                                <a href="{{ route('dashboard') }}" class="btn btn-outline-secondary">
+                                    <i class="fas fa-undo me-1"></i> Reset
+                                </a>
                             </div>
                         </div>
-
-                        <!-- SK Lainnya -->
-                        <div class="col-lg-4 col-md-6">
-                            <div class="card border h-100 print-menu-card">
-                                <div class="card-body text-center">
-                                    <div class="print-icon mb-3">
-                                        <i class="fas fa-folder-open text-warning fa-3x"></i>
-                                    </div>
-                                    <h5 class="card-title">SK Lainnya</h5>
-                                    <p class="card-text text-muted">Cetak dokumen SK lainnya berdasarkan kategori dan status</p>
-                                    <div class="d-grid gap-2">
-                                        <button class="btn btn-warning" onclick="openPrintModal('sk_lainnya')">
-                                            <i class="fas fa-print me-2"></i>Cetak SK Lainnya
-                                        </button>
-                                        <a href="{{ route('sk-lainnya.index') }}" class="btn btn-outline-warning">
-                                            <i class="fas fa-eye me-2"></i>Lihat Daftar
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    </form>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Quick Actions -->
-    <div class="row mb-4">
+    <!-- Daftar Laporan -->
+    <div class="row">
         <div class="col-12">
             <div class="card border-0 shadow-sm">
-                <div class="card-header bg-white border-bottom-0">
+                <div class="card-header bg-white border-bottom d-flex justify-content-between align-items-center">
                     <h5 class="card-title mb-0">
-                        <i class="fas fa-bolt me-2"></i>Aksi Cepat
+                        <i class="fas fa-list me-2"></i>Daftar Laporan
                     </h5>
+                    <span class="badge bg-primary">{{ $laporan->total() }} Total</span>
                 </div>
-                <div class="card-body">
-                    <div class="row g-3">
-                        <div class="col-md-3 col-sm-6">
-                            <a href="{{ route('sk.index') }}" class="btn btn-outline-primary w-100">
-                                <i class="fas fa-file-text me-2"></i>
-                                <div>Daftar SK</div>
-                                <small class="text-muted">Lihat semua SK</small>
-                            </a>
-                        </div>
-                        <div class="col-md-3 col-sm-6">
-                            <a href="{{ route('perbup.index') }}" class="btn btn-outline-success w-100">
-                                <i class="fas fa-balance-scale me-2"></i>
-                                <div>Daftar Perbup</div>
-                                <small class="text-muted">Lihat semua Perbup</small>
-                            </a>
-                        </div>
-                        <div class="col-md-3 col-sm-6">
-                            <a href="{{ route('sk-lainnya.index') }}" class="btn btn-outline-warning w-100">
-                                <i class="fas fa-folder me-2"></i>
-                                <div>SK Lainnya</div>
-                                <small class="text-muted">Lihat SK lainnya</small>
-                            </a>
-                        </div>
-                        <div class="col-md-3 col-sm-6">
-                            <button class="btn btn-outline-info w-100" data-bs-toggle="modal" data-bs-target="#printModal">
-                                <i class="fas fa-print me-2"></i>
-                                <div>Cetak Custom</div>
-                                <small class="text-muted">Cetak sesuai filter</small>
-                            </button>
-                        </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>No</th>
+                                    <th>Tanggal</th>
+                                    <th>Nama/Judul</th>
+                                    <th>Jenis</th>
+                                    <th>Status</th>
+                                    <th>Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse($laporan as $index => $item)
+                                <tr>
+                                    <td>{{ $laporan->firstItem() + $index }}</td>
+                                    <td>
+                                        <span class="fw-medium">
+                                            {{ \Carbon\Carbon::parse($item->tanggal)->format('d/m/Y') }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <div class="text-truncate" style="max-width: 300px;" title="{{ $item->judul }}">
+                                            {{ $item->judul }}
+                                        </div>
+                                    </td>
+                                    <td>
+                                        @php
+                                            $badgeClass = match($item->jenis) {
+                                                'SK' => 'bg-primary',
+                                                'Perbup' => 'bg-success', 
+                                                'SK Proses' => 'bg-warning',
+                                                'Perbup Proses' => 'bg-info',
+                                                'SK Lainnya' => 'bg-secondary',
+                                                default => 'bg-dark'
+                                            };
+                                        @endphp
+                                        <span class="badge {{ $badgeClass }}">{{ $item->jenis }}</span>
+                                    </td>
+                                    <td>
+                                        @php
+                                            $statusClass = match($item->status) {
+                                                'selesai', 'Selesai' => 'bg-success',
+                                                'proses', 'Proses', 'Diproses' => 'bg-warning', 
+                                                'bon' => 'bg-danger',
+                                                'diambil' => 'bg-info',
+                                                default => 'bg-secondary'
+                                            };
+                                        @endphp
+                                        <span class="badge {{ $statusClass }}">{{ ucfirst($item->status) }}</span>
+                                        @if($item->tgl_ambil)
+                                            <small class="text-muted d-block">Diambil: {{ \Carbon\Carbon::parse($item->tgl_ambil)->format('d/m/Y') }}</small>
+                                        @endif
+                                    </td>
+                                    <td>
+                                        <div class="btn-group" role="group">
+                                            @php
+                                                $detailRoute = match($item->jenis) {
+                                                    'SK' => route('sk.detail', $item->id),
+                                                    'Perbup' => route('perbup.detail', $item->id),
+                                                    'SK Proses' => route('sk-proses.detail', $item->id),
+                                                    'Perbup Proses' => route('perbup-proses.detail', $item->id),
+                                                    'SK Lainnya' => route('sk-lainnya.detail', $item->id),
+                                                    default => '#'
+                                                };
+                                            @endphp
+                                            <a href="{{ $detailRoute }}" class="btn btn-sm btn-outline-primary" title="Lihat Detail">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                            @if(in_array($item->status, ['selesai', 'Selesai']))
+                                                @if($item->jenis == 'Perbup')
+                                                    <a href="{{ route('perbup.cetak', $item->id) }}" class="btn btn-sm btn-outline-success" title="Cetak" target="_blank">
+                                                        <i class="fas fa-print"></i>
+                                                    </a>
+                                                @elseif($item->jenis == 'SK Proses')
+                                                    <a href="{{ route('sk-proses.nota-pengajuan', $item->id) }}" class="btn btn-sm btn-outline-info" title="Nota Pengajuan" target="_blank">
+                                                        <i class="fas fa-file-alt"></i>
+                                                    </a>
+                                                @else
+                                                    <button class="btn btn-sm btn-outline-success" onclick="printDocument('{{ $item->jenis }}', '{{ $item->id }}')" title="Cetak">
+                                                        <i class="fas fa-print"></i>
+                                                    </button>
+                                                @endif
+                                            @endif
+                                        </div>
+                                    </td>
+                                </tr>
+                                @empty
+                                <tr>
+                                    <td colspan="6" class="text-center py-4">
+                                        <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
+                                        <p class="text-muted mb-0">Tidak ada data laporan ditemukan</p>
+                                        <small class="text-muted">Coba ubah filter atau periode pencarian</small>
+                                    </td>
+                                </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
                     </div>
                 </div>
+                @if($laporan->hasPages())
+                <div class="card-footer bg-white">
+                    {{ $laporan->links() }}
+                </div>
+                @endif
             </div>
         </div>
     </div>
@@ -405,11 +469,11 @@
                         <div id="collapseOne" class="accordion-collapse collapse show" data-bs-parent="#helpAccordion">
                             <div class="accordion-body">
                                 <ul>
-                                    <li>Gunakan menu cetak laporan untuk mencetak dokumen berdasarkan jenis</li>
-                                    <li>Klik "Cetak SK" untuk mencetak Surat Keputusan</li>
-                                    <li>Klik "Cetak Perbup" untuk mencetak Peraturan Bupati</li>
-                                    <li>Klik "Cetak SK Lainnya" untuk mencetak dokumen SK lainnya</li>
-                                    <li>Gunakan "Lihat Daftar" untuk melihat detail dokumen sebelum dicetak</li>
+                                    <li>Gunakan filter periode untuk melihat laporan berdasarkan waktu tertentu</li>
+                                    <li>Filter jenis laporan untuk menampilkan hanya SK, Perbup, atau SK Lainnya</li>
+                                    <li>Gunakan kolom pencarian untuk mencari berdasarkan judul dokumen</li>
+                                    <li>Klik tombol mata untuk melihat detail laporan</li>
+                                    <li>Klik tombol print untuk mencetak laporan yang sudah selesai</li>
                                 </ul>
                             </div>
                         </div>
@@ -449,57 +513,6 @@
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Modal Cetak Spesifik -->
-<div class="modal fade" id="printSpecificModal" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">
-                    <i class="fas fa-print me-2"></i>Cetak <span id="printType"></span>
-                </h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                <form id="printSpecificForm">
-                    <div class="mb-3">
-                        <label class="form-label">Tahun</label>
-                        <select name="tahun" class="form-select" required>
-                            @for($year = date('Y'); $year >= 2020; $year--)
-                                <option value="{{ $year }}" {{ $year == date('Y') ? 'selected' : '' }}>{{ $year }}</option>
-                            @endfor
-                        </select>
-                    </div>
-                    <div class="mb-3" id="statusFilter">
-                        <label class="form-label">Status</label>
-                        <select name="status" class="form-select">
-                            <option value="semua">Semua Status</option>
-                            <option value="selesai">Sudah Selesai</option>
-                            <option value="proses">Dalam Proses</option>
-                        </select>
-                    </div>
-                    <div class="mb-3" id="seriFilter" style="display: none;">
-                        <label class="form-label">Seri (Khusus Perbup)</label>
-                        <select name="seri" class="form-select">
-                            <option value="semua">Semua Seri</option>
-                            <option value="A">Seri A</option>
-                            <option value="B">Seri B</option>
-                            <option value="C">Seri C</option>
-                            <option value="D">Seri D</option>
-                            <option value="E">Seri E</option>
-                        </select>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                <button type="button" class="btn btn-primary" onclick="cetakSpesifik()">
-                    <i class="fas fa-print me-1"></i>Cetak
-                </button>
             </div>
         </div>
     </div>
@@ -579,29 +592,19 @@
         font-size: 1.5rem;
     }
 
-    .print-menu-card {
-        transition: all 0.3s ease;
-        cursor: pointer;
-    }
-
-    .print-menu-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 0.75rem 1.5rem rgba(0,0,0,.15)!important;
-        border-color: var(--bs-primary)!important;
-    }
-
-    .print-icon {
-        opacity: 0.8;
-        transition: all 0.3s ease;
-    }
-
-    .print-menu-card:hover .print-icon {
-        opacity: 1;
-        transform: scale(1.1);
+    .table th {
+        border-top: none;
+        font-weight: 600;
+        background-color: rgba(0,0,0,.02);
     }
 
     .badge {
         font-size: 0.75em;
+    }
+
+    .btn-group .btn {
+        border-radius: 0.375rem;
+        margin-right: 0.25rem;
     }
 
     .list-group-item {
@@ -631,13 +634,6 @@
         border-radius: 0.75rem;
     }
 
-    .btn-outline-primary:hover,
-    .btn-outline-success:hover,
-    .btn-outline-warning:hover,
-    .btn-outline-info:hover {
-        transform: translateY(-1px);
-    }
-
     @media (max-width: 768px) {
         .container-fluid {
             padding-left: 1rem;
@@ -648,12 +644,8 @@
             padding: 1rem;
         }
         
-        .print-menu-card {
-            margin-bottom: 1rem;
-        }
-
-        .btn {
-            font-size: 0.875rem;
+        .btn-group .btn {
+            margin-bottom: 0.25rem;
         }
     }
 </style>
@@ -661,8 +653,6 @@
 
 @section('scripts')
 <script>
-let currentPrintType = '';
-
 function cetakTahunan(jenis) {
     const tahun = new Date().getFullYear();
     const url = `{{ route('dashboard') }}/cetak-tahunan?tahun=${tahun}&jenis=${jenis}`;
@@ -683,59 +673,24 @@ function cetakCustom() {
     modal.hide();
 }
 
-function openPrintModal(type) {
-    currentPrintType = type;
-    const modal = new bootstrap.Modal(document.getElementById('printSpecificModal'));
-    
-    // Update modal title
-    const typeNames = {
-        'sk': 'Surat Keputusan',
-        'perbup': 'Peraturan Bupati', 
-        'sk_lainnya': 'SK Lainnya'
-    };
-    
-    document.getElementById('printType').textContent = typeNames[type] || type.toUpperCase();
-    
-    // Show/hide specific filters
-    const seriFilter = document.getElementById('seriFilter');
-    if (type === 'perbup') {
-        seriFilter.style.display = 'block';
-    } else {
-        seriFilter.style.display = 'none';
-    }
-    
-    modal.show();
-}
-
-function cetakSpesifik() {
-    const form = document.getElementById('printSpecificForm');
-    const formData = new FormData(form);
-    const tahun = formData.get('tahun');
-    const status = formData.get('status');
-    const seri = formData.get('seri');
-    
+function printDocument(jenis, id) {
+    // Implement print functionality based on document type
     let url = '';
-    
-    switch(currentPrintType) {
-        case 'sk':
-            url = `{{ route('sk.index') }}/${tahun}?cetak=1&status=${status}`;
+    switch(jenis) {
+        case 'SK':
+            url = `{{ url('/sk/cetak') }}/${id}`;
             break;
-        case 'perbup':
-            url = `{{ route('perbup.index') }}/${tahun}?cetak=1&status=${status}&seri=${seri}`;
+        case 'Perbup':
+            url = `{{ url('/perbup/cetak') }}/${id}`;
             break;
-        case 'sk_lainnya':
-            url = `{{ route('sk-lainnya.index') }}/${tahun}?cetak=1&status=${status}`;
+        case 'SK Lainnya':
+            url = `{{ url('/sk-lainnya/cetak') }}/${id}`;
             break;
         default:
-            alert('Jenis cetak tidak valid');
+            alert('Fungsi cetak belum tersedia untuk jenis dokumen ini');
             return;
     }
-    
     window.open(url, '_blank');
-    
-    // Close modal
-    const modal = bootstrap.Modal.getInstance(document.getElementById('printSpecificModal'));
-    modal.hide();
 }
 
 function updateProfile() {
@@ -817,21 +772,5 @@ function showNewNotification(count) {
         bsToast.show();
     }
 }
-
-// Add click event listeners to print menu cards
-document.addEventListener('DOMContentLoaded', function() {
-    const printCards = document.querySelectorAll('.print-menu-card');
-    printCards.forEach(card => {
-        card.addEventListener('click', function(e) {
-            // Only trigger if not clicking on buttons
-            if (!e.target.closest('.btn')) {
-                const printBtn = this.querySelector('.btn-primary, .btn-success, .btn-warning');
-                if (printBtn) {
-                    printBtn.click();
-                }
-            }
-        });
-    });
-});
 </script>
 @endsection
