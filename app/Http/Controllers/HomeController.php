@@ -92,6 +92,18 @@ class HomeController extends Controller
         return response()->json(['success' => true, 'message' => 'Profil berhasil diperbarui.']);
     }
 
+    public function cetakTahunan(Request $request)
+    {
+        $user = Auth::user();
+        $tahun = $request->get('tahun', date('Y'));
+        $jenis = $request->get('jenis', 'semua');
+        
+        // Generate laporan tahunan berdasarkan filter
+        $data = $this->getDataTahunan($user->opd_id, $tahun, $jenis);
+        
+        return view('user.cetak-tahunan', compact('data', 'tahun', 'jenis', 'user'));
+    }
+
     private function getDateRange($periode)
     {
         $now = Carbon::now();
@@ -128,13 +140,13 @@ class HomeController extends Controller
     
     private function getRingkasanData($opdId, $dateRange)
     {
-        // SK yang sudah selesai dan bisa dicetak
+        // SK yang sudah selesai
         $skSelesai = NomorSk::where('kodeopd', $opdId)
             ->where('status', 'selesai')
             ->whereBetween('tglsk', [$dateRange['start'], $dateRange['end']])
             ->count();
             
-        // Perbup yang sudah selesai dan bisa dicetak
+        // Perbup yang sudah selesai
         $perbupSelesai = NomorPerbup::where('kodeopd', $opdId)
             ->where('status', 'selesai')
             ->whereBetween('tglpb', [$dateRange['start'], $dateRange['end']])
@@ -170,7 +182,7 @@ class HomeController extends Controller
         // Laporan terbaru (5 terbaru)
         $laporanTerbaru = $this->getLaporanTerbaru($opdId, 5);
         
-        // Laporan yang belum dicetak (status diambil = null atau kosong)
+        // Laporan yang belum dicetak
         $belumDicetak = NomorSk::where('kodeopd', $opdId)
             ->where('status', 'selesai')
             ->whereNull('tglambilsk')
@@ -374,18 +386,6 @@ class HomeController extends Controller
                 'proses' => 'Dalam Proses'
             ]
         ];
-    }
-    
-    public function cetakTahunan(Request $request)
-    {
-        $user = Auth::user();
-        $tahun = $request->get('tahun', date('Y'));
-        $jenis = $request->get('jenis', 'semua');
-        
-        // Generate laporan tahunan berdasarkan filter
-        $data = $this->getDataTahunan($user->opd_id, $tahun, $jenis);
-        
-        return view('user.cetak-tahunan', compact('data', 'tahun', 'jenis', 'user'));
     }
     
     private function getDataTahunan($opdId, $tahun, $jenis)
