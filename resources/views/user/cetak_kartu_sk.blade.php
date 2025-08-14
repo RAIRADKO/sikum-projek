@@ -17,18 +17,105 @@
         }
     </script>
     <style>
+        /* Screen styles - tampilan normal */
+        @media screen {
+            .print-only { display: none !important; }
+        }
+        
+        /* Print styles - layout dua kolom seperti file asli */
         @media print {
             .no-print { display: none !important; }
-            body { font-family: "Times New Roman", serif !important; }
-            .print-container { margin: 0; box-shadow: none; }
+            
+            @page {
+                size: landscape;
+                margin: 1cm;
+            }
+            
+            body { 
+                font-family: "Times New Roman", serif !important;
+                font-size: 14px;
+                margin: 0;
+                padding: 0;
+                background-color: white;
+            }
+            
+            .print-container {
+                display: flex !important;
+                width: 100%;
+                height: 100%;
+                background-color: white;
+            }
+            
+            .print-column {
+                width: 50% !important;
+                padding: 20px !important;
+                box-sizing: border-box;
+                display: flex !important;
+                flex-direction: column;
+                justify-content: space-between;
+                margin: 0 !important;
+            }
+            
+            .print-column + .print-column {
+                border-left: 1px solid #000;
+            }
+            
+            .print-title {
+                text-align: center !important;
+                font-weight: bold !important;
+                font-size: 14px !important;
+                margin-bottom: 0 !important;
+            }
+            
+            .print-table {
+                margin-top: 20px !important;
+                width: 100% !important;
+                border: none !important;
+            }
+            
+            .print-table td {
+                vertical-align: top !important;
+                padding: 3px !important;
+                border: none !important;
+                background: none !important;
+            }
+            
+            .print-footer {
+                text-align: right !important;
+                font-size: 8px !important;
+                margin-top: 40px !important;
+            }
+            
+            .print-ttd {
+                text-align: right !important;
+            }
+            
+            .print-ttd p {
+                margin: 6px 0 !important;
+            }
+            
+            .print-kode-footer {
+                display: flex !important;
+                justify-content: space-between !important;
+                align-items: flex-end !important;
+                font-size: 14px !important;
+                margin-top: 40px !important;
+            }
+            
+            .print-paraf {
+                display: inline-block !important;
+                min-width: 120px !important;
+                text-align: center !important;
+            }
         }
     </style>
 </head>
 <body class="bg-gray-100 font-times">
-    <div class="max-w-4xl mx-auto p-6">
+    <!-- Screen View - tampilan normal dengan Tailwind -->
+    <div class="max-w-4xl mx-auto p-6 no-print">
         
         <!-- Header dengan tombol aksi -->
-        <div class="flex justify-between items-center mb-6 no-print">
+        <div class="flex justify-between items-center mb-6">
             <h1 class="text-2xl font-bold text-gray-800">Kartu Nomor SK</h1>
             <div class="flex gap-3">
                 <button 
@@ -44,7 +131,7 @@
         </div>
 
         <!-- Main Card -->
-        <div class="border-4 border-black bg-white print-container" id="kartu-sk">
+        <div class="border-4 border-black bg-white" id="kartu-sk">
             
             <!-- Header Card -->
             <div class="text-center py-4 border-b-2 border-black">
@@ -63,11 +150,8 @@
                             <input type="text" 
                                    id="kodesk-input"
                                    value="{{ old('kodesk', $sk->kodesk ?? 'SK' . str_pad($sk->nosk, 4, '0', STR_PAD_LEFT)) }}" 
-                                   class="w-full px-3 py-1 border border-gray-300 rounded focus:outline-none focus:border-blue-500 no-print"
+                                   class="w-full px-3 py-1 border border-gray-300 rounded focus:outline-none focus:border-blue-500"
                                    onchange="updateKodeSK(this.value)">
-                            <div id="kodesk-display" class="hidden bg-yellow-300 px-3 py-2 font-medium rounded print:block">
-                                {{ old('kodesk', $sk->kodesk ?? 'SK' . str_pad($sk->nosk, 4, '0', STR_PAD_LEFT)) }}
-                            </div>
                         </div>
                     </div>
 
@@ -127,28 +211,100 @@
 
     </div>
 
+    <!-- Print Layout - hanya muncul saat print -->
+    <div class="print-container print-only">
+        <!-- Kolom Kiri -->
+        <div class="print-column">
+            <div>
+                <div class="print-title">
+                    KARTU NOMOR <br>
+                    KEPUTUSAN BUPATI PURWOREJO
+                </div>
+                <table class="print-table">
+                    <tr>
+                        <td width="120">NOMOR SK</td>
+                        <td width="10">:</td>
+                        <td>{{ $sk->nosk }}</td>
+                    </tr>
+                    <tr>
+                        <td>TANGGAL SK</td>
+                        <td>:</td>
+                        <td>{{ \Carbon\Carbon::parse($sk->tglsk)->format('d-m-Y') }}</td>
+                    </tr>
+                    <tr>
+                        <td>JUDUL SK</td>
+                        <td>:</td>
+                        <td>{{ $sk->judulsk }}</td>
+                    </tr>
+                    <tr>
+                        <td>DINAS/OPD</td>
+                        <td>:</td>
+                        <td>{{ $sk->opd->namaopd ?? 'N/A' }}</td>
+                    </tr>
+                </table>
+            </div>
+            <div class="print-footer">
+                Lembar untuk OPD Pemrakarsa
+            </div>
+        </div>
+
+        <!-- Kolom Kanan -->
+        <div class="print-column">
+            <div>
+                <div class="print-title">
+                    KARTU NOMOR <br>
+                    KEPUTUSAN BUPATI PURWOREJO
+                </div>
+                <table class="print-table">
+                    <tr>
+                        <td width="120">NOMOR SK</td>
+                        <td width="10">:</td>
+                        <td>{{ $sk->nosk }}</td>
+                    </tr>
+                    <tr>
+                        <td>TANGGAL SK</td>
+                        <td>:</td>
+                        <td>{{ \Carbon\Carbon::parse($sk->tglsk)->format('d-m-Y') }}</td>
+                    </tr>
+                    <tr>
+                        <td>JUDUL SK</td>
+                        <td>:</td>
+                        <td>{{ $sk->judulsk }}</td>
+                    </tr>
+                    <tr>
+                        <td>DINAS/OPD</td>
+                        <td>:</td>
+                        <td>{{ $sk->opd->namaopd ?? 'N/A' }}</td>
+                    </tr>
+                </table>
+
+                <div class="print-ttd">
+                    <p>TANDA TERIMA AMBIL</p>
+                    <p>TANGGAL</p>
+                    <br><br>
+                    <p>(<span class="print-paraf"></span>)</p>
+                </div>
+            </div>
+
+            <div class="print-kode-footer">
+                <span id="print-kodesk">{{ old('kodesk', $sk->kodesk ?? 'SK' . str_pad($sk->nosk, 4, '0', STR_PAD_LEFT)) }}/{{ \Carbon\Carbon::now()->format('d-m-Y') }}</span>
+                <span class="print-footer">Lembar untuk Bagian Hukum</span>
+            </div>
+        </div>
+    </div>
+
     <script>
         function updateKodeSK(value) {
-            // Update display version untuk print
-            document.getElementById('kodesk-display').textContent = value;
+            // Update footer kodesk di layar
             document.getElementById('footer-kodesk').textContent = value;
+            // Update kodesk di print layout
+            document.getElementById('print-kodesk').textContent = value + '/{{ \Carbon\Carbon::now()->format('d-m-Y') }}';
         }
 
         // Set initial values
         document.addEventListener('DOMContentLoaded', function() {
             const kodeskInput = document.getElementById('kodesk-input');
             updateKodeSK(kodeskInput.value);
-        });
-
-        // Auto-hide input saat print
-        window.addEventListener('beforeprint', function() {
-            document.getElementById('kodesk-input').style.display = 'none';
-            document.getElementById('kodesk-display').style.display = 'block';
-        });
-
-        window.addEventListener('afterprint', function() {
-            document.getElementById('kodesk-input').style.display = 'block';
-            document.getElementById('kodesk-display').style.display = 'none';
         });
     </script>
 </body>
