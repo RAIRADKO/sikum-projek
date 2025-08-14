@@ -12,8 +12,14 @@ class NomorPerbup extends Model
     protected $table = 'nomorpb';
     protected $primaryKey = 'nopb';
     public $incrementing = false;
-    public $timestamps = false;
+    protected $keyType = 'int';
+    public $timestamps = true; // Set to true as per the second snippet
 
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array<int, string>
+     */
     protected $fillable = [
         'nopb',
         'tglpb',
@@ -26,12 +32,28 @@ class NomorPerbup extends Model
         'tglturunpb',
         'tglambilpb',
         'namapengambilpb',
+        'namabon', // Added from second snippet
+        'tglbon', // Added from second snippet
+        'alasanbonpb', // Added from second snippet
         'ket',
         'kodepb',
     ];
 
     /**
-     * Relasi dengan OPD
+     * The attributes that should be cast to native types.
+     *
+     * @var array<string, string>
+     */
+    protected $casts = [
+        'tglpb' => 'date',
+        'tglpengundangan' => 'date',
+        'tglturunpb' => 'date',
+        'tglambilpb' => 'date',
+        'tglbon' => 'date',
+    ];
+
+    /**
+     * Get the OPD that owns the Perbup.
      */
     public function opd()
     {
@@ -39,16 +61,16 @@ class NomorPerbup extends Model
     }
 
     /**
-     * Relasi dengan Seri
+     * Get the Seri associated with the Perbup.
      */
-    public function seriModel()
+    public function seri()
     {
         return $this->belongsTo(Seri::class, 'seri', 'seri');
     }
 
     /**
-     * Relasi dengan ProsesPerbup
-     * NomorPerbup hasMany ProsesPerbup (karena satu nomor perbup bisa memiliki beberapa proses)
+     * Get the Proses Perbup records associated with the Nomor Perbup.
+     * A "NomorPerbup" can have many "ProsesPerbup" records.
      */
     public function prosesPerbup()
     {

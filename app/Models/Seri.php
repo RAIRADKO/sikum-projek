@@ -15,13 +15,18 @@ class Seri extends Model
     protected $keyType = 'string';
     public $timestamps = false;
 
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array<int, string>
+     */
     protected $fillable = [
         'seri',
         'kategori',
     ];
 
     /**
-     * Relasi dengan NomorPerbup
+     * Get the Nomor Perbup records associated with the Seri.
      */
     public function nomorPerbup()
     {
