@@ -21,8 +21,8 @@ class SkController extends Controller
         $search = $request->input('search');
 
         $skDataQuery = \App\Models\NomorSk::whereYear('tglsk', $year)
-                                        ->with('opd')
-                                        ->orderBy('tglsk', 'desc');
+                                            ->with('opd')
+                                            ->orderBy('tglsk', 'desc');
 
         if ($search) {
             $skDataQuery->where(function ($query) use ($search) {
@@ -86,8 +86,8 @@ class SkController extends Controller
         $search = $request->input('search');
 
         $prosesSkDataQuery = \App\Models\ProsesSk::whereYear('tglmasuksk', $year)
-                                              ->with(['opd', 'nomorSk'])
-                                              ->orderBy('tglmasuksk', 'desc');
+                                                ->with(['opd', 'nomorSk'])
+                                                ->orderBy('tglmasuksk', 'desc');
 
         if ($search) {
             $prosesSkDataQuery->where(function ($query) use ($search) {
@@ -140,7 +140,44 @@ class SkController extends Controller
     }
 
     /**
-     * Menampilkan halaman cetak kartu SK.
+     * Menampilkan halaman form edit kode SK sebelum cetak kartu.
+     *
+     * @param  \App\Models\NomorSk  $nomorsk
+     * @return \Illuminate\View\View
+     */
+    public function editKartu(NomorSk $nomorsk)
+    {
+        // Load relasi opd untuk mendapatkan nama OPD
+        $nomorsk->load('opd');
+        
+        return view('user.edit_kartu_sk', ['sk' => $nomorsk]);
+    }
+
+    /**
+     * Update kode SK dan redirect ke cetak kartu.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Models\NomorSk  $nomorsk
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function updateKodeSK(Request $request, NomorSk $nomorsk)
+    {
+        $request->validate([
+            'kodesk' => 'required|string|max:50'
+        ]);
+
+        // Update kode SK
+        $nomorsk->update([
+            'kodesk' => $request->kodesk
+        ]);
+
+        // Redirect ke halaman cetak dengan kode SK yang sudah diupdate
+        return redirect()->route('sk.cetak-kartu', $nomorsk->nosk)
+                         ->with('success', 'Kode SK berhasil diperbarui');
+    }
+
+    /**
+     * Menampilkan halaman cetak kartu SK (versi yang sudah diperbaiki).
      *
      * @param  \App\Models\NomorSk  $nomorsk
      * @return \Illuminate\View\View
@@ -149,6 +186,12 @@ class SkController extends Controller
     {
         // Load relasi opd untuk mendapatkan nama OPD
         $nomorsk->load('opd');
+        
+        // Generate default kode SK jika belum ada
+        if (empty($nomorsk->kodesk)) {
+            $defaultKode = 'SK' . str_pad($nomorsk->nosk, 4, '0', STR_PAD_LEFT);
+            $nomorsk->kodesk = $defaultKode;
+        }
         
         return view('user.cetak_kartu_sk', ['sk' => $nomorsk]);
     }

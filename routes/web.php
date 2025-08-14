@@ -63,6 +63,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/sk/detail/{nomorsk}', [SkController::class, 'show'])->name('sk.detail');
     Route::get('/sk/cetak/{id}', [SkController::class, 'cetak'])->name('sk.cetak');
     Route::get('/sk/cetak-kartu/{nomorsk}', [SkController::class, 'cetakKartu'])->name('sk.cetak-kartu');
+    // Route untuk edit dan update kode SK
+    Route::get('/sk/edit-kartu/{nomorsk}', [SkController::class, 'editKartu'])->name('sk.edit-kartu');
+    Route::patch('/sk/update-kode/{nomorsk}', [SkController::class, 'updateKodeSK'])->name('sk.update-kode');
+
 
     // SK Proses Routes
     Route::get('/sk-proses', [SkController::class, 'prosesIndex'])->name('sk-proses');

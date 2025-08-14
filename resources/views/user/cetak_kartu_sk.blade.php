@@ -1,152 +1,155 @@
 <!DOCTYPE html>
-<html>
+<html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>Cetak Kartu Nomor SK - {{ $sk->nosk }}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kartu Nomor SK - {{ $sk->nosk }}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'times': ['"Times New Roman"', 'serif'],
+                    }
+                }
+            }
+        }
+    </script>
     <style>
-        body {
-            font-family: "Times New Roman", serif;
-            font-size: 14px;
-            margin: 0;
-            padding: 0;
-        }
-        .container {
-            display: flex;
-            border-left: 1px solid #000;
-            border-right: 1px solid #000;
-            width: 100%;
-            height: 100%;
-        }
-        .column {
-            width: 50%;
-            padding: 20px;
-            box-sizing: border-box;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-        }
-        .column + .column {
-            border-left: 1px solid #000;
-        }
-        .title {
-            text-align: center;
-            font-weight: bold;
-        }
-        .data-table {
-            margin-top: 20px;
-            width: 100%;
-        }
-        .data-table td {
-            vertical-align: top;
-            padding: 3px;
-        }
-        .footer {
-            text-align: right;
-            font-size: 14px;
-            margin-top: 40px;
-        }
-        .ttd {
-            text-align: right; 
-        }
-        .ttd p {
-            margin: 6px 0;
-        }
-        .kode-footer {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-end;
-            font-size: 14px;
-            margin-top: 40px;
-        }
-        .paraf {
-            display: inline-block;
-            min-width: 120px; 
-            text-align: center;
+        @media print {
+            .no-print { display: none !important; }
+            body { font-family: "Times New Roman", serif !important; }
+            .print-container { margin: 0; box-shadow: none; }
         }
     </style>
 </head>
-<body onload="window.print()">
-
-<div class="container">
-    <!-- Kolom Kiri -->
-    <div class="column">
-        <div>
-            <div class="title">
-                KARTU NOMOR <br>
-                KEPUTUSAN BUPATI PURWOREJO
+<body class="bg-gray-100 font-times">
+    <div class="max-w-4xl mx-auto p-6">
+        
+        <!-- Header dengan tombol aksi -->
+        <div class="flex justify-between items-center mb-6 no-print">
+            <h1 class="text-2xl font-bold text-gray-800">Kartu Nomor SK</h1>
+            <div class="flex gap-3">
+                <button 
+                    onclick="window.print()" 
+                    class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors">
+                    Cetak
+                </button>
+                <a href="{{ route('sk.year', ['year' => \Carbon\Carbon::parse($sk->tglsk)->year]) }}" 
+                   class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition-colors">
+                    KELUAR
+                </a>
             </div>
-            <table class="data-table">
-                <tr>
-                    <td width="120">NOMOR SK</td>
-                    <td width="10">:</td>
-                    <td>{{ $sk->nosk }}</td>
-                </tr>
-                <tr>
-                    <td>TANGGAL SK</td>
-                    <td>:</td>
-                    <td>{{ \Carbon\Carbon::parse($sk->tglsk)->format('d-m-Y') }}</td>
-                </tr>
-                <tr>
-                    <td>JUDUL SK</td>
-                    <td>:</td>
-                    <td>{{ $sk->judulsk }}</td>
-                </tr>
-                <tr>
-                    <td>DINAS/OPD</td>
-                    <td>:</td>
-                    <td>{{ $sk->opd->namaopd ?? 'N/A' }}</td>
-                </tr>
-            </table>
         </div>
-        <div class="footer">
-            Lembar untuk OPD Pemrakarsa
+
+        <!-- Main Card -->
+        <div class="border-4 border-black bg-white print-container" id="kartu-sk">
+            
+            <!-- Header Card -->
+            <div class="text-center py-4 border-b-2 border-black">
+                <h2 class="text-xl font-bold underline">KARTU NOMOR SK</h2>
+            </div>
+
+            <!-- Content Area -->
+            <div class="p-6">
+                
+                <!-- Data Table -->
+                <div class="space-y-4">
+                    <div class="flex">
+                        <div class="w-32 font-medium">KODE SK</div>
+                        <div class="w-4">:</div>
+                        <div class="flex-1">
+                            <input type="text" 
+                                   id="kodesk-input"
+                                   value="{{ old('kodesk', $sk->kodesk ?? 'SK' . str_pad($sk->nosk, 4, '0', STR_PAD_LEFT)) }}" 
+                                   class="w-full px-3 py-1 border border-gray-300 rounded focus:outline-none focus:border-blue-500 no-print"
+                                   onchange="updateKodeSK(this.value)">
+                            <div id="kodesk-display" class="hidden bg-yellow-300 px-3 py-2 font-medium rounded print:block">
+                                {{ old('kodesk', $sk->kodesk ?? 'SK' . str_pad($sk->nosk, 4, '0', STR_PAD_LEFT)) }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex">
+                        <div class="w-32 font-medium">NOMOR SK</div>
+                        <div class="w-4">:</div>
+                        <div class="flex-1">
+                            <div class="bg-yellow-300 px-3 py-2 font-medium rounded">
+                                {{ $sk->nosk }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex">
+                        <div class="w-32 font-medium">TANGGAL SK</div>
+                        <div class="w-4">:</div>
+                        <div class="flex-1">
+                            <div class="bg-yellow-300 px-3 py-2 font-medium rounded">
+                                {{ \Carbon\Carbon::parse($sk->tglsk)->format('d-m-Y') }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex">
+                        <div class="w-32 font-medium">JUDUL SK</div>
+                        <div class="w-4">:</div>
+                        <div class="flex-1">
+                            <div class="bg-yellow-300 px-3 py-2 font-medium rounded">
+                                {{ $sk->judulsk }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex">
+                        <div class="w-32 font-medium">OPD/DINAS</div>
+                        <div class="w-4">:</div>
+                        <div class="flex-1">
+                            <div class="bg-yellow-300 px-3 py-2 font-medium rounded">
+                                {{ $sk->opd->namaopd ?? 'N/A' }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Footer dengan Kode SK dan Tanggal -->
+                <div class="flex justify-between items-end mt-8 pt-4">
+                    <div class="bg-yellow-300 px-3 py-2 font-bold rounded" id="footer-kodesk">
+                        {{ old('kodesk', $sk->kodesk ?? 'SK' . str_pad($sk->nosk, 4, '0', STR_PAD_LEFT)) }}
+                    </div>
+                    <div class="bg-yellow-300 px-3 py-2 font-bold rounded">
+                        {{ \Carbon\Carbon::now()->format('d-m-Y') }}
+                    </div>
+                </div>
+
+            </div>
         </div>
+
     </div>
 
-    <!-- Kolom Kanan -->
-    <div class="column">
-        <div>
-            <div class="title">
-                KARTU NOMOR <br>
-                KEPUTUSAN BUPATI PURWOREJO
-            </div>
-            <table class="data-table">
-                <tr>
-                    <td width="120">NOMOR SK</td>
-                    <td width="10">:</td>
-                    <td>{{ $sk->nosk }}</td>
-                </tr>
-                <tr>
-                    <td>TANGGAL SK</td>
-                    <td>:</td>
-                    <td>{{ \Carbon\Carbon::parse($sk->tglsk)->format('d-m-Y') }}</td>
-                </tr>
-                <tr>
-                    <td>JUDUL SK</td>
-                    <td>:</td>
-                    <td>{{ $sk->judulsk }}</td>
-                </tr>
-                <tr>
-                    <td>DINAS/OPD</td>
-                    <td>:</td>
-                    <td>{{ $sk->opd->namaopd ?? 'N/A' }}</td>
-                </tr>
-            </table>
+    <script>
+        function updateKodeSK(value) {
+            // Update display version untuk print
+            document.getElementById('kodesk-display').textContent = value;
+            document.getElementById('footer-kodesk').textContent = value;
+        }
 
-            <div class="ttd">
-                <p>TANDA TERIMA AMBIL</p>
-                <p>TANGGAL</p>
-                <br><br>
-                <p>(<span class="paraf"></span>)</p>
-            </div>
-        </div>
+        // Set initial values
+        document.addEventListener('DOMContentLoaded', function() {
+            const kodeskInput = document.getElementById('kodesk-input');
+            updateKodeSK(kodeskInput.value);
+        });
 
-        <div class="kode-footer">
-            <span>{{ $sk->kodesk ?? 'SK' . str_pad($sk->nosk, 4, '0', STR_PAD_LEFT) }}/{{ \Carbon\Carbon::parse($sk->tglsk)->format('d-m-Y') }}</span>
-            <span class="footer">Lembar untuk Bagian Hukum</span>
-        </div>
-    </div>
-</div>
+        // Auto-hide input saat print
+        window.addEventListener('beforeprint', function() {
+            document.getElementById('kodesk-input').style.display = 'none';
+            document.getElementById('kodesk-display').style.display = 'block';
+        });
 
+        window.addEventListener('afterprint', function() {
+            document.getElementById('kodesk-input').style.display = 'block';
+            document.getElementById('kodesk-display').style.display = 'none';
+        });
+    </script>
 </body>
 </html>
