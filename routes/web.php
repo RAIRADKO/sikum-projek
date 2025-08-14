@@ -62,7 +62,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/sk/{year}', [SkController::class, 'showByYear'])->name('sk.year');
     Route::get('/sk/detail/{nomorsk}', [SkController::class, 'show'])->name('sk.detail');
     Route::get('/sk/cetak/{id}', [SkController::class, 'cetak'])->name('sk.cetak');
-
+    Route::get('/sk/cetak-kartu/{nomorsk}', [SkController::class, 'cetakKartu'])->name('sk.cetak-kartu');
 
     // SK Proses Routes
     Route::get('/sk-proses', [SkController::class, 'prosesIndex'])->name('sk-proses');
@@ -90,7 +90,6 @@ Route::middleware('auth')->group(function () {
     Route::get('/sk-lainnya/{year}', [SKLainnyaController::class, 'showByYear'])->name('sk-lainnya.year');
     Route::get('/sk-lainnya/detail/{proseslain}', [SKLainnyaController::class, 'show'])->name('sk-lainnya.detail');
     Route::get('/sk-lainnya/cetak/{id}', [SKLainnyaController::class, 'cetak'])->name('sk-lainnya.cetak');
-
 
     Route::redirect('/profile', '/dashboard')->name('profile');
 });

@@ -85,7 +85,7 @@
                                            data-bs-toggle="tooltip" 
                                            title="Download Nota Pengajuan">
                                             <i class="bi bi-file-text me-1"></i>
-                                            <span class="d-none d-md-inline">Nota</span>
+                                            <span class="d-none d-md-inline">Cetak</span>
                                         </a>
                                     @endif
                                 </div>

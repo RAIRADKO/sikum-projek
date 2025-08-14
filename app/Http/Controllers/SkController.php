@@ -138,4 +138,18 @@ class SkController extends Controller
         
         return view('user.nota_pengajuan', compact('prosesSk'));
     }
+
+    /**
+     * Menampilkan halaman cetak kartu SK.
+     *
+     * @param  \App\Models\NomorSk  $nomorsk
+     * @return \Illuminate\View\View
+     */
+    public function cetakKartu(NomorSk $nomorsk)
+    {
+        // Load relasi opd untuk mendapatkan nama OPD
+        $nomorsk->load('opd');
+        
+        return view('user.cetak_kartu_sk', ['sk' => $nomorsk]);
+    }
 }

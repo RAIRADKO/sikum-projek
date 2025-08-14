@@ -65,6 +65,15 @@
                                         <i class="bi bi-eye me-1"></i>
                                         <span class="d-none d-md-inline">Detail</span>
                                     </a>
+                                    @if($sk->status == 'selesai')
+                                    <a href="{{ route('sk.cetak-kartu', $sk->nosk) }}" 
+                                       class="btn btn-sm btn-outline-success d-flex align-items-center" 
+                                       data-bs-toggle="tooltip" 
+                                       title="Cetak Kartu SK">
+                                        <i class="bi bi-printer me-1"></i>
+                                        <span class="d-none d-md-inline">Cetak</span>
+                                    </a>
+                                    @endif
                                 </div>
                             </td>
                         </tr>
